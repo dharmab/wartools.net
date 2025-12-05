@@ -1,11 +1,3 @@
-# Build output (root level for GitHub Pages)
-/articles/
-/apps/
-/index.html
-
-# Keep source files
-!/src/
-
 # macOS
 .DS_Store
 
@@ -19,3 +11,20 @@
 # Temporary files
 *.tmp
 *.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+.uv/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/

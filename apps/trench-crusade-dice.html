@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trench Crusade Dice Roller - WarTools.net</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .rollers-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .roller-wrapper {
+            min-width: 0;
+        }
+
+        .roller-title {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 2px solid var(--border-medium);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dice-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .dice-btn {
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: Georgia, serif;
+            border: 2px solid var(--border-medium);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dice-btn:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .dice-btn:active {
+            transform: translateY(0);
+        }
+
+        .dice-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-hover);
+            color: var(--bg-primary);
+            font-weight: bold;
+        }
+
+        .modifiers-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .modifier-section {
+            flex: 1;
+        }
+
+        .modifier-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .modifier-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modifier-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border-medium);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modifier-btn:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            transform: scale(1.1);
+        }
+
+        .modifier-btn:active {
+            transform: scale(0.95);
+        }
+
+        .modifier-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .modifier-btn:disabled:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--border-medium);
+            transform: none;
+        }
+
+        .modifier-display {
+            min-width: 60px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .plus-d {
+            color: var(--accent-primary);
+        }
+
+        .minus-d {
+            color: var(--text-secondary);
+        }
+
+        .armor-section {
+            margin-bottom: 15px;
+        }
+
+        .armor-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .armor-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .armor-display {
+            min-width: 60px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .effective-modifier {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            min-height: 18px;
+            font-style: italic;
+        }
+
+        .probability-display {
+            text-align: center;
+            margin-top: 12px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            border: 1px solid var(--border-medium);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .probability-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .probability-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            font-family: Georgia, serif;
+        }
+
+        .probability-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+
+        .probability-bar {
+            height: 100%;
+            background: var(--accent-primary);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .injury-outcomes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .injury-outcome {
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            border: 1px solid var(--border-medium);
+            text-align: center;
+        }
+
+        .injury-outcome-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .injury-outcome-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            font-family: Georgia, serif;
+        }
+
+        .injury-outcome.no-effect .injury-outcome-value {
+            color: var(--text-secondary);
+        }
+
+        .injury-outcome.minor .injury-outcome-value {
+            color: #d97706;
+        }
+
+        .injury-outcome.down .injury-outcome-value {
+            color: #dc2626;
+        }
+
+        .injury-outcome.out .injury-outcome-value {
+            color: #991b1b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .injury-outcome.minor .injury-outcome-value {
+                color: #fbbf24;
+            }
+
+            .injury-outcome.down .injury-outcome-value {
+                color: #f87171;
+            }
+
+            .injury-outcome.out .injury-outcome-value {
+                color: #fca5a5;
+            }
+        }
+
+        .roll-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            font-family: Georgia, serif;
+            border: none;
+            border-radius: 6px;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 2px solid var(--accent-hover);
+            margin-top: auto;
+        }
+
+        .roll-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-color);
+        }
+
+        .roll-btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .dice-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .die {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-primary);
+            border: 3px solid var(--border-dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            box-shadow: 0 4px 8px var(--shadow-color);
+            animation: rollIn 0.5s ease-out;
+            font-family: Georgia, serif;
+        }
+
+        .die.kept {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-hover);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .die.discarded {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            opacity: 0.5;
+            border-color: var(--border-light);
+        }
+
+        @keyframes rollIn {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: rotateX(180deg) rotateY(180deg) scale(1.1);
+            }
+            100% {
+                transform: rotateX(360deg) rotateY(360deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .result-summary {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .final-result {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            text-shadow: 0 0 20px var(--shadow-color);
+            font-family: Georgia, serif;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-medium);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+            color: var(--link-hover);
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .rollers-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .roller-title {
+                font-size: 1.4rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .injury-outcomes {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .injury-outcome {
+                padding: 10px;
+            }
+
+            .injury-outcome-label {
+                font-size: 0.8rem;
+            }
+
+            .injury-outcome-value {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            .roller-title {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .modifiers-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .dice-selector {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .dice-btn {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TRENCH✠CRUSADE</h1>
+        </header>
+
+        <div class="rollers-container">
+            <!-- SUCCESS ROLL -->
+            <div class="roller-wrapper">
+                <h2 class="roller-title">Success Roll</h2>
+
+                <div class="card">
+                    <div class="dice-selector">
+                        <button class="dice-btn active" data-dice="2" data-roller="success">2D6</button>
+                        <button class="dice-btn" data-dice="3" data-roller="success">3D6</button>
+                        <button class="dice-btn" data-dice="4" data-roller="success">4D6</button>
+                    </div>
+
+                    <div class="modifiers-container">
+                        <div class="modifier-section">
+                            <div class="modifier-controls">
+                                <button class="modifier-btn" id="successMinusDMinusBtn" onclick="adjustModifier('success', 'minus', -1)">−</button>
+                                <div class="modifier-display minus-d" id="successMinusD">-0D</div>
+                                <button class="modifier-btn" onclick="adjustModifier('success', 'minus', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="modifier-section">
+                            <div class="modifier-controls">
+                                <button class="modifier-btn" id="successPlusDMinusBtn" onclick="adjustModifier('success', 'plus', -1)">−</button>
+                                <div class="modifier-display plus-d" id="successPlusD">+0D</div>
+                                <button class="modifier-btn" onclick="adjustModifier('success', 'plus', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="effective-modifier" id="successEffectiveModifier"></div>
+
+                    <div class="probability-display">
+                        <div class="probability-label">Chance of Success (≥7)</div>
+                        <div class="probability-value" id="successProbabilityValue">--</div>
+                        <div class="probability-bar-container">
+                            <div class="probability-bar" id="successProbabilityBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <button class="roll-btn" onclick="rollDice('success')">🎲 ROLL DICE</button>
+                </div>
+
+                <div class="card results" id="successResults" style="display: none;">
+                    <div class="result-summary" id="successResultSummary"></div>
+                    <div class="dice-visual" id="successDiceVisual"></div>
+                    <div class="final-result" id="successFinalResult"></div>
+                </div>
+            </div>
+
+            <!-- INJURY ROLL -->
+            <div class="roller-wrapper">
+                <h2 class="roller-title">Injury Roll</h2>
+
+                <div class="card">
+                    <div class="dice-selector">
+                        <button class="dice-btn active" data-dice="2" data-roller="injury">2D6</button>
+                        <button class="dice-btn" data-dice="3" data-roller="injury">3D6</button>
+                        <button class="dice-btn" data-dice="4" data-roller="injury">4D6</button>
+                    </div>
+
+                    <div class="modifiers-container">
+                        <div class="modifier-section">
+                            <div class="modifier-controls">
+                                <button class="modifier-btn" id="injuryMinusDMinusBtn" onclick="adjustModifier('injury', 'minus', -1)">−</button>
+                                <div class="modifier-display minus-d" id="injuryMinusD">-0D</div>
+                                <button class="modifier-btn" onclick="adjustModifier('injury', 'minus', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="modifier-section">
+                            <div class="modifier-controls">
+                                <button class="modifier-btn" id="injuryPlusDMinusBtn" onclick="adjustModifier('injury', 'plus', -1)">−</button>
+                                <div class="modifier-display plus-d" id="injuryPlusD">+0D</div>
+                                <button class="modifier-btn" onclick="adjustModifier('injury', 'plus', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="armor-section">
+                        <div class="armor-controls">
+                            <button class="modifier-btn" onclick="adjustArmor(-1)">−</button>
+                            <div class="armor-display" id="armorValue">0 🛡️</div>
+                            <button class="modifier-btn" id="armorPlusBtn" onclick="adjustArmor(1)" disabled>+</button>
+                        </div>
+                    </div>
+
+                    <div class="effective-modifier" id="injuryEffectiveModifier"></div>
+
+                    <div class="probability-display">
+                        <div class="probability-label">Injury Probabilities</div>
+                        <div class="injury-outcomes">
+                            <div class="injury-outcome no-effect">
+                                <div class="injury-outcome-label">No Effect (≤1)</div>
+                                <div class="injury-outcome-value" id="injuryNoEffect">--</div>
+                            </div>
+                            <div class="injury-outcome minor">
+                                <div class="injury-outcome-label">Minor Hit (2-6)</div>
+                                <div class="injury-outcome-value" id="injuryMinor">--</div>
+                            </div>
+                            <div class="injury-outcome down">
+                                <div class="injury-outcome-label">Down (7-8)</div>
+                                <div class="injury-outcome-value" id="injuryDown">--</div>
+                            </div>
+                            <div class="injury-outcome out">
+                                <div class="injury-outcome-label">Out of Action (≥9)</div>
+                                <div class="injury-outcome-value" id="injuryOut">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="roll-btn" onclick="rollDice('injury')">🎲 ROLL DICE</button>
+                </div>
+
+                <div class="card results" id="injuryResults" style="display: none;">
+                    <div class="result-summary" id="injuryResultSummary"></div>
+                    <div class="dice-visual" id="injuryDiceVisual"></div>
+                    <div class="final-result" id="injuryFinalResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p></p><a href="/">← Back to WarTools.net</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Success Roll State
+        let successBaseDice = 2;
+        let successPlusD = 0;
+        let successMinusD = 0;
+
+        // Injury Roll State
+        let injuryBaseDice = 2;
+        let injuryPlusD = 0;
+        let injuryMinusD = 0;
+        let armor = 0;
+
+        // Initialize button states on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // All minus buttons should be disabled initially since values start at 0
+            document.getElementById('successPlusDMinusBtn').disabled = true;
+            document.getElementById('successMinusDMinusBtn').disabled = true;
+            document.getElementById('injuryPlusDMinusBtn').disabled = true;
+            document.getElementById('injuryMinusDMinusBtn').disabled = true;
+        });
+
+        // Dice selection
+        document.querySelectorAll('.dice-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const roller = btn.dataset.roller;
+                // Only deactivate buttons in the same roller
+                document.querySelectorAll(`.dice-btn[data-roller="${roller}"]`).forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                if (roller === 'success') {
+                    successBaseDice = parseInt(btn.dataset.dice);
+                    updateEffectiveModifier('success');
+                } else {
+                    injuryBaseDice = parseInt(btn.dataset.dice);
+                    updateEffectiveModifier('injury');
+                }
+            });
+        });
+
+        function adjustModifier(roller, type, delta) {
+            if (roller === 'success') {
+                if (type === 'plus') {
+                    successPlusD = Math.max(0, successPlusD + delta);
+                    document.getElementById('successPlusD').textContent = `+${successPlusD}D`;
+                    // Enable/disable the minus button based on value
+                    const minusBtn = document.getElementById('successPlusDMinusBtn');
+                    minusBtn.disabled = successPlusD === 0;
+                } else {
+                    successMinusD = Math.max(0, successMinusD + delta);
+                    document.getElementById('successMinusD').textContent = `-${successMinusD}D`;
+                    // Enable/disable the minus button based on value
+                    const minusBtn = document.getElementById('successMinusDMinusBtn');
+                    minusBtn.disabled = successMinusD === 0;
+                }
+            } else if (roller === 'injury') {
+                if (type === 'plus') {
+                    injuryPlusD = Math.max(0, injuryPlusD + delta);
+                    document.getElementById('injuryPlusD').textContent = `+${injuryPlusD}D`;
+                    // Enable/disable the minus button based on value
+                    const minusBtn = document.getElementById('injuryPlusDMinusBtn');
+                    minusBtn.disabled = injuryPlusD === 0;
+                } else {
+                    injuryMinusD = Math.max(0, injuryMinusD + delta);
+                    document.getElementById('injuryMinusD').textContent = `-${injuryMinusD}D`;
+                    // Enable/disable the minus button based on value
+                    const minusBtn = document.getElementById('injuryMinusDMinusBtn');
+                    minusBtn.disabled = injuryMinusD === 0;
+                }
+            }
+            updateEffectiveModifier(roller);
+        }
+
+        function adjustArmor(delta) {
+            armor = Math.min(0, armor + delta);
+            document.getElementById('armorValue').textContent = armor + ' 🛡️';
+
+            // Enable/disable the + button based on armor value
+            const plusBtn = document.getElementById('armorPlusBtn');
+            plusBtn.disabled = armor === 0;
+
+            updateEffectiveModifier('injury');
+        }
+
+        function updateEffectiveModifier(roller) {
+            if (roller === 'success') {
+                const netModifier = successPlusD - successMinusD;
+                const totalDice = successBaseDice + Math.abs(netModifier);
+                const effectiveEl = document.getElementById('successEffectiveModifier');
+
+                if (netModifier === 0) {
+                    effectiveEl.textContent = `Rolling ${successBaseDice}d6`;
+                } else if (netModifier > 0) {
+                    effectiveEl.textContent = `Rolling ${totalDice}d6, keeping highest ${successBaseDice}`;
+                } else {
+                    effectiveEl.textContent = `Rolling ${totalDice}d6, keeping lowest ${successBaseDice}`;
+                }
+
+                updateProbability('success');
+            } else {
+                const netModifier = injuryPlusD - injuryMinusD;
+                const totalDice = injuryBaseDice + Math.abs(netModifier);
+                const effectiveEl = document.getElementById('injuryEffectiveModifier');
+
+                let text = '';
+                if (netModifier === 0) {
+                    text = `Rolling ${injuryBaseDice}d6`;
+                } else if (netModifier > 0) {
+                    text = `Rolling ${totalDice}d6, keeping highest ${injuryBaseDice}`;
+                } else {
+                    text = `Rolling ${totalDice}d6, keeping lowest ${injuryBaseDice}`;
+                }
+
+                if (armor !== 0) {
+                    text += `, ${armor} armor modifier`;
+                }
+
+                effectiveEl.textContent = text;
+
+                updateProbability('injury');
+            }
+        }
+
+        function updateProbability(roller) {
+            if (roller === 'success') {
+                const netModifier = successPlusD - successMinusD;
+                const totalDiceToRoll = successBaseDice + Math.abs(netModifier);
+
+                // Monte Carlo simulation with 100,000 trials
+                const trials = 100000;
+                let successCount = 0;
+
+                for (let i = 0; i < trials; i++) {
+                    const rolls = [];
+                    for (let j = 0; j < totalDiceToRoll; j++) {
+                        rolls.push(Math.floor(Math.random() * 6) + 1);
+                    }
+
+                    let keptRolls;
+                    if (netModifier > 0) {
+                        keptRolls = rolls.sort((a, b) => b - a).slice(0, successBaseDice);
+                    } else if (netModifier < 0) {
+                        keptRolls = rolls.sort((a, b) => a - b).slice(0, successBaseDice);
+                    } else {
+                        keptRolls = rolls;
+                    }
+
+                    const total = keptRolls.reduce((sum, val) => sum + val, 0);
+
+                    if (total >= 7) {
+                        successCount++;
+                    }
+                }
+
+                const probability = (successCount / trials) * 100;
+                document.getElementById('successProbabilityValue').textContent = probability.toFixed(1) + '%';
+                document.getElementById('successProbabilityBar').style.width = probability + '%';
+            } else {
+                // Injury roll probabilities
+                const netModifier = injuryPlusD - injuryMinusD;
+                const totalDiceToRoll = injuryBaseDice + Math.abs(netModifier);
+                const trials = 100000;
+                let noEffect = 0;
+                let minor = 0;
+                let down = 0;
+                let out = 0;
+
+                for (let i = 0; i < trials; i++) {
+                    const rolls = [];
+                    for (let j = 0; j < totalDiceToRoll; j++) {
+                        rolls.push(Math.floor(Math.random() * 6) + 1);
+                    }
+
+                    let keptRolls;
+                    if (netModifier > 0) {
+                        keptRolls = rolls.sort((a, b) => b - a).slice(0, injuryBaseDice);
+                    } else if (netModifier < 0) {
+                        keptRolls = rolls.sort((a, b) => a - b).slice(0, injuryBaseDice);
+                    } else {
+                        keptRolls = rolls;
+                    }
+
+                    let total = keptRolls.reduce((sum, val) => sum + val, 0);
+                    total += armor; // armor is 0 or negative
+
+                    if (total <= 1) {
+                        noEffect++;
+                    } else if (total <= 6) {
+                        minor++;
+                    } else if (total <= 8) {
+                        down++;
+                    } else {
+                        out++;
+                    }
+                }
+
+                document.getElementById('injuryNoEffect').textContent = ((noEffect / trials) * 100).toFixed(1) + '%';
+                document.getElementById('injuryMinor').textContent = ((minor / trials) * 100).toFixed(1) + '%';
+                document.getElementById('injuryDown').textContent = ((down / trials) * 100).toFixed(1) + '%';
+                document.getElementById('injuryOut').textContent = ((out / trials) * 100).toFixed(1) + '%';
+            }
+        }
+
+        function rollDice(roller) {
+            if (roller === 'success') {
+                const netModifier = successPlusD - successMinusD;
+                const totalDiceToRoll = successBaseDice + Math.abs(netModifier);
+
+                const rolls = [];
+                for (let i = 0; i < totalDiceToRoll; i++) {
+                    rolls.push(Math.floor(Math.random() * 6) + 1);
+                }
+
+                let keptIndices;
+                if (netModifier > 0) {
+                    keptIndices = rolls
+                        .map((value, index) => ({ value, index }))
+                        .sort((a, b) => b.value - a.value)
+                        .slice(0, successBaseDice)
+                        .map(item => item.index);
+                } else if (netModifier < 0) {
+                    keptIndices = rolls
+                        .map((value, index) => ({ value, index }))
+                        .sort((a, b) => a.value - b.value)
+                        .slice(0, successBaseDice)
+                        .map(item => item.index);
+                } else {
+                    keptIndices = rolls.map((_, index) => index);
+                }
+
+                const keptRolls = keptIndices.map(i => rolls[i]);
+                const total = keptRolls.reduce((sum, val) => sum + val, 0);
+
+                displayResults('success', rolls, keptIndices, total, netModifier);
+            } else {
+                const netModifier = injuryPlusD - injuryMinusD;
+                const totalDiceToRoll = injuryBaseDice + Math.abs(netModifier);
+
+                const rolls = [];
+                for (let i = 0; i < totalDiceToRoll; i++) {
+                    rolls.push(Math.floor(Math.random() * 6) + 1);
+                }
+
+                let keptIndices;
+                if (netModifier > 0) {
+                    keptIndices = rolls
+                        .map((value, index) => ({ value, index }))
+                        .sort((a, b) => b.value - a.value)
+                        .slice(0, injuryBaseDice)
+                        .map(item => item.index);
+                } else if (netModifier < 0) {
+                    keptIndices = rolls
+                        .map((value, index) => ({ value, index }))
+                        .sort((a, b) => a.value - b.value)
+                        .slice(0, injuryBaseDice)
+                        .map(item => item.index);
+                } else {
+                    keptIndices = rolls.map((_, index) => index);
+                }
+
+                const keptRolls = keptIndices.map(i => rolls[i]);
+                const baseTotal = keptRolls.reduce((sum, val) => sum + val, 0);
+                const total = baseTotal + armor;
+
+                displayResults('injury', rolls, keptIndices, total, netModifier);
+            }
+        }
+
+        function displayResults(roller, rolls, keptIndices, total, netModifier) {
+            const resultsEl = document.getElementById(`${roller}Results`);
+            const diceVisualEl = document.getElementById(`${roller}DiceVisual`);
+            const summaryEl = document.getElementById(`${roller}ResultSummary`);
+            const finalResultEl = document.getElementById(`${roller}FinalResult`);
+
+            diceVisualEl.innerHTML = '';
+
+            rolls.forEach((value, index) => {
+                const die = document.createElement('div');
+                die.className = 'die';
+                if (keptIndices.includes(index)) {
+                    die.classList.add('kept');
+                } else {
+                    die.classList.add('discarded');
+                }
+                die.textContent = value;
+                die.style.animationDelay = `${index * 0.1}s`;
+                diceVisualEl.appendChild(die);
+            });
+
+            if (roller === 'success') {
+                const baseDice = successBaseDice;
+                let summaryText = `${baseDice}d6`;
+                if (netModifier > 0) {
+                    summaryText += ` +${netModifier}D (rolled ${rolls.length}, kept highest ${baseDice})`;
+                } else if (netModifier < 0) {
+                    summaryText += ` ${netModifier}D (rolled ${rolls.length}, kept lowest ${baseDice})`;
+                }
+                summaryEl.textContent = summaryText;
+
+                let resultText = total.toString();
+                if (total >= 12) {
+                    resultText += ' - CRITICAL';
+                } else if (total >= 7) {
+                    resultText += ' - SUCCESS';
+                } else {
+                    resultText += ' - FAILURE';
+                }
+                finalResultEl.textContent = resultText;
+            } else {
+                const keptRolls = keptIndices.map(i => rolls[i]);
+                const baseTotal = keptRolls.reduce((sum, val) => sum + val, 0);
+                const baseDice = injuryBaseDice;
+                let summaryText = `${baseDice}d6`;
+                if (netModifier > 0) {
+                    summaryText += ` +${netModifier}D (rolled ${rolls.length}, kept highest ${baseDice})`;
+                } else if (netModifier < 0) {
+                    summaryText += ` ${netModifier}D (rolled ${rolls.length}, kept lowest ${baseDice})`;
+                }
+                if (armor !== 0) {
+                    summaryText += ` (${baseTotal} ${armor} armor = ${total})`;
+                }
+                summaryEl.textContent = summaryText;
+
+                let resultText = total.toString();
+                let outcomeText = '';
+                if (total <= 1) {
+                    outcomeText = ' - No Effect';
+                } else if (total <= 6) {
+                    outcomeText = ' - Minor Hit';
+                } else if (total <= 8) {
+                    outcomeText = ' - Down';
+                } else {
+                    outcomeText = ' - Out of Action';
+                }
+                finalResultEl.textContent = resultText + outcomeText;
+            }
+
+            resultsEl.style.display = 'block';
+
+            setTimeout(() => {
+                resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // Initialize
+        updateEffectiveModifier('success');
+        updateProbability('success');
+        updateEffectiveModifier('injury');
+        updateProbability('injury');
+    </script>
+</body>
+</html>
