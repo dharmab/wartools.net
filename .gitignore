@@ -1,0 +1,21 @@
+# Build output (root level for GitHub Pages)
+/articles/
+/apps/
+/index.html
+
+# Keep source files
+!/src/
+
+# macOS
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
