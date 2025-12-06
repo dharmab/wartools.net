@@ -782,6 +782,13 @@
             }
         }
 
+        function formatProbability(probability) {
+            if (probability >= 99.95) {
+                return '99.9%+';
+            }
+            return probability.toFixed(1) + '%';
+        }
+
         function updateProbability(roller) {
             if (roller === 'success') {
                 const netModifier = successPlusD - successMinusD;
@@ -814,7 +821,7 @@
                 }
 
                 const probability = (successCount / trials) * 100;
-                document.getElementById('successProbabilityValue').textContent = probability.toFixed(1) + '%';
+                document.getElementById('successProbabilityValue').textContent = formatProbability(probability);
                 document.getElementById('successProbabilityBar').style.width = probability + '%';
             } else {
                 // Injury roll probabilities
@@ -855,10 +862,10 @@
                     }
                 }
 
-                document.getElementById('injuryNoEffect').textContent = ((noEffect / trials) * 100).toFixed(1) + '%';
-                document.getElementById('injuryMinor').textContent = ((minor / trials) * 100).toFixed(1) + '%';
-                document.getElementById('injuryDown').textContent = ((down / trials) * 100).toFixed(1) + '%';
-                document.getElementById('injuryOut').textContent = ((out / trials) * 100).toFixed(1) + '%';
+                document.getElementById('injuryNoEffect').textContent = formatProbability((noEffect / trials) * 100);
+                document.getElementById('injuryMinor').textContent = formatProbability((minor / trials) * 100);
+                document.getElementById('injuryDown').textContent = formatProbability((down / trials) * 100);
+                document.getElementById('injuryOut').textContent = formatProbability((out / trials) * 100);
             }
         }
 

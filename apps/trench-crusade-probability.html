@@ -245,6 +245,12 @@
                 }
                 return dist;
             }
+            function formatProbability(probability) {
+                if (probability >= 99.95) {
+                    return "99.9%+";
+                }
+                return probability.toFixed(1) + "%";
+            }
             function generateTable() {
                 const table = document.getElementById("outcomesTable");
                 table.innerHTML = "";
@@ -299,7 +305,7 @@
                         for (let t = total; t <= maxTotal; t++)
                             cumProb += dists[mod][t] || 0;
                         if (cumProb > 0) {
-                            cell.textContent = cumProb.toFixed(1) + "%";
+                            cell.textContent = formatProbability(cumProb);
                             cell.className = "prob-cell";
                             const intensity = Math.min(cumProb / 100, 1);
                             const r = Math.round(255 - intensity * 100);
