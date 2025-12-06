@@ -193,6 +193,11 @@
             margin-bottom: 15px;
         }
 
+        .armor-spacer {
+            margin-bottom: 15px;
+            height: 36px;
+        }
+
         .armor-label {
             display: block;
             margin-bottom: 6px;
@@ -234,9 +239,9 @@
             background: var(--bg-tertiary);
             border-radius: 6px;
             border: 1px solid var(--border-medium);
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
+            height: 165px;
         }
 
         .probability-label {
@@ -497,7 +502,11 @@
             }
 
             h1 {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
+            }
+
+            .armor-spacer {
+                display: none;
             }
         }
 
@@ -590,6 +599,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="armor-spacer"></div>
 
                     <div class="effective-modifier" id="successEffectiveModifier"></div>
 
