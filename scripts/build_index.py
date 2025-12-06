@@ -3,7 +3,7 @@
 Build the index.html page by injecting articles section into existing index.
 
 This script reads the existing index.html, finds the Tools section, and injects
-an Articles section before it if markdown articles exist.
+an Articles section after it if markdown articles exist.
 """
 
 import argparse
@@ -112,15 +112,19 @@ def update_index(index_file: Path, articles_dir: Path) -> None:
         )
         print(f"Updated existing articles section in {index_file}")
     else:
-        # Insert articles section before the first <section> tag (which should be Tools)
-        first_section_match = re.search(r"(\s*)<section>", index_content)
-        if first_section_match:
-            position = first_section_match.start()
-            indent = first_section_match.group(1)
-            index_content = index_content[:position] + articles_section + index_content[position:]
+        # Insert articles section after the Tools section
+        # Find the closing </section> tag after <h2>Tools</h2>
+        tools_section_match = re.search(
+            r"<h2>Tools</h2>.*?</section>\s*", index_content, flags=re.DOTALL
+        )
+        if tools_section_match:
+            position = tools_section_match.end()
+            index_content = (
+                index_content[:position] + "\n" + articles_section + index_content[position:]
+            )
             print(f"Inserted articles section into {index_file}")
         else:
-            print(f"Warning: Could not find insertion point in {index_file}")
+            print(f"Warning: Could not find Tools section in {index_file}")
             return
 
     # Write updated content
