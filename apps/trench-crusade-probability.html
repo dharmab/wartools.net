@@ -13,30 +13,25 @@
                 align-items: center;
                 padding: 20px;
             }
-
             .container {
                 max-width: 1200px;
                 width: 100%;
                 padding: 10px;
             }
-
             header {
                 text-align: center;
                 margin-bottom: 20px;
             }
-
             h1 {
                 font-size: 1.8rem;
                 margin-bottom: 10px;
             }
-
             .subtitle {
                 color: var(--text-muted);
                 font-size: 0.9rem;
                 font-style: italic;
                 margin-bottom: 0;
             }
-
             .card {
                 background: var(--bg-secondary);
                 border-radius: 8px;
@@ -45,14 +40,12 @@
                 box-shadow: 0 4px 12px var(--shadow-color);
                 border: 2px solid var(--border-medium);
             }
-
             .dice-selector {
                 display: flex;
                 gap: 12px;
                 margin-bottom: 20px;
                 justify-content: center;
             }
-
             .dice-btn {
                 padding: 12px 24px;
                 font-size: 1rem;
@@ -65,7 +58,6 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
             }
-
             .dice-btn:hover {
                 background: var(--accent-primary);
                 color: var(--bg-primary);
@@ -73,35 +65,29 @@
                 transform: translateY(-2px);
                 box-shadow: 0 4px 8px var(--shadow-color);
             }
-
             .dice-btn:active {
                 transform: translateY(0);
             }
-
             .dice-btn.active {
                 background: var(--accent-primary);
                 border-color: var(--accent-hover);
                 color: var(--bg-primary);
             }
-
             .table-container {
                 overflow-x: auto;
                 margin-top: 20px;
             }
-
             .outcomes-table {
                 width: 100%;
                 border-collapse: collapse;
                 font-size: 0.9rem;
             }
-
             .outcomes-table th,
             .outcomes-table td {
                 padding: 8px;
                 text-align: center;
                 border: 1px solid var(--border-medium);
             }
-
             .outcomes-table th {
                 background: var(--bg-tertiary);
                 font-weight: bold;
@@ -109,20 +95,16 @@
                 top: 0;
                 z-index: 10;
             }
-
             .outcomes-table th.modifier-header {
                 background: var(--accent-primary);
                 color: var(--bg-primary);
             }
-
             .outcomes-table td {
                 background: var(--bg-secondary);
             }
-
             .outcomes-table tr:hover td {
                 background: var(--bg-tertiary);
             }
-
             .total-header {
                 background: var(--bg-tertiary);
                 font-weight: bold;
@@ -130,7 +112,6 @@
                 left: 0;
                 z-index: 5;
             }
-
             .total-cell {
                 background: var(--bg-tertiary);
                 font-weight: bold;
@@ -138,17 +119,14 @@
                 left: 0;
                 z-index: 5;
             }
-
             .outcomes-table tr:hover .total-cell {
                 background: var(--accent-primary);
                 color: var(--bg-primary);
             }
-
             .prob-cell {
                 font-family: "Courier New", monospace;
                 font-weight: bold;
             }
-
             .legend {
                 margin-top: 15px;
                 padding: 10px;
@@ -156,12 +134,10 @@
                 border-radius: 6px;
                 font-size: 0.85rem;
             }
-
             .legend-item {
                 display: inline-block;
                 margin-right: 20px;
             }
-
             footer {
                 margin-top: auto;
                 padding-top: 20px;
@@ -169,26 +145,21 @@
                 color: var(--text-muted);
                 font-size: 0.9rem;
             }
-
             footer a {
                 color: var(--accent-primary);
                 text-decoration: none;
             }
-
             footer a:hover {
                 text-decoration: underline;
             }
-
             @media (max-width: 768px) {
                 .outcomes-table {
                     font-size: 0.75rem;
                 }
-
                 .outcomes-table th,
                 .outcomes-table td {
                     padding: 4px;
                 }
-
                 .dice-selector {
                     flex-direction: column;
                 }
@@ -204,63 +175,32 @@
                     Probability of rolling that total or higher
                 </p>
             </header>
-
             <div class="card">
                 <div class="dice-selector">
                     <button class="dice-btn active" data-dice="2">2d6</button>
                     <button class="dice-btn" data-dice="3">3d6</button>
                     <button class="dice-btn" data-dice="4">4d6</button>
                 </div>
-
                 <div class="table-container">
-                    <table class="outcomes-table" id="outcomesTable">
-                        <!-- Table will be generated by JavaScript -->
-                    </table>
+                    <table class="outcomes-table" id="outcomesTable"></table>
                 </div>
             </div>
         </div>
-
         <footer>
             <p><a href="/">← Back to WARTOOLS.NET</a></p>
         </footer>
-
         <script>
             let baseDice = 2;
-
-            // Calculate probability distribution for rolling n dice and keeping k highest or lowest
-            // Uses efficient DP with sorted multiset tracking
-            // Complexity: O(n * states) where states is the number of unique k-dice multisets
-            // This is approximately O(n * C(k+5, 5)) which is polynomial, vs O(6^n) exponential
-            // Example: For 4d6+6D (10 dice keep 4), this is ~10 * 126 = 1,260 operations
-            // vs the old recursive approach which would be 6^10 = 60,466,176 operations
-            // Performance improvement: ~48,000x faster for large dice pools!
             function calculateDiceDistribution(n, k, keepHighest = true) {
-                // Special case: if keeping all dice, use simple convolution
-                if (n === k) {
-                    return convolveSimpleDice(n);
-                }
-
-                // DP approach: track probability of each possible sorted multiset
-                // State: Map of sorted dice arrays to their probabilities
-                // We build incrementally, one die at a time
-
-                // Start with empty set
+                if (n === k) return convolveSimpleDice(n);
                 let states = new Map();
                 states.set("", 1.0);
-
-                // Add n dice, one at a time
-                for (let diceNum = 0; diceNum < n; diceNum++) {
+                for (let i = 0; i < n; i++) {
                     const newStates = new Map();
-
-                    for (const [stateKey, prob] of states) {
+                    for (const [key, prob] of states) {
                         const dice =
-                            stateKey === ""
-                                ? []
-                                : stateKey.split(",").map(Number);
-
-                        // Roll a new die (1-6)
+                            key === "" ? [] : key.split(",").map(Number);
                         for (let face = 1; face <= 6; face++) {
-                            // Add this die to current dice and keep k highest/lowest
                             const allDice = [...dice, face];
                             allDice.sort((a, b) =>
                                 keepHighest ? b - a : a - b,
@@ -269,12 +209,8 @@
                                 0,
                                 Math.min(k, allDice.length),
                             );
-
-                            // Create canonical key (sorted for keep-highest, reverse-sorted for keep-lowest)
-                            kept.sort((a, b) => a - b); // Always store in ascending order
+                            kept.sort((a, b) => a - b);
                             const newKey = kept.join(",");
-
-                            // Update probability
                             const newProb = prob / 6;
                             newStates.set(
                                 newKey,
@@ -282,70 +218,44 @@
                             );
                         }
                     }
-
                     states = newStates;
                 }
-
-                // Convert to sum distribution (cap at 12 per game rules)
-                const distribution = {};
-                for (const [stateKey, prob] of states) {
-                    const dice = stateKey.split(",").map(Number);
+                const dist = {};
+                for (const [key, prob] of states) {
+                    const dice = key.split(",").map(Number);
                     const sum = dice.reduce((a, b) => a + b, 0);
-                    // Cap sum at 12 - any result above 12 counts as 12
-                    const cappedSum = Math.min(sum, 12);
-                    distribution[cappedSum] =
-                        (distribution[cappedSum] || 0) + prob * 100;
+                    const capped = Math.min(sum, 12);
+                    dist[capped] = (dist[capped] || 0) + prob * 100;
                 }
-
-                return distribution;
+                return dist;
             }
-
-            // Simple convolution for n independent d6 rolls (no keep-highest/lowest)
             function convolveSimpleDice(n) {
-                // Start with a single die distribution
                 let dist = {};
-                for (let i = 1; i <= 6; i++) {
-                    dist[i] = 100 / 6; // Each face has equal probability (in percentage)
-                }
-
-                // Convolve n-1 more times
+                for (let i = 1; i <= 6; i++) dist[i] = 100 / 6;
                 for (let d = 1; d < n; d++) {
                     const newDist = {};
                     for (const [sum, prob] of Object.entries(dist)) {
                         for (let face = 1; face <= 6; face++) {
                             const newSum = parseInt(sum) + face;
-                            // Cap at 12 per game rules
-                            const cappedSum = Math.min(newSum, 12);
-                            newDist[cappedSum] =
-                                (newDist[cappedSum] || 0) + prob / 6;
+                            const capped = Math.min(newSum, 12);
+                            newDist[capped] = (newDist[capped] || 0) + prob / 6;
                         }
                     }
                     dist = newDist;
                 }
-
                 return dist;
             }
-
-            // Generate the outcomes table
             function generateTable() {
                 const table = document.getElementById("outcomesTable");
                 table.innerHTML = "";
-
-                // Define modifier range (-4D to +6D, with +6D at top)
-                const modifiers = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4];
-
-                // Calculate min and max possible totals (capped at 12 per game rules)
-                const minTotal = baseDice; // Minimum is rolling all 1s
-                const maxTotal = 12; // Cap at 12 per game rules
-
-                // Create header row with totals (columns)
+                const mods = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4];
+                const minTotal = baseDice;
+                const maxTotal = 12;
                 const headerRow = document.createElement("tr");
-                const cornerHeader = document.createElement("th");
-                cornerHeader.textContent = "";
-                cornerHeader.className = "total-header";
-                headerRow.appendChild(cornerHeader);
-
-                // Add headers for each total (from min to max)
+                const corner = document.createElement("th");
+                corner.textContent = "";
+                corner.className = "total-header";
+                headerRow.appendChild(corner);
                 for (let total = minTotal; total <= maxTotal; total++) {
                     const th = document.createElement("th");
                     th.className = "modifier-header";
@@ -353,90 +263,59 @@
                     headerRow.appendChild(th);
                 }
                 table.appendChild(headerRow);
-
-                // Calculate distributions for each modifier
-                const distributions = {};
-                modifiers.forEach((mod) => {
+                const dists = {};
+                mods.forEach((mod) => {
                     const totalDice = baseDice + Math.abs(mod);
-                    if (mod > 0) {
-                        // Keep highest baseDice
-                        distributions[mod] = calculateDiceDistribution(
+                    if (mod > 0)
+                        dists[mod] = calculateDiceDistribution(
                             totalDice,
                             baseDice,
                             true,
                         );
-                    } else if (mod < 0) {
-                        // Keep lowest baseDice
-                        distributions[mod] = calculateDiceDistribution(
+                    else if (mod < 0)
+                        dists[mod] = calculateDiceDistribution(
                             totalDice,
                             baseDice,
                             false,
                         );
-                    } else {
-                        // No modifier, just roll baseDice
-                        distributions[mod] = calculateDiceDistribution(
+                    else
+                        dists[mod] = calculateDiceDistribution(
                             baseDice,
                             baseDice,
                             true,
                         );
-                    }
                 });
-
-                // Create rows for each modifier
-                modifiers.forEach((mod) => {
+                mods.forEach((mod) => {
                     const row = document.createElement("tr");
-
-                    // Modifier label
                     const modCell = document.createElement("td");
-                    if (mod > 0) {
-                        modCell.textContent = `+${mod}D`;
-                    } else if (mod < 0) {
-                        modCell.textContent = `${mod}D`;
-                    } else {
-                        modCell.textContent = "0D";
-                    }
+                    if (mod > 0) modCell.textContent = `+${mod}D`;
+                    else if (mod < 0) modCell.textContent = `${mod}D`;
+                    else modCell.textContent = "0D";
                     modCell.className = "total-cell";
                     row.appendChild(modCell);
-
-                    // Probability for each total (from min to max)
                     for (let total = minTotal; total <= maxTotal; total++) {
                         const cell = document.createElement("td");
-
-                        // Calculate cumulative probability (this total or higher)
-                        let cumulativeProb = 0;
-                        for (let t = total; t <= maxTotal; t++) {
-                            cumulativeProb += distributions[mod][t] || 0;
-                        }
-
-                        if (cumulativeProb > 0) {
-                            cell.textContent = cumulativeProb.toFixed(1) + "%";
+                        let cumProb = 0;
+                        for (let t = total; t <= maxTotal; t++)
+                            cumProb += dists[mod][t] || 0;
+                        if (cumProb > 0) {
+                            cell.textContent = cumProb.toFixed(1) + "%";
                             cell.className = "prob-cell";
-
-                            // Apply red-to-blue gradient background based on probability
-                            // Use light tints that maintain contrast with black text
-                            const intensity = Math.min(cumulativeProb / 100, 1);
-
-                            // Interpolate from red (0%) to blue (100%)
-                            // Using light, pastel colors for accessibility
-                            const red = Math.round(255 - intensity * 100); // 255 -> 155
-                            const green = Math.round(180 - intensity * 30); // 180 -> 150
-                            const blue = Math.round(180 + intensity * 75); // 180 -> 255
-
-                            cell.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
-                            cell.style.color = "#000000"; // Keep text black for contrast
+                            const intensity = Math.min(cumProb / 100, 1);
+                            const r = Math.round(255 - intensity * 100);
+                            const g = Math.round(180 - intensity * 30);
+                            const b = Math.round(180 + intensity * 75);
+                            cell.style.backgroundColor = `rgb(${r},${g},${b})`;
+                            cell.style.color = "#000000";
                         } else {
                             cell.textContent = "-";
                             cell.style.opacity = "0.3";
                         }
-
                         row.appendChild(cell);
                     }
-
                     table.appendChild(row);
                 });
             }
-
-            // Dice button click handlers
             document.querySelectorAll(".dice-btn").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     document
@@ -447,8 +326,6 @@
                     generateTable();
                 });
             });
-
-            // Generate initial table
             generateTable();
         </script>
     </body>
