@@ -366,9 +366,9 @@
         }
 
         .results.hidden {
-            visibility: hidden;
-            opacity: 0;
-            height: 250px;
+            opacity: 0.3;
+            filter: grayscale(1);
+            pointer-events: none;
         }
 
         .dice-visual {
@@ -591,9 +591,12 @@
                 </div>
 
                 <div class="card results hidden" id="successResults">
-                    <div class="result-summary" id="successResultSummary"></div>
-                    <div class="dice-visual" id="successDiceVisual"></div>
-                    <div class="final-result" id="successFinalResult"></div>
+                    <div class="result-summary" id="successResultSummary">Roll the dice to see results</div>
+                    <div class="dice-visual" id="successDiceVisual">
+                        <div class="die kept">?</div>
+                        <div class="die kept">?</div>
+                    </div>
+                    <div class="final-result" id="successFinalResult">? - ???</div>
                 </div>
             </div>
 
@@ -662,9 +665,12 @@
                 </div>
 
                 <div class="card results hidden" id="injuryResults">
-                    <div class="result-summary" id="injuryResultSummary"></div>
-                    <div class="dice-visual" id="injuryDiceVisual"></div>
-                    <div class="final-result" id="injuryFinalResult"></div>
+                    <div class="result-summary" id="injuryResultSummary">Roll the dice to see results</div>
+                    <div class="dice-visual" id="injuryDiceVisual">
+                        <div class="die kept">?</div>
+                        <div class="die kept">?</div>
+                    </div>
+                    <div class="final-result" id="injuryFinalResult">? - ???</div>
                 </div>
             </div>
         </div>
