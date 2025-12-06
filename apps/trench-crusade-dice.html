@@ -458,6 +458,39 @@
             color: var(--accent-primary);
             text-shadow: 0 0 20px var(--shadow-color);
             font-family: Georgia, serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            line-height: 1.2;
+        }
+
+        .final-result .result-number {
+            white-space: nowrap;
+        }
+
+        .final-result .result-separator {
+            margin: 0 0.3em;
+            white-space: nowrap;
+        }
+
+        .final-result .result-outcome {
+            /* Default styling */
+        }
+
+        @media (max-width: 900px) {
+            .final-result {
+                flex-wrap: wrap;
+            }
+
+            .final-result .result-separator {
+                display: none;
+            }
+
+            .final-result .result-outcome {
+                flex-basis: 100%;
+                margin-top: 0.2em;
+            }
         }
 
         footer {
@@ -1013,15 +1046,15 @@
                 }
                 summaryEl.textContent = summaryText;
 
-                let resultText = total.toString();
+                let outcomeText = '';
                 if (total >= 12) {
-                    resultText += ' - CRITICAL';
+                    outcomeText = 'CRITICAL';
                 } else if (total >= 7) {
-                    resultText += ' - SUCCESS';
+                    outcomeText = 'SUCCESS';
                 } else {
-                    resultText += ' - FAILURE';
+                    outcomeText = 'FAILURE';
                 }
-                finalResultEl.textContent = resultText;
+                finalResultEl.innerHTML = `<span class="result-number">${total}</span><span class="result-separator"> - </span><span class="result-outcome">${outcomeText}</span>`;
             } else {
                 const keptRolls = keptIndices.map(i => rolls[i]);
                 const baseTotal = keptRolls.reduce((sum, val) => sum + val, 0);
@@ -1037,18 +1070,17 @@
                 }
                 summaryEl.textContent = summaryText;
 
-                let resultText = total.toString();
                 let outcomeText = '';
                 if (total <= 1) {
-                    outcomeText = ' - No Effect';
+                    outcomeText = 'No Effect';
                 } else if (total <= 6) {
-                    outcomeText = ' - Minor Hit';
+                    outcomeText = 'Minor Hit';
                 } else if (total <= 8) {
-                    outcomeText = ' - Down';
+                    outcomeText = 'Down';
                 } else {
-                    outcomeText = ' - Out of Action';
+                    outcomeText = '<span style="font-size: 0.7em;">Out of Action</span>';
                 }
-                finalResultEl.textContent = resultText + outcomeText;
+                finalResultEl.innerHTML = `<span class="result-number">${total}</span><span class="result-separator"> - </span><span class="result-outcome">${outcomeText}</span>`;
             }
 
             resultsEl.classList.remove('hidden');
