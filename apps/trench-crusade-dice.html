@@ -411,6 +411,20 @@
             border-color: var(--border-light);
         }
 
+        .die.placeholder-die {
+            font-size: 2rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .die.placeholder-die::after {
+                content: '⛧';
+                position: absolute;
+            }
+            .die.placeholder-die {
+                color: transparent;
+            }
+        }
+
         @keyframes rollIn {
             0% {
                 transform: rotateX(0deg) rotateY(0deg) scale(0.5);
@@ -593,8 +607,8 @@
                 <div class="card results hidden" id="successResults">
                     <div class="result-summary" id="successResultSummary">Roll the dice to see results</div>
                     <div class="dice-visual" id="successDiceVisual">
-                        <div class="die kept">?</div>
-                        <div class="die kept">?</div>
+                        <div class="die kept placeholder-die">✠</div>
+                        <div class="die kept placeholder-die">✠</div>
                     </div>
                     <div class="final-result" id="successFinalResult">? - ???</div>
                 </div>
@@ -667,8 +681,8 @@
                 <div class="card results hidden" id="injuryResults">
                     <div class="result-summary" id="injuryResultSummary">Roll the dice to see results</div>
                     <div class="dice-visual" id="injuryDiceVisual">
-                        <div class="die kept">?</div>
-                        <div class="die kept">?</div>
+                        <div class="die kept placeholder-die">✠</div>
+                        <div class="die kept placeholder-die">✠</div>
                     </div>
                     <div class="final-result" id="injuryFinalResult">? - ???</div>
                 </div>
