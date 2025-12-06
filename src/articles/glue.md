@@ -20,8 +20,6 @@ Resin miniatures (such as those printed on SLA 3D printers or cast from resin mo
 
 _Anything that comes out of an FDM 3D printer - most commonly, 3D printed bases and terrain..._
 
-**Use superglue.**
-
 Miniatures 3D printed in PLA (i.e. on an FDM 3D printer) are not chemically compatible with plastic cement. **Use superglue.**
 
 # What Glues Are Good?
