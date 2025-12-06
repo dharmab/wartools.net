@@ -297,8 +297,7 @@
                 for (const [key, prob] of states) {
                     const dice = key.split(",").map(Number);
                     const sum = dice.reduce((a, b) => a + b, 0);
-                    const capped = Math.min(sum, 12);
-                    dist[capped] = (dist[capped] || 0) + prob * 100;
+                    dist[sum] = (dist[sum] || 0) + prob * 100;
                 }
                 return dist;
             }
@@ -310,8 +309,7 @@
                     for (const [sum, prob] of Object.entries(dist)) {
                         for (let face = 1; face <= 6; face++) {
                             const newSum = parseInt(sum) + face;
-                            const capped = Math.min(newSum, 12);
-                            newDist[capped] = (newDist[capped] || 0) + prob / 6;
+                            newDist[newSum] = (newDist[newSum] || 0) + prob / 6;
                         }
                     }
                     dist = newDist;
@@ -329,7 +327,10 @@
                 table.innerHTML = "";
                 const mods = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4];
                 const minTotal = baseDice;
-                const maxTotal = 12;
+                const maxTotal = Math.min(
+                    baseDice * 6,
+                    12 - Math.min(flatBonus, 0),
+                );
                 const headerRow = document.createElement("tr");
                 const corner = document.createElement("th");
                 corner.textContent = "";
@@ -388,7 +389,7 @@
                         if (modifiedTotal === lastDisplayed) continue;
                         const cell = document.createElement("td");
                         let cumProb = 0;
-                        for (let t = total; t <= maxTotal; t++)
+                        for (let t = total; t <= 100; t++)
                             cumProb += dists[mod][t] || 0;
                         if (cumProb > 0) {
                             cell.textContent = formatProbability(cumProb);
