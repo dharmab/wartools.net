@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Success Roll Outcomes Table - WARTOOLS.NET</title>
+        <title>Dice Roll Outcomes Table - WARTOOLS.NET</title>
         <link rel="stylesheet" href="../style.css" />
         <style>
             body {
@@ -72,6 +72,54 @@
                 background: var(--accent-primary);
                 border-color: var(--accent-hover);
                 color: var(--bg-primary);
+            }
+            .bonus-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-top: 20px;
+                gap: 12px;
+            }
+            .bonus-label {
+                font-weight: bold;
+                font-size: 1rem;
+                color: var(--text-primary);
+            }
+            .bonus-controls {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+            .bonus-btn {
+                padding: 8px 16px;
+                font-size: 1.2rem;
+                font-weight: bold;
+                border: 2px solid var(--border-medium);
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-width: 40px;
+            }
+            .bonus-btn:hover {
+                background: var(--accent-primary);
+                color: var(--bg-primary);
+                border-color: var(--accent-primary);
+            }
+            .bonus-btn:active {
+                transform: scale(0.95);
+            }
+            .bonus-display {
+                padding: 8px 20px;
+                font-size: 1.1rem;
+                font-weight: bold;
+                background: var(--bg-primary);
+                border: 2px solid var(--border-medium);
+                border-radius: 6px;
+                min-width: 60px;
+                text-align: center;
+                color: var(--text-primary);
             }
             .table-container {
                 overflow-x: auto;
@@ -170,7 +218,7 @@
         <div class="container">
             <header>
                 <h1>TRENCH✠CRUSADE</h1>
-                <p class="subtitle">Success Roll Outcomes Table</p>
+                <p class="subtitle">Dice Roll Outcomes Table</p>
                 <p class="subtitle">
                     Probability of rolling that total or higher
                 </p>
@@ -180,6 +228,18 @@
                     <button class="dice-btn active" data-dice="2">2d6</button>
                     <button class="dice-btn" data-dice="3">3d6</button>
                     <button class="dice-btn" data-dice="4">4d6</button>
+                </div>
+                <div class="bonus-section">
+                    <span class="bonus-label">Modifier:</span>
+                    <div class="bonus-controls">
+                        <button class="bonus-btn" onclick="adjustBonus(-1)">
+                            −
+                        </button>
+                        <div class="bonus-display" id="bonusValue">0</div>
+                        <button class="bonus-btn" onclick="adjustBonus(1)">
+                            +
+                        </button>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table class="outcomes-table" id="outcomesTable"></table>
@@ -191,6 +251,19 @@
         </footer>
         <script>
             let baseDice = 2;
+            let flatBonus = 0;
+
+            function adjustBonus(delta) {
+                flatBonus += delta;
+                document.getElementById("bonusValue").textContent =
+                    flatBonus === 0
+                        ? "0"
+                        : flatBonus > 0
+                          ? `+${flatBonus}`
+                          : `${flatBonus}`;
+                generateTable();
+            }
+
             function calculateDiceDistribution(n, k, keepHighest = true) {
                 if (n === k) return convolveSimpleDice(n);
                 let states = new Map();
@@ -262,11 +335,18 @@
                 corner.textContent = "";
                 corner.className = "total-header";
                 headerRow.appendChild(corner);
+                let lastDisplayed = null;
                 for (let total = minTotal; total <= maxTotal; total++) {
+                    const modifiedTotal = Math.max(
+                        0,
+                        Math.min(total + flatBonus, 12),
+                    );
+                    if (modifiedTotal === lastDisplayed) continue;
                     const th = document.createElement("th");
                     th.className = "modifier-header";
-                    th.textContent = total;
+                    th.textContent = modifiedTotal;
                     headerRow.appendChild(th);
+                    lastDisplayed = modifiedTotal;
                 }
                 table.appendChild(headerRow);
                 const dists = {};
@@ -299,7 +379,13 @@
                     else modCell.textContent = "0D";
                     modCell.className = "total-cell";
                     row.appendChild(modCell);
+                    let lastDisplayed = null;
                     for (let total = minTotal; total <= maxTotal; total++) {
+                        const modifiedTotal = Math.max(
+                            0,
+                            Math.min(total + flatBonus, 12),
+                        );
+                        if (modifiedTotal === lastDisplayed) continue;
                         const cell = document.createElement("td");
                         let cumProb = 0;
                         for (let t = total; t <= maxTotal; t++)
@@ -318,6 +404,7 @@
                             cell.style.opacity = "0.3";
                         }
                         row.appendChild(cell);
+                        lastDisplayed = modifiedTotal;
                     }
                     table.appendChild(row);
                 });
