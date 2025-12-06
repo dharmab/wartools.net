@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Success Roll Outcomes Table - WARTOOLS.NET</title>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            body {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 1200px;
+                width: 100%;
+                padding: 10px;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+            }
+
+            .subtitle {
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                font-style: italic;
+                margin-bottom: 0;
+            }
+
+            .card {
+                background: var(--bg-secondary);
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 12px var(--shadow-color);
+                border: 2px solid var(--border-medium);
+            }
+
+            .dice-selector {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 20px;
+                justify-content: center;
+            }
+
+            .dice-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+                font-weight: bold;
+                font-family: Georgia, serif;
+                border: 2px solid var(--border-medium);
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .dice-btn:hover {
+                background: var(--accent-primary);
+                color: var(--bg-primary);
+                border-color: var(--accent-primary);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px var(--shadow-color);
+            }
+
+            .dice-btn:active {
+                transform: translateY(0);
+            }
+
+            .dice-btn.active {
+                background: var(--accent-primary);
+                border-color: var(--accent-hover);
+                color: var(--bg-primary);
+            }
+
+            .table-container {
+                overflow-x: auto;
+                margin-top: 20px;
+            }
+
+            .outcomes-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.9rem;
+            }
+
+            .outcomes-table th,
+            .outcomes-table td {
+                padding: 8px;
+                text-align: center;
+                border: 1px solid var(--border-medium);
+            }
+
+            .outcomes-table th {
+                background: var(--bg-tertiary);
+                font-weight: bold;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+
+            .outcomes-table th.modifier-header {
+                background: var(--accent-primary);
+                color: var(--bg-primary);
+            }
+
+            .outcomes-table td {
+                background: var(--bg-secondary);
+            }
+
+            .outcomes-table tr:hover td {
+                background: var(--bg-tertiary);
+            }
+
+            .total-header {
+                background: var(--bg-tertiary);
+                font-weight: bold;
+                position: sticky;
+                left: 0;
+                z-index: 5;
+            }
+
+            .total-cell {
+                background: var(--bg-tertiary);
+                font-weight: bold;
+                position: sticky;
+                left: 0;
+                z-index: 5;
+            }
+
+            .outcomes-table tr:hover .total-cell {
+                background: var(--accent-primary);
+                color: var(--bg-primary);
+            }
+
+            .prob-cell {
+                font-family: "Courier New", monospace;
+                font-weight: bold;
+            }
+
+            .legend {
+                margin-top: 15px;
+                padding: 10px;
+                background: var(--bg-tertiary);
+                border-radius: 6px;
+                font-size: 0.85rem;
+            }
+
+            .legend-item {
+                display: inline-block;
+                margin-right: 20px;
+            }
+
+            footer {
+                margin-top: auto;
+                padding-top: 20px;
+                text-align: center;
+                color: var(--text-muted);
+                font-size: 0.9rem;
+            }
+
+            footer a {
+                color: var(--accent-primary);
+                text-decoration: none;
+            }
+
+            footer a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 768px) {
+                .outcomes-table {
+                    font-size: 0.75rem;
+                }
+
+                .outcomes-table th,
+                .outcomes-table td {
+                    padding: 4px;
+                }
+
+                .dice-selector {
+                    flex-direction: column;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>TRENCH✠CRUSADE</h1>
+                <p class="subtitle">Success Roll Outcomes Table</p>
+                <p class="subtitle">
+                    Probability of rolling that total or higher
+                </p>
+            </header>
+
+            <div class="card">
+                <div class="dice-selector">
+                    <button class="dice-btn active" data-dice="2">2d6</button>
+                    <button class="dice-btn" data-dice="3">3d6</button>
+                    <button class="dice-btn" data-dice="4">4d6</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="outcomes-table" id="outcomesTable">
+                        <!-- Table will be generated by JavaScript -->
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="/">← Back to WARTOOLS.NET</a></p>
+        </footer>
+
+        <script>
+            let baseDice = 2;
+
+            // Calculate probability distribution for rolling n dice and keeping k highest or lowest
+            function calculateDiceDistribution(n, k, keepHighest = true) {
+                // Distribution maps total -> probability
+                const distribution = {};
+
+                // Generate all possible outcomes for n dice
+                function generateOutcomes(dice, depth) {
+                    if (depth === n) {
+                        // Determine which dice to keep
+                        const sorted = [...dice].sort((a, b) =>
+                            keepHighest ? b - a : a - b,
+                        );
+                        const kept = sorted.slice(0, k);
+                        const total = kept.reduce((sum, val) => sum + val, 0);
+
+                        // Each outcome has probability (1/6)^n
+                        distribution[total] = (distribution[total] || 0) + 1;
+                        return;
+                    }
+
+                    // Try all possible values for this die
+                    for (let i = 1; i <= 6; i++) {
+                        generateOutcomes([...dice, i], depth + 1);
+                    }
+                }
+
+                generateOutcomes([], 0);
+
+                // Convert counts to probabilities
+                const totalOutcomes = Math.pow(6, n);
+                for (let total in distribution) {
+                    distribution[total] =
+                        (distribution[total] / totalOutcomes) * 100;
+                }
+
+                return distribution;
+            }
+
+            // Generate the outcomes table
+            function generateTable() {
+                const table = document.getElementById("outcomesTable");
+                table.innerHTML = "";
+
+                // Define modifier range (-4D to +6D, with +6D at top)
+                const modifiers = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4];
+
+                // Calculate min and max possible totals
+                const minTotal = baseDice;
+                const maxTotal = baseDice * 6;
+
+                // Create header row with totals (columns)
+                const headerRow = document.createElement("tr");
+                const cornerHeader = document.createElement("th");
+                cornerHeader.textContent = "";
+                cornerHeader.className = "total-header";
+                headerRow.appendChild(cornerHeader);
+
+                // Add headers for each total (from min to max)
+                for (let total = minTotal; total <= maxTotal; total++) {
+                    const th = document.createElement("th");
+                    th.className = "modifier-header";
+                    th.textContent = total;
+                    headerRow.appendChild(th);
+                }
+                table.appendChild(headerRow);
+
+                // Calculate distributions for each modifier
+                const distributions = {};
+                modifiers.forEach((mod) => {
+                    const totalDice = baseDice + Math.abs(mod);
+                    if (mod > 0) {
+                        // Keep highest baseDice
+                        distributions[mod] = calculateDiceDistribution(
+                            totalDice,
+                            baseDice,
+                            true,
+                        );
+                    } else if (mod < 0) {
+                        // Keep lowest baseDice
+                        distributions[mod] = calculateDiceDistribution(
+                            totalDice,
+                            baseDice,
+                            false,
+                        );
+                    } else {
+                        // No modifier, just roll baseDice
+                        distributions[mod] = calculateDiceDistribution(
+                            baseDice,
+                            baseDice,
+                            true,
+                        );
+                    }
+                });
+
+                // Create rows for each modifier
+                modifiers.forEach((mod) => {
+                    const row = document.createElement("tr");
+
+                    // Modifier label
+                    const modCell = document.createElement("td");
+                    if (mod > 0) {
+                        modCell.textContent = `+${mod}D`;
+                    } else if (mod < 0) {
+                        modCell.textContent = `${mod}D`;
+                    } else {
+                        modCell.textContent = "0D";
+                    }
+                    modCell.className = "total-cell";
+                    row.appendChild(modCell);
+
+                    // Probability for each total (from min to max)
+                    for (let total = minTotal; total <= maxTotal; total++) {
+                        const cell = document.createElement("td");
+
+                        // Calculate cumulative probability (this total or higher)
+                        let cumulativeProb = 0;
+                        for (let t = total; t <= maxTotal; t++) {
+                            cumulativeProb += distributions[mod][t] || 0;
+                        }
+
+                        if (cumulativeProb > 0) {
+                            cell.textContent = cumulativeProb.toFixed(1) + "%";
+                            cell.className = "prob-cell";
+
+                            // Apply red-to-blue gradient background based on probability
+                            // Use light tints that maintain contrast with black text
+                            const intensity = Math.min(cumulativeProb / 100, 1);
+
+                            // Interpolate from red (0%) to blue (100%)
+                            // Using light, pastel colors for accessibility
+                            const red = Math.round(255 - intensity * 100); // 255 -> 155
+                            const green = Math.round(180 - intensity * 30); // 180 -> 150
+                            const blue = Math.round(180 + intensity * 75); // 180 -> 255
+
+                            cell.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+                            cell.style.color = "#000000"; // Keep text black for contrast
+                        } else {
+                            cell.textContent = "-";
+                            cell.style.opacity = "0.3";
+                        }
+
+                        row.appendChild(cell);
+                    }
+
+                    table.appendChild(row);
+                });
+            }
+
+            // Dice button click handlers
+            document.querySelectorAll(".dice-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    document
+                        .querySelectorAll(".dice-btn")
+                        .forEach((b) => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    baseDice = parseInt(btn.dataset.dice);
+                    generateTable();
+                });
+            });
+
+            // Generate initial table
+            generateTable();
+        </script>
+    </body>
+</html>
