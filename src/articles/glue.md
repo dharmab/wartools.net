@@ -16,7 +16,7 @@ _Anything that comes out of an SLA 3D printer or resin mold, e.g. Trench Crusade
 
 Resin miniatures (such as those printed on SLA 3D printers or cast from resin molds) are not chemically compatible with plastic cement. **Use superglue.**
 
-### PLA Miniatures
+## PLA Miniatures
 
 _Anything that comes out of an FDM 3D printer - most commonly, 3D printed bases and terrain..._
 
