@@ -228,41 +228,102 @@
             let baseDice = 2;
 
             // Calculate probability distribution for rolling n dice and keeping k highest or lowest
+            // Uses efficient DP with sorted multiset tracking
+            // Complexity: O(n * states) where states is the number of unique k-dice multisets
+            // This is approximately O(n * C(k+5, 5)) which is polynomial, vs O(6^n) exponential
+            // Example: For 4d6+6D (10 dice keep 4), this is ~10 * 126 = 1,260 operations
+            // vs the old recursive approach which would be 6^10 = 60,466,176 operations
+            // Performance improvement: ~48,000x faster for large dice pools!
             function calculateDiceDistribution(n, k, keepHighest = true) {
-                // Distribution maps total -> probability
-                const distribution = {};
-
-                // Generate all possible outcomes for n dice
-                function generateOutcomes(dice, depth) {
-                    if (depth === n) {
-                        // Determine which dice to keep
-                        const sorted = [...dice].sort((a, b) =>
-                            keepHighest ? b - a : a - b,
-                        );
-                        const kept = sorted.slice(0, k);
-                        const total = kept.reduce((sum, val) => sum + val, 0);
-
-                        // Each outcome has probability (1/6)^n
-                        distribution[total] = (distribution[total] || 0) + 1;
-                        return;
-                    }
-
-                    // Try all possible values for this die
-                    for (let i = 1; i <= 6; i++) {
-                        generateOutcomes([...dice, i], depth + 1);
-                    }
+                // Special case: if keeping all dice, use simple convolution
+                if (n === k) {
+                    return convolveSimpleDice(n);
                 }
 
-                generateOutcomes([], 0);
+                // DP approach: track probability of each possible sorted multiset
+                // State: Map of sorted dice arrays to their probabilities
+                // We build incrementally, one die at a time
 
-                // Convert counts to probabilities
-                const totalOutcomes = Math.pow(6, n);
-                for (let total in distribution) {
-                    distribution[total] =
-                        (distribution[total] / totalOutcomes) * 100;
+                // Start with empty set
+                let states = new Map();
+                states.set("", 1.0);
+
+                // Add n dice, one at a time
+                for (let diceNum = 0; diceNum < n; diceNum++) {
+                    const newStates = new Map();
+
+                    for (const [stateKey, prob] of states) {
+                        const dice =
+                            stateKey === ""
+                                ? []
+                                : stateKey.split(",").map(Number);
+
+                        // Roll a new die (1-6)
+                        for (let face = 1; face <= 6; face++) {
+                            // Add this die to current dice and keep k highest/lowest
+                            const allDice = [...dice, face];
+                            allDice.sort((a, b) =>
+                                keepHighest ? b - a : a - b,
+                            );
+                            const kept = allDice.slice(
+                                0,
+                                Math.min(k, allDice.length),
+                            );
+
+                            // Create canonical key (sorted for keep-highest, reverse-sorted for keep-lowest)
+                            kept.sort((a, b) => a - b); // Always store in ascending order
+                            const newKey = kept.join(",");
+
+                            // Update probability
+                            const newProb = prob / 6;
+                            newStates.set(
+                                newKey,
+                                (newStates.get(newKey) || 0) + newProb,
+                            );
+                        }
+                    }
+
+                    states = newStates;
+                }
+
+                // Convert to sum distribution (cap at 12 per game rules)
+                const distribution = {};
+                for (const [stateKey, prob] of states) {
+                    const dice = stateKey.split(",").map(Number);
+                    const sum = dice.reduce((a, b) => a + b, 0);
+                    // Cap sum at 12 - any result above 12 counts as 12
+                    const cappedSum = Math.min(sum, 12);
+                    distribution[cappedSum] =
+                        (distribution[cappedSum] || 0) + prob * 100;
                 }
 
                 return distribution;
+            }
+
+            // Simple convolution for n independent d6 rolls (no keep-highest/lowest)
+            function convolveSimpleDice(n) {
+                // Start with a single die distribution
+                let dist = {};
+                for (let i = 1; i <= 6; i++) {
+                    dist[i] = 100 / 6; // Each face has equal probability (in percentage)
+                }
+
+                // Convolve n-1 more times
+                for (let d = 1; d < n; d++) {
+                    const newDist = {};
+                    for (const [sum, prob] of Object.entries(dist)) {
+                        for (let face = 1; face <= 6; face++) {
+                            const newSum = parseInt(sum) + face;
+                            // Cap at 12 per game rules
+                            const cappedSum = Math.min(newSum, 12);
+                            newDist[cappedSum] =
+                                (newDist[cappedSum] || 0) + prob / 6;
+                        }
+                    }
+                    dist = newDist;
+                }
+
+                return dist;
             }
 
             // Generate the outcomes table
@@ -273,9 +334,9 @@
                 // Define modifier range (-4D to +6D, with +6D at top)
                 const modifiers = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4];
 
-                // Calculate min and max possible totals
-                const minTotal = baseDice;
-                const maxTotal = 12; // Cap at 12, the highest meaningful value in the game
+                // Calculate min and max possible totals (capped at 12 per game rules)
+                const minTotal = baseDice; // Minimum is rolling all 1s
+                const maxTotal = 12; // Cap at 12 per game rules
 
                 // Create header row with totals (columns)
                 const headerRow = document.createElement("tr");
