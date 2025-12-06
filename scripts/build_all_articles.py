@@ -12,70 +12,107 @@ from pathlib import Path
 from commonmark import commonmark
 from process_images import process_article_images
 
-HTML_TEMPLATE = """<!DOCTYPE html>
+HTML_TEMPLATE = """<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} - WARTOOLS.NET</title>
-<style>
-body {{
-    font-family: Georgia, serif;
-    line-height: 1.6;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f4f4f4;
-    color: #333;
-}}
-article {{
-    background: white;
-    padding: 40px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}}
-h1 {{ border-bottom: 3px solid #333; padding-bottom: 10px; }}
-h2 {{ border-bottom: 2px solid #666; padding-bottom: 5px; margin-top: 30px; }}
-h3 {{ margin-top: 20px; }}
-a {{ color: #0066cc; text-decoration: none; }}
-a:hover {{ text-decoration: underline; }}
-code {{ background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }}
-pre {{ background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }}
-blockquote {{ border-left: 4px solid #666; margin-left: 0; padding-left: 20px; color: #666; }}
-ul, ol {{ padding-left: 25px; }}
-li {{ margin-bottom: 5px; }}
-hr {{ border: none; border-top: 1px solid #ccc; margin: 30px 0; }}
-img {{
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 20px auto;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}}
-nav {{
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}}
-nav a {{
-    color: #0066cc;
-    text-decoration: none;
-    font-weight: bold;
-}}
-nav a:hover {{
-    text-decoration: underline;
-}}
-</style>
-</head>
-<body>
-<nav>
-    <a href="/">← Back to WARTOOLS.NET</a>
-</nav>
-<article>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title} - WARTOOLS.NET</title>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            article {{
+                background: var(--bg-secondary);
+                padding: 40px;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px var(--shadow-color);
+                border: 1px solid var(--border-light);
+                margin-bottom: 20px;
+            }}
+            article h1 {{
+                border-bottom: 3px solid var(--border-dark);
+                padding-bottom: 10px;
+                margin-top: 0;
+            }}
+            article h2 {{
+                border-bottom: 2px solid var(--border-medium);
+                padding-bottom: 5px;
+                margin-top: 30px;
+                text-align: left;
+            }}
+            article h3 {{
+                margin-top: 20px;
+                color: var(--text-primary);
+            }}
+            article ul,
+            article ol {{
+                padding-left: 25px;
+                list-style-type: disc;
+            }}
+            article li {{
+                margin-bottom: 5px;
+            }}
+            article p {{
+                margin-bottom: 15px;
+            }}
+            article em {{
+                color: var(--text-muted);
+            }}
+            article strong {{
+                color: var(--text-primary);
+                font-weight: bold;
+            }}
+            code {{
+                background: var(--bg-tertiary);
+                padding: 2px 5px;
+                border-radius: 3px;
+                color: var(--text-primary);
+            }}
+            pre {{
+                background: var(--bg-tertiary);
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+                border: 1px solid var(--border-light);
+            }}
+            blockquote {{
+                border-left: 4px solid var(--border-medium);
+                margin-left: 0;
+                padding-left: 20px;
+                color: var(--text-muted);
+            }}
+            hr {{
+                border: none;
+                border-top: 1px solid var(--border-medium);
+                margin: 30px 0;
+            }}
+            img {{
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 20px auto;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px var(--shadow-color);
+                border: 1px solid var(--border-light);
+            }}
+            nav {{
+                margin-bottom: 20px;
+            }}
+            nav a {{
+                font-weight: bold;
+            }}
+        </style>
+    </head>
+    <body>
+        <nav>
+            <a href="/">← WARTOOLS.NET</a>
+        </nav>
+        <article>
 {content}
-</article>
-</body>
+        </article>
+        <footer>
+            <a href="/">← Back to WARTOOLS.NET</a>
+        </footer>
+    </body>
 </html>"""
 
 
