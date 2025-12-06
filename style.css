@@ -1,23 +1,23 @@
-/* CSS Custom Properties for Desert Light Theme (Default) */
+/* CSS Custom Properties for Holy Light Theme (Default) */
 :root {
-    --bg-primary: #f5ebd9;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #e8dcc4;
+    --bg-primary: #e8d5b7;
+    --bg-secondary: #f2e4c9;
+    --bg-tertiary: #dcc9a6;
 
-    --text-primary: #2c1810;
-    --text-secondary: #5d4e37;
-    --text-muted: #6b5d52;
+    --text-primary: #2a1a0a;
+    --text-secondary: #4a3010;
+    --text-muted: #6b4e2a;
 
-    --accent-primary: #c1440e;
-    --accent-hover: #9a3608;
+    --accent-primary: #b8860b;
+    --accent-hover: #8b6914;
 
-    --border-light: #d4c4a8;
-    --border-medium: #b8a892;
-    --border-dark: #8b7355;
+    --border-light: #e6d4b0;
+    --border-medium: #d4af37;
+    --border-dark: #b8941f;
 
-    --shadow-color: rgba(92, 64, 32, 0.15);
-    --link-color: #0d5c8c;
-    --link-hover: #094a6f;
+    --shadow-color: rgba(139, 105, 20, 0.25);
+    --link-color: #1a5490;
+    --link-hover: #0f3d6b;
 }
 
 /* Infernal Dark Theme */
