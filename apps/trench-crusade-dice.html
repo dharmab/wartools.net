@@ -189,16 +189,16 @@
             color: var(--text-secondary);
         }
 
-        .armor-section {
+        .injury-modifier-section {
             margin-bottom: 15px;
         }
 
-        .armor-spacer {
+        .injury-modifier-spacer {
             margin-bottom: 15px;
-            height: 36px;
+            height: 21px;
         }
 
-        .armor-label {
+        .injury-modifier-label {
             display: block;
             margin-bottom: 6px;
             font-size: 0.85rem;
@@ -207,14 +207,14 @@
             text-align: center;
         }
 
-        .armor-controls {
+        .injury-modifier-controls {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
 
-        .armor-display {
+        .injury-modifier-display {
             min-width: 60px;
             text-align: center;
             font-size: 1.1rem;
@@ -537,7 +537,11 @@
                 font-size: 1.8rem;
             }
 
-            .armor-spacer {
+            .injury-modifier-spacer {
+                display: none;
+            }
+
+            .roller-wrapper:first-of-type .injury-modifier-section {
                 display: none;
             }
 
@@ -636,7 +640,14 @@
                         </div>
                     </div>
 
-                    <div class="armor-spacer"></div>
+                    <div class="injury-modifier-section">
+                        <div class="injury-modifier-label">&nbsp;</div>
+                        <div class="injury-modifier-controls">
+                            <button class="modifier-btn" style="visibility: hidden;">−</button>
+                            <div class="injury-modifier-display" style="visibility: hidden;">0</div>
+                            <button class="modifier-btn" style="visibility: hidden;">+</button>
+                        </div>
+                    </div>
 
                     <div class="effective-modifier" id="successEffectiveModifier"></div>
 
@@ -690,11 +701,12 @@
                         </div>
                     </div>
 
-                    <div class="armor-section">
-                        <div class="armor-controls">
-                            <button class="modifier-btn" onclick="adjustArmor(-1)">−</button>
-                            <div class="armor-display" id="armorValue">0 🛡️</div>
-                            <button class="modifier-btn" id="armorPlusBtn" onclick="adjustArmor(1)" disabled>+</button>
+                    <div class="injury-modifier-section">
+                        <div class="injury-modifier-label">Injury Modifier</div>
+                        <div class="injury-modifier-controls">
+                            <button class="modifier-btn" onclick="adjustInjuryModifier(-1)">−</button>
+                            <div class="injury-modifier-display" id="injuryModifierValue">0</div>
+                            <button class="modifier-btn" id="injuryModifierPlusBtn" onclick="adjustInjuryModifier(1)">+</button>
                         </div>
                     </div>
 
@@ -751,7 +763,7 @@
         let injuryBaseDice = 2;
         let injuryPlusD = 0;
         let injuryMinusD = 0;
-        let armor = 0;
+        let injuryModifier = 0;
 
         // Initialize button states on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -760,6 +772,12 @@
             document.getElementById('successMinusDMinusBtn').disabled = true;
             document.getElementById('injuryPlusDMinusBtn').disabled = true;
             document.getElementById('injuryMinusDMinusBtn').disabled = true;
+
+            // Initialize injury modifier buttons (starts at 0, so can go down to -3)
+            const injuryModifierMinusBtn = document.querySelector('.injury-modifier-controls button:first-child');
+            if (injuryModifierMinusBtn) {
+                injuryModifierMinusBtn.disabled = false;
+            }
         });
 
         // Dice selection
@@ -813,13 +831,15 @@
             updateEffectiveModifier(roller);
         }
 
-        function adjustArmor(delta) {
-            armor = Math.min(0, armor + delta);
-            document.getElementById('armorValue').textContent = armor + ' 🛡️';
+        function adjustInjuryModifier(delta) {
+            injuryModifier = Math.max(-3, Math.min(99, injuryModifier + delta));
+            document.getElementById('injuryModifierValue').textContent = injuryModifier;
 
-            // Enable/disable the + button based on armor value
-            const plusBtn = document.getElementById('armorPlusBtn');
-            plusBtn.disabled = armor === 0;
+            // Enable/disable buttons based on injury modifier value
+            const minusBtn = document.querySelector('.injury-modifier-controls button:first-child');
+            const plusBtn = document.getElementById('injuryModifierPlusBtn');
+            minusBtn.disabled = injuryModifier === -3;
+            plusBtn.disabled = injuryModifier === 99;
 
             updateEffectiveModifier('injury');
         }
@@ -853,8 +873,8 @@
                     text = `Rolling ${totalDice}d6, keeping lowest ${injuryBaseDice}`;
                 }
 
-                if (armor !== 0) {
-                    text += `, ${armor} armor modifier`;
+                if (injuryModifier !== 0) {
+                    text += `, ${injuryModifier > 0 ? '+' : ''}${injuryModifier} injury modifier`;
                 }
 
                 effectiveEl.textContent = text;
@@ -930,7 +950,7 @@
                     }
 
                     let total = keptRolls.reduce((sum, val) => sum + val, 0);
-                    total += armor; // armor is 0 or negative
+                    total += injuryModifier;
 
                     if (total <= 1) {
                         noEffect++;
@@ -1009,7 +1029,7 @@
 
                 const keptRolls = keptIndices.map(i => rolls[i]);
                 const baseTotal = keptRolls.reduce((sum, val) => sum + val, 0);
-                const total = baseTotal + armor;
+                const total = baseTotal + injuryModifier;
 
                 displayResults('injury', rolls, keptIndices, total, netModifier);
             }
@@ -1065,8 +1085,8 @@
                 } else if (netModifier < 0) {
                     summaryText += ` ${netModifier}D (rolled ${rolls.length}, kept lowest ${baseDice})`;
                 }
-                if (armor !== 0) {
-                    summaryText += ` (${baseTotal} ${armor} armor = ${total})`;
+                if (injuryModifier !== 0) {
+                    summaryText += ` (${baseTotal} ${injuryModifier > 0 ? '+' : ''}${injuryModifier} modifier = ${total})`;
                 }
                 summaryEl.textContent = summaryText;
 
