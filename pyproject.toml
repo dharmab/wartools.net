@@ -1,7 +1,7 @@
 [project]
 name = "wartools-net"
 version = "0.1.0"
-description = "Build scripts for WarTools.net"
+description = "Build scripts for WARTOOLS.NET"
 requires-python = ">=3.14"
 dependencies = [
     "commonmark>=0.9.1",

@@ -17,7 +17,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} - WarTools.net</title>
+<title>{title} - WARTOOLS.NET</title>
 <style>
 body {{
     font-family: Georgia, serif;
@@ -70,7 +70,7 @@ nav a:hover {{
 </head>
 <body>
 <nav>
-    <a href="/">← Back to WarTools.net</a>
+    <a href="/">← Back to WARTOOLS.NET</a>
 </nav>
 <article>
 {content}

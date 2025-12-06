@@ -46,7 +46,7 @@ format:
 
 # Help target
 help:
-	@echo "WarTools.net Build System"
+	@echo "WARTOOLS.NET Build System"
 	@echo ""
 	@echo "Targets:"
 	@echo "  all            - Build entire site (default)"
