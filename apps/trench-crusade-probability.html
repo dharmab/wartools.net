@@ -275,7 +275,7 @@
 
                 // Calculate min and max possible totals
                 const minTotal = baseDice;
-                const maxTotal = baseDice * 6;
+                const maxTotal = 12; // Cap at 12, the highest meaningful value in the game
 
                 // Create header row with totals (columns)
                 const headerRow = document.createElement("tr");
