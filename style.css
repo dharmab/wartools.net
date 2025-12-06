@@ -139,6 +139,21 @@ footer {
     font-size: 0.9em;
 }
 
+/* YouTube channels two-column layout */
+@media (min-width: 768px) {
+    section:last-of-type ul {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    section:last-of-type li {
+        text-align: center;
+    }
+}
+
 /* High contrast mode support */
 @media (prefers-contrast: high) {
     :root {
