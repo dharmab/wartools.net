@@ -12,7 +12,7 @@ If you don't have plastic cement, you can use superglue.
 
 ## Resin Miniatures
 
-_Anything that comes out of an SLA 3D printer or resin mold, e.g. Trench Crusader Kickstarter miniatures, Forge World, many smaller miniature printers..._
+_Anything that comes out of an SLA 3D printer or resin mold, e.g. Trench Crusade Kickstarter miniatures, Forge World, many smaller miniature printers..._
 
 Resin miniatures (such as those printed on SLA 3D printers or cast from resin molds) are not chemically compatible with plastic cement. **Use superglue.**
 
