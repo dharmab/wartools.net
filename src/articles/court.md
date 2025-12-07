@@ -2,7 +2,7 @@
 
 _Draft version for TC 1.0.1_
 
-The Court of the Seven Headed Serpent ("Court") is the weirdest faction in Trench Crusade. Other factions are playing XCOM, while you are playing a puzzle game. You will often deprioritize scenario objectives in favor of keeping your Elites on the board and taking enemie models Out of Action.
+The Court of the Seven Headed Serpent ("Court") is the weirdest faction in Trench Crusade. Other factions are playing XCOM, while you are playing a puzzle game. You will often deprioritize scenario objectives in favor of keeping your Elites on the board and taking enemy models Out of Action.
 
 This is a beginner's guide to your first game as Court. It assumes you've read the rulebook and _Warbands of Trench Crusade_, and understand the game's rules. It is not a full campaign guide or comprehensive strategy guide, just a quick primer with a few common builds and strategies.
 
