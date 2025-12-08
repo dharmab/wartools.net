@@ -94,7 +94,7 @@ Only take a Desecrated Saint if you need a specific aura for your build. Otherwi
 
 If you do take a saint, fill his arms with melee weapons (probably Swords and a Hellblade).
 
-### Pit Locust. 
+### Pit Locust
 
 A cool model, but it costs too much. Invest in Hell Knights instead - you get more for your money.
 
