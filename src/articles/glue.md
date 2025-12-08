@@ -26,7 +26,7 @@ Miniatures 3D printed in PLA (i.e. on an FDM 3D printer) are not chemically comp
 
 ## Superglue (Cyanoacrylate, "CA Glue")
 
-Thicker gel superglue is best for miniatures. The gel helps hold parts in place while you adjust their position, and offers better control of where the glue goes.
+Thicker gel superglue is a great superglue for miniatures. The gel helps hold parts in place while you adjust their position, and offers better control of where the glue goes.
 
 **Loctite Gel Super Glue** and **Gorilla Super Glue Gel** are both widely available at hardware stores, but come in tiny bottles. My favorite is **Starbond Medium** which comes in a large bottle with many applicator tips at a good price.
 
