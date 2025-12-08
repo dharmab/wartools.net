@@ -88,9 +88,9 @@ Your source of Blood Markers. Give them a trench knife unless you're running a S
 
 Equip as required for your Blood Marker generation strategy. In later campaign stages you can use them as combat units with Muzzles and Flamethrowers, with extra movement from Slavemaster. But in early campaign/one-offs, the money is better spent on the ELITE models.
 
-### Dessecrated Saint
+### Desecrated Saint
 
-Only take a Desecrated Saint if you need a specific aura for your build. Otherwise, the money is better spent on powering up the Unholy Trinity and Hell Knights.
+Only take a Desecrated Saint if you need a specific aura for your build. Otherwise, the money is better spent on powering up the Unholy Trinity and Hell Knights. 
 
 If you do take a saint, fill his arms with melee weapons (probably Swords and a Hellblade).
 
@@ -133,7 +133,7 @@ It is not worth winning a campaign game if you gain Battle Scars that fuck you i
 The goal during deployment is to delay placing the large models as long as possible. If you place them early, your opponent can deploy their ranged units to all shoot them on turn 1.
 
 - Deploy Wretches and Yoke Fiends. Unless you are running Shotwretches, place them behind line-of-sight blocking terrain so the enemy can't shoot them.
-- Deploy  Hell Knights
+- Deploy Hell Knights
 - Deploy the Sorceror carrying the Musical Instrument, followed by the Hunter within Musical Instrument range.
 - Deploy the Desecrated Saint and Praetor last.
 
@@ -141,7 +141,7 @@ The goal during deployment is to delay placing the large models as long as possi
 
 - Activate Wretches to force the opponent to activate their models before your Hell Knights, Hunter or Sorceror are within line of sight
 - Generate Blood Markers
-- If you have enough Blood Markers for both Left Hand Path and Oracle Beast Cloak, Dash, Left Hand Path, Shoot with the Bow of Lethe, Charge an unactivated model, and attack with the Headtaker. You must do this such that in _any_ outcome, your Hunter is not in danger from your opponent's deadliest models. This is your most important activation of the entire game, so think very carefully about the puzzle. If you can't do it safely, or don't have enough Blood Markers, delay activating the Hunter, or Dash, Shoot, and Move into cover instead.
+- If you have enough Blood Markers for both Left Hand Path and Oracle Beast Cloak, then Dash, Left Hand Path, Shoot with the Bow of Lethe, Charge an unactivated model, and attack with the Headtaker. You must do this such that in _any_ outcome, your Hunter is not in danger from your opponent's deadliest models. This is your most important activation of the entire game, so think very carefully about your choices like a puzzle. If you can't do it safely, or don't have enough Blood Markers, delay activating the Hunter, or Dash, Shoot, and Move into cover instead.
 - Activate other models as opportune.
 
 ### Later Turns
