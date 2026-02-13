@@ -189,14 +189,45 @@
             color: var(--accent-primary);
         }
 
-        .injury-modifier-section {
+        .injury-params-row {
+            display: flex;
+            gap: 15px;
             margin-bottom: 15px;
         }
 
-        .injury-modifier-spacer {
-            margin-bottom: 15px;
-            height: 21px;
+        .injury-modifier-section {
+            flex: 1;
         }
+
+        .injury-deadly-section {
+            flex: 1;
+        }
+
+        .injury-deadly-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .injury-deadly-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .injury-deadly-display {
+            min-width: 60px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+
 
         .injury-modifier-label {
             display: block;
@@ -541,7 +572,7 @@
                 display: none;
             }
 
-            .roller-wrapper:first-of-type .injury-modifier-section {
+            .roller-wrapper:first-of-type .injury-params-row {
                 display: none;
             }
 
@@ -640,12 +671,23 @@
                         </div>
                     </div>
 
-                    <div class="injury-modifier-section">
-                        <div class="injury-modifier-label">&nbsp;</div>
-                        <div class="injury-modifier-controls">
-                            <button class="modifier-btn" style="visibility: hidden;">−</button>
-                            <div class="injury-modifier-display" style="visibility: hidden;">0</div>
-                            <button class="modifier-btn" style="visibility: hidden;">+</button>
+                    <div class="injury-params-row">
+                        <div class="injury-deadly-section">
+                            <div class="injury-deadly-label">&nbsp;</div>
+                            <div class="injury-deadly-controls">
+                                <button class="modifier-btn" style="visibility: hidden;">−</button>
+                                <div class="injury-deadly-display" style="visibility: hidden;">0</div>
+                                <button class="modifier-btn" style="visibility: hidden;">+</button>
+                            </div>
+                        </div>
+
+                        <div class="injury-modifier-section">
+                            <div class="injury-modifier-label">&nbsp;</div>
+                            <div class="injury-modifier-controls">
+                                <button class="modifier-btn" style="visibility: hidden;">−</button>
+                                <div class="injury-modifier-display" style="visibility: hidden;">0</div>
+                                <button class="modifier-btn" style="visibility: hidden;">+</button>
+                            </div>
                         </div>
                     </div>
 
@@ -701,12 +743,23 @@
                         </div>
                     </div>
 
-                    <div class="injury-modifier-section">
-                        <div class="injury-modifier-label">Injury Modifier</div>
-                        <div class="injury-modifier-controls">
-                            <button class="modifier-btn" onclick="adjustInjuryModifier(-1)">−</button>
-                            <div class="injury-modifier-display" id="injuryModifierValue">0</div>
-                            <button class="modifier-btn" id="injuryModifierPlusBtn" onclick="adjustInjuryModifier(1)">+</button>
+                    <div class="injury-params-row">
+                        <div class="injury-deadly-section">
+                            <div class="injury-deadly-label">Deadly</div>
+                            <div class="injury-deadly-controls">
+                                <button class="modifier-btn" id="injuryDeadlyMinusBtn" onclick="adjustInjuryDeadly(-1)">−</button>
+                                <div class="injury-deadly-display" id="injuryDeadlyValue">0</div>
+                                <button class="modifier-btn" id="injuryDeadlyPlusBtn" onclick="adjustInjuryDeadly(1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="injury-modifier-section">
+                            <div class="injury-modifier-label">Injury Modifier</div>
+                            <div class="injury-modifier-controls">
+                                <button class="modifier-btn" onclick="adjustInjuryModifier(-1)">−</button>
+                                <div class="injury-modifier-display" id="injuryModifierValue">0</div>
+                                <button class="modifier-btn" id="injuryModifierPlusBtn" onclick="adjustInjuryModifier(1)">+</button>
+                            </div>
                         </div>
                     </div>
 
@@ -764,6 +817,7 @@
         let injuryPlusD = 0;
         let injuryMinusD = 0;
         let injuryModifier = 0;
+        let injuryDeadly = 0;
 
         // Initialize button states on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -778,6 +832,9 @@
             if (injuryModifierMinusBtn) {
                 injuryModifierMinusBtn.disabled = false;
             }
+
+            // Initialize deadly minus button (starts at 0, so minus should be disabled)
+            document.getElementById('injuryDeadlyMinusBtn').disabled = true;
         });
 
         // Dice selection
@@ -844,6 +901,16 @@
             updateEffectiveModifier('injury');
         }
 
+        function adjustInjuryDeadly(delta) {
+            injuryDeadly = Math.max(0, Math.min(10, injuryDeadly + delta));
+            document.getElementById('injuryDeadlyValue').textContent = injuryDeadly;
+
+            document.getElementById('injuryDeadlyMinusBtn').disabled = injuryDeadly === 0;
+            document.getElementById('injuryDeadlyPlusBtn').disabled = injuryDeadly === 10;
+
+            updateEffectiveModifier('injury');
+        }
+
         function updateEffectiveModifier(roller) {
             if (roller === 'success') {
                 const netModifier = successPlusD - successMinusD;
@@ -861,16 +928,17 @@
                 updateProbability('success');
             } else {
                 const netModifier = injuryPlusD - injuryMinusD;
-                const totalDice = injuryBaseDice + Math.abs(netModifier);
+                const keptCount = injuryBaseDice + injuryDeadly;
+                const totalDice = keptCount + Math.abs(netModifier);
                 const effectiveEl = document.getElementById('injuryEffectiveModifier');
 
                 let text = '';
                 if (netModifier === 0) {
-                    text = `Rolling ${injuryBaseDice}d6`;
+                    text = `Rolling ${keptCount}d6`;
                 } else if (netModifier > 0) {
-                    text = `Rolling ${totalDice}d6, keeping highest ${injuryBaseDice}`;
+                    text = `Rolling ${totalDice}d6, keeping highest ${keptCount}`;
                 } else {
-                    text = `Rolling ${totalDice}d6, keeping lowest ${injuryBaseDice}`;
+                    text = `Rolling ${totalDice}d6, keeping lowest ${keptCount}`;
                 }
 
                 if (injuryModifier !== 0) {
@@ -927,7 +995,8 @@
             } else {
                 // Injury roll probabilities
                 const netModifier = injuryPlusD - injuryMinusD;
-                const totalDiceToRoll = injuryBaseDice + Math.abs(netModifier);
+                const keptCount = injuryBaseDice + injuryDeadly;
+                const totalDiceToRoll = keptCount + Math.abs(netModifier);
                 const trials = 100000;
                 let noEffect = 0;
                 let minor = 0;
@@ -942,9 +1011,9 @@
 
                     let keptRolls;
                     if (netModifier > 0) {
-                        keptRolls = rolls.sort((a, b) => b - a).slice(0, injuryBaseDice);
+                        keptRolls = rolls.sort((a, b) => b - a).slice(0, keptCount);
                     } else if (netModifier < 0) {
-                        keptRolls = rolls.sort((a, b) => a - b).slice(0, injuryBaseDice);
+                        keptRolls = rolls.sort((a, b) => a - b).slice(0, keptCount);
                     } else {
                         keptRolls = rolls;
                     }
@@ -1003,7 +1072,8 @@
                 displayResults('success', rolls, keptIndices, total, netModifier);
             } else {
                 const netModifier = injuryPlusD - injuryMinusD;
-                const totalDiceToRoll = injuryBaseDice + Math.abs(netModifier);
+                const keptCount = injuryBaseDice + injuryDeadly;
+                const totalDiceToRoll = keptCount + Math.abs(netModifier);
 
                 const rolls = [];
                 for (let i = 0; i < totalDiceToRoll; i++) {
@@ -1015,13 +1085,13 @@
                     keptIndices = rolls
                         .map((value, index) => ({ value, index }))
                         .sort((a, b) => b.value - a.value)
-                        .slice(0, injuryBaseDice)
+                        .slice(0, keptCount)
                         .map(item => item.index);
                 } else if (netModifier < 0) {
                     keptIndices = rolls
                         .map((value, index) => ({ value, index }))
                         .sort((a, b) => a.value - b.value)
-                        .slice(0, injuryBaseDice)
+                        .slice(0, keptCount)
                         .map(item => item.index);
                 } else {
                     keptIndices = rolls.map((_, index) => index);
@@ -1078,12 +1148,15 @@
             } else {
                 const keptRolls = keptIndices.map(i => rolls[i]);
                 const baseTotal = keptRolls.reduce((sum, val) => sum + val, 0);
-                const baseDice = injuryBaseDice;
-                let summaryText = `${baseDice}d6`;
+                const keptCount = injuryBaseDice + injuryDeadly;
+                let summaryText = `${injuryBaseDice}d6`;
+                if (injuryDeadly > 0) {
+                    summaryText += ` Deadly ${injuryDeadly}`;
+                }
                 if (netModifier > 0) {
-                    summaryText += ` +${netModifier}D (rolled ${rolls.length}, kept highest ${baseDice})`;
+                    summaryText += ` +${netModifier}D (rolled ${rolls.length}, kept highest ${keptCount})`;
                 } else if (netModifier < 0) {
-                    summaryText += ` ${netModifier}D (rolled ${rolls.length}, kept lowest ${baseDice})`;
+                    summaryText += ` ${netModifier}D (rolled ${rolls.length}, kept lowest ${keptCount})`;
                 }
                 if (injuryModifier !== 0) {
                     summaryText += ` (${baseTotal} ${injuryModifier > 0 ? '+' : ''}${injuryModifier} modifier = ${total})`;
