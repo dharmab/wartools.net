@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twilight 2000 Roll Tables - WARTOOLS.NET</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        nav a {
+            color: var(--link-color);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 2px solid var(--border-medium);
+        }
+
+        .table-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .table-selector label {
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .table-selector select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 2px solid var(--border-medium);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: Georgia, serif;
+            font-size: 1rem;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .table-selector select:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        .dice-info {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .roll-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .roll-btn {
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 2px solid var(--border-medium);
+            border-radius: 8px;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .roll-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .roll-btn:active {
+            transform: scale(0.96);
+        }
+
+        .roll-result-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .roll-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .roll-table th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-medium);
+            font-size: 0.95rem;
+        }
+
+        .roll-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .roll-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .roll-table tr.highlighted {
+            background: var(--accent-primary);
+        }
+
+        .roll-table tr.highlighted td {
+            color: var(--bg-primary);
+            font-weight: bold;
+        }
+
+        @keyframes flashHighlight {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .roll-table tr.rolling {
+            animation: flashHighlight 0.15s ease-in-out;
+        }
+
+        .table-notes {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .table-notes dt {
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-top: 8px;
+        }
+
+        .table-notes dd {
+            margin-left: 16px;
+            margin-bottom: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav><a href="../index.html">&larr; WARTOOLS.NET</a></nav>
+        <header>
+            <h1>Twilight 2000 Roll Tables</h1>
+            <p class="subtitle">Roll tables for Twilight 2000 4th Edition</p>
+        </header>
+
+        <div class="card">
+            <div class="table-selector">
+                <select id="table-select" onchange="selectTable()"></select>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="roll-section">
+                <button class="roll-btn" id="roll-btn" onclick="roll()">Roll</button>
+                <div class="roll-result-display" id="roll-result"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div id="table-container">
+                <div class="empty-state">No tables loaded.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Table data registry.
+        // Each table has:
+        //   name: string - display name
+        //   dice: string - dice notation, e.g. "1d6", "2d6", "1d10"
+        //   columns: string[] - column headers (first column is always the roll range)
+        //   rows: { min: number, max: number, values: string[] }[]
+        //     - min/max define the roll range that selects this row
+        //     - values has one entry per column
+        const TABLES = [
+            {
+                name: "Weather",
+                dice: "1d6",
+                columns: ["Roll", "Result"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Weather improves"] },
+                    { min: 2, max: 5, values: ["2-5", "No change"] },
+                    { min: 6, max: 6, values: ["6", "Weather worsens"] },
+                ],
+                notes: [
+                    ["Fair Weather", "Maximum visibility in darkness is 10 combat hexes (15 with strong moonlight)."],
+                    ["Cloudy", "Cloud cover reduces visibility during the dark shifts of the day to 5 combat hexes (50 meters)."],
+                    ["Heavy Rain/Snow", "Limits visibility to 20 combat hexes in the daytime and 5 hexes at night. Gives a \u22121 modifier to all ranged attacks. Requires a STAMINA check for marching and gives a \u22122 modifier to DRIVING rolls. A heavy rain will only last one shift \u2013 after a shift of heavy rain, the weather automatically shifts to cloudy."],
+                ]
+            },
+            {
+                name: "Driving Mishaps",
+                dice: "2d6",
+                columns: ["Roll", "Mishap", "Effect"],
+                rows: [
+                    { min: 2, max: 2, values: ["2", "Broken Axle", "The vehicle becomes inoperable, its reliability rating reduced to zero."] },
+                    { min: 3, max: 3, values: ["3", "Roadkill", "The vehicle hits a random animal (roll a D6 on the hunting table). The animal is killed (and can be used for food), but also inflicts damage on the vehicle front equal to half its hit capacity (rounding up)."] },
+                    { min: 4, max: 4, values: ["4", "Busted Gearbox", "The vehicle cannot move any further. Fixing the problem requires a TECH roll and a vehicle spare part. One attempt per shift can be made."] },
+                    { min: 5, max: 5, values: ["5", "Dirty Fuel", "The engine stops due to dirt or water in the fuel. All of the fuel in the tank needs to be drained and the vehicle refueled before it can continue."] },
+                    { min: 6, max: 6, values: ["6", "Bogged Down", "The vehicle gets stuck and moves no further this shift. Getting loose requires a STAMINA roll or help from another vehicle. One attempt per shift can be made."] },
+                    { min: 7, max: 7, values: ["7", "Wrong Turn", "The driver makes a wrong turn and needs to turn around and go back. One hex of movement is lost this shift."] },
+                    { min: 8, max: 8, values: ["8", "Roadblock", "The road ahead is blocked by debris, a landslide, or fallen trees. The driver must choose a different hex to move into, or remove the obstacle (STAMINA roll, taking one shift)."] },
+                    { min: 9, max: 9, values: ["9", "Engine Overheated", "The vehicle must stop for the rest of the shift."] },
+                    { min: 10, max: 10, values: ["10", "Blown Tire/Thrown Track", "The vehicle cannot move any further. Fixing the problem requires a TECH roll (+2) and a vehicle spare part. One attempt per shift can be made."] },
+                    { min: 11, max: 11, values: ["11", "Crash", "The vehicle crashes into a tree, rock, or barricade, and suffers damage to the front equal to its travel speed rating. The crash may attract unwanted attention."] },
+                    { min: 12, max: 12, values: ["12", "Engine Blown", "The vehicle becomes inoperable, its reliability rating reduced to zero."] },
+                ]
+            },
+            {
+                name: "Scrounging",
+                dice: "1d100",
+                columns: ["Roll", "Item", "Effect", "Spare Parts", "Weight", "Value"],
+                rows: [
+                    { min: 1, max: 1, values: ["01", "Alarm clock", "\u2013", "1 general", "\u00bd", "10"] },
+                    { min: 2, max: 2, values: ["02", "Aspirin bottle", "Page 130 (D6 doses remaining)", "\u2013", "0", "D6\u00d715"] },
+                    { min: 3, max: 3, values: ["03", "Axe", "Page 93", "\u2013", "1", "30"] },
+                    { min: 4, max: 4, values: ["04", "Baseball bat", "As club", "\u2013", "1", "5"] },
+                    { min: 5, max: 5, values: ["05", "Bible", "\u2013", "\u2013", "\u00bc", "10"] },
+                    { min: 6, max: 6, values: ["06", "Bicycle", "Page 116", "2 general", "5", "50"] },
+                    { min: 7, max: 7, values: ["07", "Bicycle pump", "\u2013", "1 general", "1", "15"] },
+                    { min: 8, max: 8, values: ["08", "Binoculars", "Page 129", "\u2013", "\u00bd", "50"] },
+                    { min: 9, max: 9, values: ["09", "Box of cereal, unopened", "D3 rations of domestic food", "\u2013", "D3\u00d7\u00bd", "D3\u00d710"] },
+                    { min: 10, max: 10, values: ["10", "Box of chocolates (still edible)", "D3 field rations", "\u2013", "D3\u00d7\u00bc", "D3\u00d720"] },
+                    { min: 11, max: 11, values: ["11", "Bullhorn (broken)", "\u2013", "1 general", "1", "10"] },
+                    { min: 12, max: 12, values: ["12", "Candelabra", "\u2013", "\u2013", "1", "25"] },
+                    { min: 13, max: 13, values: ["13", "Candy bar", "One field ration", "\u2013", "\u00bc", "20"] },
+                    { min: 14, max: 14, values: ["14", "Car tire", "\u2013", "1 vehicle", "2", "50"] },
+                    { min: 15, max: 15, values: ["15", "Carving knife", "As knife", "\u2013", "\u00bd", "5"] },
+                    { min: 16, max: 16, values: ["16", "Champagne glasses, D6", "\u2013", "\u2013", "D6\u00d7\u00bc", "D6\u00d720"] },
+                    { min: 17, max: 17, values: ["17", "Chandelier", "\u2013", "\u2013", "2", "50"] },
+                    { min: 18, max: 18, values: ["18", "Charcoal grill", "SURVIVAL +1 when cooking", "1 general", "3", "100"] },
+                    { min: 19, max: 19, values: ["19", "Cigarettes, half-empty pack", "Removes 1 point of stress but gives \u22121 to STAMINA rolls for one shift. 2D6 uses.", "\u2013", "0", "2D6\u00d710"] },
+                    { min: 20, max: 20, values: ["20", "Coloring book for kids (half done)", "\u2013", "\u2013", "\u00bc", "5"] },
+                    { min: 21, max: 21, values: ["21", "Cooking pot", "SURVIVAL +1 when cooking", "\u2013", "\u00bd", "20"] },
+                    { min: 22, max: 22, values: ["22", "Credit card", "\u2013", "\u2013", "0", "1"] },
+                    { min: 23, max: 23, values: ["23", "Crime novel", "\u2013", "\u2013", "\u00bc", "3"] },
+                    { min: 24, max: 24, values: ["24", "Crowbar", "TECH +1 for rough work, can be used as club", "\u2013", "1", "5"] },
+                    { min: 25, max: 25, values: ["25", "Deodorant bottle", "\u2013", "\u2013", "0", "10"] },
+                    { min: 26, max: 26, values: ["26", "Desk lamp", "\u2013", "1 electronic", "1", "15"] },
+                    { min: 27, max: 27, values: ["27", "Doll", "\u2013", "\u2013", "\u00bc", "15"] },
+                    { min: 28, max: 28, values: ["28", "Electric guitar", "Requires electricity", "1 electronic", "1", "30"] },
+                    { min: 29, max: 29, values: ["29", "Electric mixer", "Requires electricity", "1 electronic", "\u00bd", "20"] },
+                    { min: 30, max: 30, values: ["30", "Electric shaver", "Requires electricity", "1 electronic", "\u00bc", "25"] },
+                    { min: 31, max: 31, values: ["31", "Electric toothbrush", "Requires electricity", "1 electronic", "\u00bc", "25"] },
+                    { min: 32, max: 32, values: ["32", "Extension cord", "\u2013", "1 electronic", "\u00bc", "15"] },
+                    { min: 33, max: 33, values: ["33", "Face mask, cartoon animal", "\u2013", "\u2013", "0", "5"] },
+                    { min: 34, max: 34, values: ["34", "Fantasy novel, very thick", "\u2013", "\u2013", "\u00bc", "5"] },
+                    { min: 35, max: 35, values: ["35", "Fire extinguisher", "Puts out fire in a hex or a vehicle. One use only.", "\u2013", "2", "150"] },
+                    { min: 36, max: 36, values: ["36", "Fireworks, D6, still functional", "As flares (page 129)", "\u2013", "D6\u00d7\u00bc", "D6\u00d75"] },
+                    { min: 37, max: 37, values: ["37", "Fishing pole", "Page 131", "\u2013", "1", "25"] },
+                    { min: 38, max: 38, values: ["38", "Flashlight (broken)", "Needs repair. Requires battery.", "1 electronic", "\u00bc", "20"] },
+                    { min: 39, max: 39, values: ["39", "Floor lamp", "Requires electricity", "1 electronic", "1", "15"] },
+                    { min: 40, max: 40, values: ["40", "Football", "\u2013", "\u2013", "\u00bc", "5"] },
+                    { min: 41, max: 41, values: ["41", "Frying pan", "SURVIVAL +1 when cooking", "\u2013", "\u00bd", "20"] },
+                    { min: 42, max: 42, values: ["42", "Gaffer tape", "TECH +1 when jury rigging", "\u2013", "\u00bc", "25"] },
+                    { min: 43, max: 43, values: ["43", "Golf club", "As club", "\u2013", "1", "5"] },
+                    { min: 44, max: 44, values: ["44", "Hair dryer", "\u2013", "1 electronic", "\u00bd", "20"] },
+                    { min: 45, max: 45, values: ["45", "Hair gel", "\u2013", "\u2013", "0", "5"] },
+                    { min: 46, max: 46, values: ["46", "Hedge trimmer", "As knife", "1 general", "1", "10"] },
+                    { min: 47, max: 47, values: ["47", "Hockey club", "As club", "\u2013", "1", "5"] },
+                    { min: 48, max: 48, values: ["48", "Hunting bow", "Page 94", "\u2013", "1", "150"] },
+                    { min: 49, max: 49, values: ["49", "Hunting rifle", "Page 95", "2 weapon", "1", "varies"] },
+                    { min: 50, max: 50, values: ["50", "Infant formula", "D6 field rations", "\u2013", "D6\u00d7\u00bc", "D6\u00d720"] },
+                    { min: 51, max: 51, values: ["51", "Instant coffee", "D6 uses, removes sleep deprivation", "\u2013", "D6\u00d7\u00bc", "D6\u00d710"] },
+                    { min: 52, max: 52, values: ["52", "Instant noodles", "D6 rations of domestic food", "\u2013", "D6\u00d7\u00bd", "D6\u00d710"] },
+                    { min: 53, max: 53, values: ["53", "Iron pipe", "As club", "\u2013", "1", "1"] },
+                    { min: 54, max: 54, values: ["54", "Ladies hat", "\u2013", "\u2013", "0", "5"] },
+                    { min: 55, max: 55, values: ["55", "Laptop computer, broken", "\u2013", "2 electronic", "1", "50"] },
+                    { min: 56, max: 56, values: ["56", "Lawn mower", "\u2013", "2 general", "4", "25"] },
+                    { min: 57, max: 57, values: ["57", "Lipstick", "\u2013", "\u2013", "0", "3"] },
+                    { min: 58, max: 58, values: ["58", "Loudspeaker (broken)", "\u2013", "1 general, 1 electronic", "2", "30"] },
+                    { min: 59, max: 59, values: ["59", "Mathematics textbook", "\u2013", "\u2013", "\u00bd", "20"] },
+                    { min: 60, max: 60, values: ["60", "Microwave oven (broken)", "Requires electricity", "1 general, 1 electronic", "3", "30"] },
+                    { min: 61, max: 61, values: ["61", "Mirror", "\u2013", "\u2013", "2", "5"] },
+                    { min: 62, max: 62, values: ["62", "Movie DVDs, D6", "\u2013", "\u2013", "0", "D6\u00d71"] },
+                    { min: 63, max: 63, values: ["63", "Movie poster", "\u2013", "\u2013", "\u00bc", "3"] },
+                    { min: 64, max: 64, values: ["64", "Music CDs, D6", "\u2013", "\u2013", "\u00bc", "D6\u00d71"] },
+                    { min: 65, max: 65, values: ["65", "National flag, torn", "\u2013", "\u2013", "0", "10"] },
+                    { min: 66, max: 66, values: ["66", "Necktie", "\u2013", "\u2013", "0", "5"] },
+                    { min: 67, max: 67, values: ["67", "Oriental carpet", "\u2013", "\u2013", "2", "15"] },
+                    { min: 68, max: 68, values: ["68", "Photo of happy family", "\u2013", "\u2013", "0", "3"] },
+                    { min: 69, max: 69, values: ["69", "Playing cards", "\u2013", "\u2013", "0", "10"] },
+                    { min: 70, max: 70, values: ["70", "Raincoat", "STAMINA +1 against chemical weapons", "\u2013", "\u00bd", "25"] },
+                    { min: 71, max: 71, values: ["71", "Remote control", "\u2013", "1 electronic", "0", "15"] },
+                    { min: 72, max: 72, values: ["72", "Revolver", "Page 94", "1 weapon", "\u00bd", "75"] },
+                    { min: 73, max: 73, values: ["73", "Saxophone", "\u2013", "1 general", "1", "25"] },
+                    { min: 74, max: 74, values: ["74", "Shopping cart", "Carries 20 encumbrance units", "1 general", "3", "20"] },
+                    { min: 75, max: 75, values: ["75", "Shotgun", "Page 96", "2 weapon", "1", "varies"] },
+                    { min: 76, max: 76, values: ["76", "Skateboard", "MOBILITY +1 on pavement", "\u2013", "1", "15"] },
+                    { min: 77, max: 77, values: ["77", "Ski hat", "STAMINA +1 against cold", "\u2013", "0", "10"] },
+                    { min: 78, max: 78, values: ["78", "Sleeping pad", "SURVIVAL +1 when sleeping on bare ground", "\u2013", "\u00bd", "10"] },
+                    { min: 79, max: 79, values: ["79", "Snowglobe", "\u2013", "\u2013", "\u00bc", "5"] },
+                    { min: 80, max: 80, values: ["80", "Sports jersey", "\u2013", "\u2013", "0", "5"] },
+                    { min: 81, max: 81, values: ["81", "Teddy bear", "\u2013", "\u2013", "\u00bc", "5"] },
+                    { min: 82, max: 82, values: ["82", "Tent (fits four)", "SURVIVAL +1 to make camp", "\u2013", "4", "50"] },
+                    { min: 83, max: 83, values: ["83", "Tire iron", "TECH +1 on vehicles", "\u2013", "2", "25"] },
+                    { min: 84, max: 84, values: ["84", "Top hat", "\u2013", "\u2013", "0", "10"] },
+                    { min: 85, max: 85, values: ["85", "Toy sword", "\u2013", "\u2013", "\u00bd", "5"] },
+                    { min: 86, max: 86, values: ["86", "Trombone", "\u2013", "\u2013", "1", "20"] },
+                    { min: 87, max: 87, values: ["87", "TV set, broken", "Requires electricity", "2 general, 2 electronic", "4", "50"] },
+                    { min: 88, max: 88, values: ["88", "Twinkies, still edible", "D6 rations of domestic food", "\u2013", "D6\u00d7\u00bd", "D6\u00d710"] },
+                    { min: 89, max: 89, values: ["89", "Typewriter", "\u2013", "2 general", "2", "60"] },
+                    { min: 90, max: 90, values: ["90", "Vacuum cleaner", "Requires electricity", "1 general, 1 electronic", "2", "30"] },
+                    { min: 91, max: 91, values: ["91", "Video game console", "\u2013", "1 electronic", "\u00bd", "20"] },
+                    { min: 92, max: 92, values: ["92", "Walkie-talkies (broken)", "Page 129 (need repair)", "1 electronic", "\u00bd", "50"] },
+                    { min: 93, max: 93, values: ["93", "Walkman with headphones and cassette", "\u2013", "1 electronic", "\u00bc", "25"] },
+                    { min: 94, max: 94, values: ["94", "Wallet full of moldy cash", "\u2013", "\u2013", "0", "3"] },
+                    { min: 95, max: 95, values: ["95", "Wine bottle, undrinkable", "\u2013", "\u2013", "\u00bd", "2"] },
+                    { min: 96, max: 96, values: ["96", "Wristwatch, broken", "\u2013", "1 electronic", "0", "20"] },
+                    { min: 97, max: 97, values: ["97", "Yellowed copy of Twilight: 2000 RPG, 1st edition", "\u2013", "\u2013", "\u00bd", "10"] },
+                    { min: 98, max: 98, values: ["98", "Roll twice on the table", "\u2013", "\u2013", "\u2013", "\u2013"] },
+                    { min: 99, max: 99, values: ["99", "Roll three times on the table", "\u2013", "\u2013", "\u2013", "\u2013"] },
+                    { min: 100, max: 100, values: ["00", "Roll four times on the table", "\u2013", "\u2013", "\u2013", "\u2013"] },
+                ],
+                notes: [
+                    ["Scrounging", "Spend a shift scrounging in your current hex. Roll SURVIVAL, modified by terrain type. For each success (six rolled), roll D100 on the scrap table. Only one character can roll for scrounging per hex per shift, but others can help the roll. Each repeated scrounge in the same hex gives a cumulative \u22121 modifier."],
+                    ["Terrain Modifiers", "Road +1, Open (no modifier), Woods \u22121, Hills \u22121, Mountains \u22122, Swamp \u22122, Ruins +2. Lakes/Rivers: scrounging not possible."],
+                    ["Quick Search", "In areas likely to have scrap (e.g. settlements), the Referee may allow a quick search with no dice roll, giving one free roll on the scrap table. This doesn\u2019t count as scrounging and doesn\u2019t take a full shift."],
+                    ["Spare Parts", "The Spare Parts column indicates parts that can be scavenged from the find. Scavenging takes a full shift, separate from scrounging time."],
+                    ["Value", "The Value column is the approximate value of the item in bullets."],
+                ]
+            },
+        ];
+
+        let currentTableIndex = -1;
+
+        function parseDice(notation) {
+            const match = notation.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
+            if (!match) return null;
+            return {
+                count: parseInt(match[1]),
+                sides: parseInt(match[2]),
+                modifier: match[3] ? parseInt(match[3]) : 0,
+            };
+        }
+
+        function rollDice(notation) {
+            const dice = parseDice(notation);
+            if (!dice) return 0;
+            let total = dice.modifier;
+            for (let i = 0; i < dice.count; i++) {
+                total += Math.floor(Math.random() * dice.sides) + 1;
+            }
+            return total;
+        }
+
+        function populateDropdown() {
+            const select = document.getElementById('table-select');
+            select.innerHTML = '';
+            if (TABLES.length === 0) {
+                const opt = document.createElement('option');
+                opt.textContent = 'No tables available';
+                opt.disabled = true;
+                select.appendChild(opt);
+                document.getElementById('roll-btn').disabled = true;
+                return;
+            }
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Select a table\u2026';
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            select.appendChild(placeholder);
+
+            const sorted = TABLES.map((table, i) => ({ table, i }));
+            sorted.sort((a, b) => a.table.name.localeCompare(b.table.name));
+            sorted.forEach(({ table, i }) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = table.name;
+                select.appendChild(opt);
+            });
+        }
+
+        function selectTable() {
+            const select = document.getElementById('table-select');
+            const val = select.value;
+            currentTableIndex = val === '' ? -1 : parseInt(val);
+            renderTable();
+            document.getElementById('roll-result').textContent = '';
+        }
+
+        function renderTable() {
+            const container = document.getElementById('table-container');
+            if (currentTableIndex < 0) {
+                container.innerHTML = '';
+                document.getElementById('roll-btn').textContent = 'Roll';
+                document.getElementById('roll-btn').disabled = true;
+                return;
+            }
+
+            const table = TABLES[currentTableIndex];
+            document.getElementById('roll-btn').textContent = 'Roll ' + table.dice;
+            document.getElementById('roll-btn').disabled = false;
+
+            let html = '<table class="roll-table"><thead><tr>';
+            for (const col of table.columns) {
+                html += '<th>' + escapeHtml(col) + '</th>';
+            }
+            html += '</tr></thead><tbody>';
+
+            for (let i = 0; i < table.rows.length; i++) {
+                const row = table.rows[i];
+                html += '<tr data-row-index="' + i + '">';
+                for (const val of row.values) {
+                    html += '<td>' + escapeHtml(val) + '</td>';
+                }
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+
+            if (table.notes && table.notes.length > 0) {
+                html += '<div class="table-notes"><dl>';
+                for (const [term, desc] of table.notes) {
+                    html += '<dt>' + escapeHtml(term) + '</dt>';
+                    html += '<dd>' + escapeHtml(desc) + '</dd>';
+                }
+                html += '</dl></div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function findRowForRoll(total) {
+            const table = TABLES[currentTableIndex];
+            for (let i = 0; i < table.rows.length; i++) {
+                if (total >= table.rows[i].min && total <= table.rows[i].max) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function roll() {
+            if (currentTableIndex < 0) return;
+
+            const table = TABLES[currentTableIndex];
+            const total = rollDice(table.dice);
+
+            let displayTotal = total;
+            if (table.dice.includes('d100') && total === 100) displayTotal = '00';
+            else if (table.dice.includes('d100')) displayTotal = String(total).padStart(2, '0');
+            document.getElementById('roll-result').textContent = displayTotal;
+
+            // Clear previous highlights
+            const rows = document.querySelectorAll('.roll-table tbody tr');
+            rows.forEach(r => r.classList.remove('highlighted', 'rolling'));
+
+            const rowIndex = findRowForRoll(total);
+            if (rowIndex >= 0) {
+                const targetRow = document.querySelector('[data-row-index="' + rowIndex + '"]');
+                if (targetRow) {
+                    targetRow.classList.add('highlighted');
+                    targetRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDropdown();
+            renderTable();
+        });
+    </script>
+</body>
+</html>
