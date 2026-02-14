@@ -169,6 +169,17 @@
             animation: flashHighlight 0.15s ease-in-out;
         }
 
+        .table-footnotes {
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .table-footnotes p {
+            margin: 2px 0;
+        }
+
         .table-notes {
             margin-top: 16px;
             padding-top: 12px;
@@ -266,6 +277,167 @@
                     { min: 10, max: 10, values: ["10", "Blown Tire/Thrown Track", "The vehicle cannot move any further. Fixing the problem requires a TECH roll (+2) and a vehicle spare part. One attempt per shift can be made."] },
                     { min: 11, max: 11, values: ["11", "Crash", "The vehicle crashes into a tree, rock, or barricade, and suffers damage to the front equal to its travel speed rating. The crash may attract unwanted attention."] },
                     { min: 12, max: 12, values: ["12", "Engine Blown", "The vehicle becomes inoperable, its reliability rating reduced to zero."] },
+                ]
+            },
+            {
+                name: "Hunting",
+                dice: "1d6",
+                columns: ["Roll", "Animal", "Hit Capacity", "Trapping", "Food"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Grouse\u00b9", "1", "No", "1"] },
+                    { min: 2, max: 2, values: ["2", "Rabbit", "1", "Yes", "1"] },
+                    { min: 3, max: 3, values: ["3", "Fox", "1", "Yes", "D3"] },
+                    { min: 4, max: 4, values: ["4", "Deer", "2", "No", "2D6"] },
+                    { min: 5, max: 5, values: ["5", "Boar", "3", "No", "2D6\u00d72"] },
+                    { min: 6, max: 6, values: ["6", "Moose", "6", "No", "2D6\u00d74"] },
+                ],
+                notes: [
+                    ["Hunting", "Roll SURVIVAL, modified for terrain type. Success means you\u2019ve tracked prey \u2013 roll on the hunting table. If you roll multiple successes, roll once for each and choose which to hunt."],
+                    ["Killing Prey", "Make a RECON roll to move into position without alerting the animal, then make a ranged attack. If your attack inflicts damage equal to or in excess of the hit capacity, or if you roll a critical hit, the animal is killed. Otherwise it escapes. You usually only get one shot."],
+                    ["Food", "The Food column indicates how many rations of domestic food your prey yields, once the meat has been cut and cooked. You can eat raw meat, but you must make a STAMINA roll to resist food poisoning."],
+                    ["Trapping", "Animals marked Yes for Trapping can be caught using simple snares. Instead of shooting the animal, make another SURVIVAL roll after tracking \u2013 if successful, the animal is caught."],
+                    ["Repeat Hunting", "Only one character can roll for hunting in the same hex during the same shift, but others can help the roll. For each shift you hunt again in the same hex, you get a \u22121 cumulative modifier. This modifier is reset after a week."],
+                ],
+                footnotes: [
+                    "\u00b9Requires a shotgun.",
+                ]
+            },
+            {
+                name: "Hit Location",
+                dice: "1d6",
+                columns: ["Roll", "Hit Location"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Legs"] },
+                    { min: 2, max: 4, values: ["2\u20134", "Torso"] },
+                    { min: 5, max: 5, values: ["5", "Arm"] },
+                    { min: 6, max: 6, values: ["6", "Head"] },
+                ],
+                notes: [
+                    ["When to Roll", "Roll when a human target is hit by a ranged attack, in close combat, or by an explosion. If you fired a called shot or struck an aimed blow, you can choose the hit location freely."],
+                    ["Pushing", "Never roll hit location for damage from pushing."],
+                ]
+            },
+            {
+                name: "Critical Injury \u2013 Head",
+                dice: "1d10",
+                columns: ["Roll", "Injury", "Lethal", "Time Limit", "Effects", "Heal Time"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Ear slashed", "No", "\u2013", "RECON \u22121", "D6"] },
+                    { min: 2, max: 2, values: ["2", "Concussion", "No", "\u2013", "CUF \u22121", "D6"] },
+                    { min: 3, max: 3, values: ["3", "Nose crushed", "No", "\u2013", "RECON and PERSUASION \u22121", "2D6"] },
+                    { min: 4, max: 4, values: ["4", "Shattered teeth", "No", "\u2013", "PERSUASION \u22122", "3D6"] },
+                    { min: 5, max: 5, values: ["5", "Cracked skull", "Yes", "Shift", "CUF \u22122", "2D6"] },
+                    { min: 6, max: 6, values: ["6", "Gouged eye", "Yes", "Shift", "RANGED COMBAT and RECON \u22122", "Permanent"] },
+                    { min: 7, max: 7, values: ["7", "Brain hemorrhage", "Yes", "Stretch", "All INT skills \u22122", "3D6"] },
+                    { min: 8, max: 8, values: ["8", "Shattered neck", "Yes", "Stretch", "Fall down, immobile", "4D6"] },
+                    { min: 9, max: 9, values: ["9", "Crushed windpipe", "Yes", "Round", "STAMINA and MOBILITY \u22122", "3D6"] },
+                    { min: 10, max: 10, values: ["10", "Brains blown out", "Yes", "\u2013", "Instant death", "\u2013"] },
+                ],
+                notes: [
+                    ["Severe Injuries", "If damage exceeds the crit threshold by 2+ steps, roll two D10s and use the highest. By 4+ steps, roll three D10s and use the highest."],
+                    ["Lethal", "If lethal, you must make a death save (STAMINA) when the time limit expires. If you fail, you die. If you succeed, you must save again when the time limit expires again."],
+                ]
+            },
+            {
+                name: "Critical Injury \u2013 Torso",
+                dice: "1d10",
+                columns: ["Roll", "Injury", "Lethal", "Time Limit", "Effects", "Heal Time"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Snapped collarbone", "No", "\u2013", "MOBILITY \u22121", "D6"] },
+                    { min: 2, max: 2, values: ["2", "Broken ribs", "No", "\u2013", "STAMINA and MOBILITY \u22121", "2D6"] },
+                    { min: 3, max: 3, values: ["3", "Cracked pelvis", "No", "\u2013", "MOBILITY \u22122", "3D6"] },
+                    { min: 4, max: 4, values: ["4", "Bleeding gut", "Yes", "Shift", "STAMINA \u22122, any MOBILITY roll reopens wound", "2D6"] },
+                    { min: 5, max: 5, values: ["5", "Ruptured kidney", "Yes", "Shift", "1 damage at any MOBILITY roll", "2D6"] },
+                    { min: 6, max: 6, values: ["6", "Punctured lung", "Yes", "Shift", "STAMINA and MOBILITY \u22122", "2D6"] },
+                    { min: 7, max: 7, values: ["7", "Cracked spine", "Yes", "Shift", "Fall down, immobile", "4D6"] },
+                    { min: 8, max: 8, values: ["8", "Torn intestines", "Yes", "Stretch", "STAMINA \u22121 and disease virulence \u22123, incubation one shift", "2D6"] },
+                    { min: 9, max: 9, values: ["9", "Internal bleeding", "Yes", "Round", "Fall down, cannot run, only crawl", "3D6"] },
+                    { min: 10, max: 10, values: ["10", "Heart impaled", "Yes", "\u2013", "Instant death", "\u2013"] },
+                ],
+                notes: [
+                    ["Severe Injuries", "If damage exceeds the crit threshold by 2+ steps, roll two D10s and use the highest. By 4+ steps, roll three D10s and use the highest."],
+                    ["Lethal", "If lethal, you must make a death save (STAMINA) when the time limit expires. If you fail, you die. If you succeed, you must save again when the time limit expires again."],
+                ]
+            },
+            {
+                name: "Critical Injury \u2013 Legs",
+                dice: "1d10",
+                columns: ["Roll", "Injury", "Lethal", "Time Limit", "Effects", "Heal Time"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Crushed toes", "No", "\u2013", "Running becomes a slow action", "2D6"] },
+                    { min: 2, max: 2, values: ["2", "Dislocated knee", "No", "\u2013", "Can\u2019t run, only crawl", "D6"] },
+                    { min: 3, max: 3, values: ["3", "Severed tendons", "No", "\u2013", "Running is slow action, MOBILITY \u22122", "2D6"] },
+                    { min: 4, max: 4, values: ["4", "Broken shinbone", "No", "\u2013", "Can\u2019t run, only crawl", "3D6"] },
+                    { min: 5, max: 5, values: ["5", "Crushed ankle", "No", "\u2013", "Can\u2019t run, MOBILITY \u22122", "2D6"] },
+                    { min: 6, max: 6, values: ["6", "Cracked hip", "No", "\u2013", "Can\u2019t run, MOBILITY \u22122", "3D6"] },
+                    { min: 7, max: 7, values: ["7", "Thigh gash", "Yes", "Shift", "Running is slow action, MOBILITY \u22122", "D6"] },
+                    { min: 8, max: 8, values: ["8", "Shattered knee", "Yes", "Shift", "Can\u2019t run, MOBILITY \u22122", "3D6"] },
+                    { min: 9, max: 9, values: ["9", "Arterial bleeding", "Yes", "Stretch", "Running becomes a slow action", "2D6"] },
+                    { min: 10, max: 10, values: ["10", "Severed leg", "Yes", "Stretch", "Can\u2019t run, MOBILITY \u22122", "Permanent"] },
+                ],
+                notes: [
+                    ["Leg Crits", "In addition to the listed effects, all leg crits make you fall down."],
+                    ["Severe Injuries", "If damage exceeds the crit threshold by 2+ steps, roll two D10s and use the highest. By 4+ steps, roll three D10s and use the highest."],
+                    ["Lethal", "If lethal, you must make a death save (STAMINA) when the time limit expires. If you fail, you die. If you succeed, you must save again when the time limit expires again."],
+                ]
+            },
+            {
+                name: "Critical Injury \u2013 Arms",
+                dice: "1d10",
+                columns: ["Roll", "Injury", "Lethal", "Time Limit", "Effects", "Heal Time"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Dislocated shoulder", "No", "\u2013", "RANGED COMBAT \u22122 with two-handed weapons", "D6"] },
+                    { min: 2, max: 2, values: ["2", "Slashed forearm", "No", "\u2013", "RANGED COMBAT \u22122 with two-handed weapons", "2D6"] },
+                    { min: 3, max: 3, values: ["3", "Crushed fingers", "No", "\u2013", "RANGED COMBAT \u22122 with two-handed weapons", "3D6"] },
+                    { min: 4, max: 4, values: ["4", "Dislocated elbow", "No", "\u2013", "Two-handed weapons cannot be used", "D6"] },
+                    { min: 5, max: 5, values: ["5", "Broken forearm", "No", "\u2013", "Two-handed weapons cannot be used", "2D6"] },
+                    { min: 6, max: 6, values: ["6", "Crushed wrist", "No", "\u2013", "Two-handed weapons cannot be used", "3D6"] },
+                    { min: 7, max: 7, values: ["7", "Bleeding shoulder", "Yes", "Shift", "RANGED COMBAT \u22122 with two-handed weapons", "D6"] },
+                    { min: 8, max: 8, values: ["8", "Shattered elbow", "Yes", "Shift", "Two-handed weapons cannot be used", "3D6"] },
+                    { min: 9, max: 9, values: ["9", "Arterial bleeding", "Yes", "Stretch", "RANGED COMBAT \u22122 with two-handed weapons", "2D6"] },
+                    { min: 10, max: 10, values: ["10", "Severed arm", "Yes", "Stretch", "Two-handed weapons cannot be used", "Permanent"] },
+                ],
+                notes: [
+                    ["Arm Crits", "In addition to the listed effects, all arm crits automatically make you drop any held items."],
+                    ["Severe Injuries", "If damage exceeds the crit threshold by 2+ steps, roll two D10s and use the highest. By 4+ steps, roll three D10s and use the highest."],
+                    ["Lethal", "If lethal, you must make a death save (STAMINA) when the time limit expires. If you fail, you die. If you succeed, you must save again when the time limit expires again."],
+                ]
+            },
+            {
+                name: "Critical Injury \u2013 Mental",
+                dice: "1d10",
+                columns: ["Roll", "Injury", "Effects"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Nervous tremble", "RANGED COMBAT and DRIVING \u22121"] },
+                    { min: 2, max: 2, values: ["2", "Anxious", "RECON and SURVIVAL \u22121"] },
+                    { min: 3, max: 3, values: ["3", "Sullen", "COMMAND and PERSUASION \u22121"] },
+                    { min: 4, max: 4, values: ["4", "Nightmares", "CUF roll every shift spent sleeping \u2013 if failed, the sleep doesn\u2019t count"] },
+                    { min: 5, max: 5, values: ["5", "Nocturnal", "Sleep only possible during morning and day shifts"] },
+                    { min: 6, max: 6, values: ["6", "Phobia", "1 stress each round in the same hex as the object of phobia (related to trauma)"] },
+                    { min: 7, max: 7, values: ["7", "Alcoholism", "1 point of stress and no stress recovery each shift without drinking alcohol"] },
+                    { min: 8, max: 8, values: ["8", "Paranoia", "Effects are to be roleplayed"] },
+                    { min: 9, max: 9, values: ["9", "Psychosis", "EMP roll (attribute only) in stressful situations, failure triggers violent rampage"] },
+                    { min: 10, max: 10, values: ["10", "Catatonic", "Immobile and non-responsive"] },
+                ],
+            },
+            {
+                name: "Camp Mishaps",
+                dice: "1d10",
+                columns: ["Roll", "Mishap", "Effect"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "Food Spoiled", "Your food has rotted or been infected by insects. Half the rations you are carrying are spoiled."] },
+                    { min: 2, max: 2, values: ["2", "Flooding", "Heavy rainfall starts in the middle of the night. The camp is flooded and everything gets soaking wet. All characters must roll for STAMINA to avoid becoming hypothermic, and no one gets any sleep."] },
+                    { min: 3, max: 3, values: ["3", "Fire Dies", "The firewood is wet, and your campfire goes out. Except in warm weather, everyone must roll for STAMINA to avoid becoming hypothermic."] },
+                    { min: 4, max: 4, values: ["4", "Fire!", "The flames from your campfire spread out of control. If you have a tent, it\u2019s destroyed. Each character suffers the effects of fire with intensity D, and must make a MOBILITY roll to save their gear. Failure means that one piece of equipment (Referee\u2019s discretion) is lost in the fire."] },
+                    { min: 5, max: 5, values: ["5", "Ants", "Your camp sits right in the middle of an ant road. You each suffer 1 point of stress and no one gets any sleep here."] },
+                    { min: 6, max: 6, values: ["6", "Lice", "A randomly selected character has caught lice. It itches horribly, and they get a rash all over their body. The victim suffers 1 point of stress each day and cannot sleep this day. A successful MEDICAL AID roll stops the effect."] },
+                    { min: 7, max: 7, values: ["7", "Mosquito Swarm", "A large swarm of mosquitoes attacks the camp, driving everyone crazy. Roll two D6 base dice for each character \u2013 for each bane rolled, the character suffers 1 point of stress."] },
+                    { min: 8, max: 8, values: ["8", "Savage Animal", "A starving wolf, dog, boar or even a bear attacks the camp. For stats, see page 38 of the Referee\u2019s Manual."] },
+                    { min: 9, max: 9, values: ["9", "Lost Gear", "A randomly selected character has lost a piece of gear. The Referee decides what was lost, and if it can be found."] },
+                    { min: 10, max: 10, values: ["10", "Broken Gear", "An item belonging to a randomly selected character is broken. The Referee decides what item it is. The item can be repaired with a TECH roll."] },
+                ],
+                notes: [
+                    ["Making Camp", "Make a SURVIVAL roll. If your roll succeeds, you find a sheltered place to spend the night. If your roll fails, you set up camp anyway, but the Referee makes a hidden roll on this mishap table. Re-roll if the mishap is not applicable to the situation."],
                 ]
             },
             {
@@ -471,6 +643,14 @@
             }
 
             html += '</tbody></table>';
+
+            if (table.footnotes && table.footnotes.length > 0) {
+                html += '<div class="table-footnotes">';
+                for (const fn of table.footnotes) {
+                    html += '<p>' + escapeHtml(fn) + '</p>';
+                }
+                html += '</div>';
+            }
 
             if (table.notes && table.notes.length > 0) {
                 html += '<div class="table-notes"><dl>';
