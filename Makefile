@@ -4,9 +4,6 @@
 SRC_DIR := src
 ARTICLES_SRC := $(SRC_DIR)/articles
 
-# UV command prefix
-UV := uv run
-
 # Default target
 all: clean-orphans build-articles update-index
 
@@ -19,30 +16,33 @@ articles:
 
 # Update index.html with articles section
 update-index: build-articles
-	$(UV) scripts/build_index.py $(ARTICLES_SRC) index.html
+	uv run scripts/build_index.py $(ARTICLES_SRC) index.html
 
 
 # Build all articles
 build-articles: | articles
-	$(UV) scripts/build_all_articles.py $(ARTICLES_SRC) articles
+	uv run scripts/build_all_articles.py $(ARTICLES_SRC) articles
 
 
 
 # Clean orphaned HTML files (articles with no corresponding markdown)
 clean-orphans:
-	$(UV) scripts/clean_orphans.py articles $(ARTICLES_SRC)
+	uv run scripts/clean_orphans.py articles $(ARTICLES_SRC)
 
 # Clean build files
 clean:
 	rm -rf articles/
 
-# Lint Python code with Ruff
+# Lint Python code with Ruff and JavaScript with oxlint
 lint:
-	$(UV) ruff check .
+	uv run ruff check .
+	bunx oxlint apps/
+	bunx oxfmt --check apps/*.js
 
 # Format Python code with Ruff
 format:
-	$(UV) ruff format .
+	uv run ruff format .
+	bunx oxfmt apps/*.js
 
 # Help target
 help:

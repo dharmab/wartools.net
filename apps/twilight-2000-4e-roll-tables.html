@@ -290,18 +290,8 @@
         </div>
     </div>
 
-    <script>
-        // Table data registry.
-        // Each table has:
-        //   name: string - display name
-        //   dice: string - dice notation, e.g. "1d6", "2d6", "1d10"
-        //   columns: string[] - column headers (first column is always the roll range)
-        //   rows: { min: number, max: number, values: string[] }[]
-        //     - min/max define the roll range that selects this row
-        //     - values has one entry per column
-        const TABLES = [
-            {
-                name: "Weather",
+    <script src="twilight-2000-4e-roll-tables.js"></script>
+
                 dice: "1d6",
                 columns: ["Roll", "Result"],
                 rows: [

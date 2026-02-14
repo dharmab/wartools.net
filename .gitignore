@@ -31,3 +31,4 @@ build/
 
 *.pdf
 .claude
+node_modules/
