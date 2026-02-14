@@ -609,6 +609,27 @@
                 ]
             },
             {
+                name: "Radio Chatter",
+                dice: "1d10",
+                columns: ["Roll", "Transmission"],
+                rows: [
+                    { min: 1, max: 1, values: ["1", "The airwaves are quiet as the grave, and the PCs hear nothing but static."] },
+                    { min: 2, max: 2, values: ["2", "The PCs hear sporadic communication between Soviet army units in the area. If the PCs speak Russian and make a COMMAND roll, they can gain valuable intelligence about the local Soviet forces."] },
+                    { min: 3, max: 3, values: ["3", "The PCs overhear a conversation between the nearest Soviet HQ and a field commander. If the PCs know Russian, they will understand that the field commander is refusing to obey orders and effectively deserting."] },
+                    { min: 4, max: 4, values: ["4", "The PCs pick up a desperate plea for help from a civilian family in a farm nearby, being attacked by marauders. The civilians desperately beg for help. If the PCs go to their aid, it plays out like the Ace of Hearts encounter."] },
+                    { min: 5, max: 5, values: ["5", "A unit of US stragglers (PCx1 in number) call for help. They are under heavy fire from a larger Soviet force (PCx3 in number, including an APC or even a tank). If the PCs go to their aid, they will be getting themselves into a very dangerous fight."] },
+                    { min: 6, max: 6, values: ["6", "A badly wounded American soldier calls for help. They are close, but the PCs have heard of traps like this before. Do they aid the supposedly fallen comrade or ignore their dying plea?"] },
+                    { min: 7, max: 7, values: ["7", "The PCs pick up the chatter of a group of Polish [Swedish] partisans (PCx3) preparing to execute American stragglers (PCx1) for unspecified war crimes. It is unclear whether these Americans are guilty. Do the PCs intervene?"] },
+                    { min: 8, max: 8, values: ["8", "The radio picks up what appears to be a rock station, complete with DJ. It\u2019s a taste of the old days, but peppered with supposed \u201cnews\u201d about current weather, military forces in the area, and local news. Do the PCs believe the voice? Can they triangulate the location of the broadcast?"] },
+                    { min: 9, max: 9, values: ["9", "A fervent storm of prophetic, revivalist Biblical mish-mash pours forth from the radio. Whoever is broadcasting speaks German, Russian, and Polish [Swedish]. They speak of the end times and \u201cThe Reckoning Ahead.\u201d At the end, the voice calls all the faithful to a familiar landmark within 2D6 hexes. The \u201cgathering\u201d takes place in a few days."] },
+                    { min: 10, max: 10, values: ["10", "A cryptic voice repeats a string of seemingly random numbers and letters, then suddenly utters the words \u201cOperation Reset.\u201d Then, the message starts over. The message is a code, but the PCs have no way of deciphering it at this point."] },
+                ],
+                notes: [
+                    ["Radio Chatter", "If the PCs have access to a radio, and one character spends a shift monitoring it, roll on this table to see if they pick up any chatter. A PC can\u2019t do anything else (such as marching or scrounging) while manning the radio."],
+                    ["Range", "Most radios that the PCs will likely have access to will have a range of 1\u20133 hexes. Keep this in mind when deciding the location from which a transmission is sent."],
+                ]
+            },
+            {
                 name: "Stationary Encounters",
                 dice: "1d6",
                 modifierInput: { label: "Days Stationary", min: 0 },
