@@ -200,6 +200,54 @@
             margin-bottom: 4px;
         }
 
+        .modifier-input {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .modifier-input.visible {
+            display: flex;
+        }
+
+        .modifier-input label {
+            font-weight: bold;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .modifier-input .modifier-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border-medium);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modifier-input .modifier-btn:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .modifier-input .modifier-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            min-width: 30px;
+            text-align: center;
+        }
+
         .empty-state {
             text-align: center;
             color: var(--text-muted);
@@ -213,7 +261,7 @@
         <nav><a href="../index.html">&larr; WARTOOLS.NET</a></nav>
         <header>
             <h1>Twilight: 2000 Roll Tables</h1>
-            <p class="subtitle">Web versions of roll tables from the Twilight: 2000 4th Edition Player's Manual</p>
+            <p class="subtitle">Web versions of roll tables from the Twilight: 2000 4th Edition Player's and Referee's Manuals</p>
         </header>
 
         <div class="card">
@@ -224,6 +272,12 @@
 
         <div class="card">
             <div class="roll-section">
+                <div class="modifier-input" id="modifier-input">
+                    <label id="modifier-label"></label>
+                    <button class="modifier-btn" onclick="adjustModifier(-1)">&minus;</button>
+                    <span class="modifier-value" id="modifier-value">0</span>
+                    <button class="modifier-btn" onclick="adjustModifier(1)">+</button>
+                </div>
                 <button class="roll-btn" id="roll-btn" onclick="roll()">Roll</button>
                 <div class="roll-result-display" id="roll-result"></div>
             </div>
@@ -554,9 +608,26 @@
                     ["Value", "The Value column is the approximate value of the item in bullets."],
                 ]
             },
+            {
+                name: "Stationary Encounters",
+                dice: "1d6",
+                modifierInput: { label: "Days Stationary", min: 0 },
+                columns: ["Roll", "Encounter"],
+                rows: [
+                    { min: 1, max: 4, values: ["1\u20134", "Draw an encounter normally. Only encounters marked with the campsite symbol are triggered."] },
+                    { min: 5, max: 5, values: ["5", "Refugees: 2D6 starving and hypothermic refugees arrive, having seen the PCs pass or heard rumors of their presence. They ask for food and protection. If the PCs give it to them, they will be grateful and can share a rumor or two (page 51). If the PCs chase them off, the refugees might tip off a local faction about their presence \u2013 add an additional +1 on the next roll on this table. The refugees can be used for replacement PCs, if needed."] },
+                    { min: 6, max: 6, values: ["6", "Stragglers: D6 stragglers of the same nationality as some of the PCs appear at the camp. The soldiers ask for food and ammo. They act friendly and will share rumors, but will take the first chance to steal from the PCs and leave. The stragglers can be used for replacement PCs, if needed."] },
+                    { min: 7, max: 7, values: ["7", "Scouts: A group of scouts sent from a faction nearby, equal in number to the PCs, arrives to observe them. They can be marauder or military. Allow the PCs a RECON roll to spot the scouts (opposed roll). If spotted, the scouts might attack, retreat, or negotiate, depending on their goals."] },
+                    { min: 8, max: 100, values: ["8+", "Large Force: A larger unit from a nearby faction, twice as many soldiers as the PCs and equipped with vehicles and/or heavy weapons, arrives. They demand that the PCs surrender to them, and they can attack if not obeyed. The PCs will need to flee, fight, or talk their way out of the situation. If combat breaks out, the enemies will retreat if they lose half of their number, but might then come back with a larger force the next time you roll this encounter."] },
+                ],
+                notes: [
+                    ["Stationary Encounters", "When the PCs remain in one place for an extended period of time, roll on this table once per day, adding the number of days the PCs have remained stationary to the roll."],
+                ]
+            },
         ];
 
         let currentTableIndex = -1;
+        let currentModifier = 0;
 
         function parseDice(notation) {
             const match = notation.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
@@ -606,18 +677,37 @@
             });
         }
 
+        function adjustModifier(delta) {
+            const table = TABLES[currentTableIndex];
+            if (!table || !table.modifierInput) return;
+            const min = table.modifierInput.min !== undefined ? table.modifierInput.min : 0;
+            currentModifier = Math.max(min, currentModifier + delta);
+            document.getElementById('modifier-value').textContent = currentModifier;
+        }
+
         function selectTable() {
             const select = document.getElementById('table-select');
             const val = select.value;
             currentTableIndex = val === '' ? -1 : parseInt(val);
+            currentModifier = 0;
             renderTable();
             document.getElementById('roll-result').textContent = '';
+
+            const modifierEl = document.getElementById('modifier-input');
+            if (currentTableIndex >= 0 && TABLES[currentTableIndex].modifierInput) {
+                const cfg = TABLES[currentTableIndex].modifierInput;
+                document.getElementById('modifier-label').textContent = cfg.label + ':';
+                document.getElementById('modifier-value').textContent = currentModifier;
+                modifierEl.classList.add('visible');
+            } else {
+                modifierEl.classList.remove('visible');
+            }
         }
 
         function renderTable() {
             const container = document.getElementById('table-container');
             if (currentTableIndex < 0) {
-                container.innerHTML = '<div class="empty-state">Web versions of roll tables from the Twilight: 2000 4th Edition Player\u2019s Manual. Select a table above to get started.</div>';
+                container.innerHTML = '<div class="empty-state">Web versions of roll tables from the Twilight: 2000 4th Edition Player\u2019s and Referee\u2019s Manuals. Select a table above to get started.</div>';
                 document.getElementById('roll-btn').textContent = 'Roll';
                 document.getElementById('roll-btn').disabled = true;
                 return;
@@ -678,11 +768,14 @@
             if (currentTableIndex < 0) return;
 
             const table = TABLES[currentTableIndex];
-            const total = rollDice(table.dice);
+            const diceResult = rollDice(table.dice);
+            const modifier = table.modifierInput ? currentModifier : 0;
+            const total = diceResult + modifier;
 
             let displayTotal = total;
-            if (table.dice.includes('d100') && total === 100) displayTotal = '00';
+            if (table.dice.includes('d100') && diceResult === 100) displayTotal = '00';
             else if (table.dice.includes('d100')) displayTotal = String(total).padStart(2, '0');
+            else if (modifier > 0) displayTotal = diceResult + ' + ' + modifier + ' = ' + total;
             document.getElementById('roll-result').textContent = displayTotal;
 
             // Clear previous highlights
