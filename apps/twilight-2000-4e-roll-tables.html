@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twilight 2000 Roll Tables - WARTOOLS.NET</title>
+    <title>Twilight: 2000 Roll Tables - WARTOOLS.NET</title>
     <link rel="stylesheet" href="../style.css">
     <style>
         body {
@@ -212,8 +212,8 @@
     <div class="container">
         <nav><a href="../index.html">&larr; WARTOOLS.NET</a></nav>
         <header>
-            <h1>Twilight 2000 Roll Tables</h1>
-            <p class="subtitle">Roll tables for Twilight 2000 4th Edition</p>
+            <h1>Twilight: 2000 Roll Tables</h1>
+            <p class="subtitle">Web versions of roll tables from the Twilight: 2000 4th Edition Player's Manual</p>
         </header>
 
         <div class="card">
@@ -231,7 +231,7 @@
 
         <div class="card">
             <div id="table-container">
-                <div class="empty-state">No tables loaded.</div>
+                <div class="empty-state">Web versions of roll tables from the Twilight: 2000 4th Edition Player's Manual. Select a table above to get started.</div>
             </div>
         </div>
     </div>
@@ -617,7 +617,7 @@
         function renderTable() {
             const container = document.getElementById('table-container');
             if (currentTableIndex < 0) {
-                container.innerHTML = '';
+                container.innerHTML = '<div class="empty-state">Web versions of roll tables from the Twilight: 2000 4th Edition Player\u2019s Manual. Select a table above to get started.</div>';
                 document.getElementById('roll-btn').textContent = 'Roll';
                 document.getElementById('roll-btn').disabled = true;
                 return;
