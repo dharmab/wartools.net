@@ -28,3 +28,6 @@ env/
 *.egg-info/
 dist/
 build/
+
+*.pdf
+.claude
