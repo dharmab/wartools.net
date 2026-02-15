@@ -19,6 +19,7 @@ function escapeHtml(text) {
 const DIE_LEVELS = ["F", "D", "C", "B", "A"];
 const DIE_SIZES = { F: 0, D: 6, C: 8, B: 10, A: 12 };
 const DIE_LABELS = { F: "\u2014", D: "D6", C: "D8", B: "D10", A: "D12" };
+const LEVEL_LABELS = { F: "F", D: "D", C: "C", B: "B", A: "A" };
 
 const ATTRIBUTES = ["STR", "AGL", "INT", "EMP"];
 const ATTR_NAMES = {
@@ -45,41 +46,101 @@ const SKILLS = [
 
 const UNIVERSAL_SKILLS = ["Stamina", "Mobility", "Driving"];
 
-const ENLISTED_RANKS = [
-  "Private",
-  "Corporal",
-  "Sergeant",
-  "Staff Sergeant",
-  "Sergeant Major",
-];
-const OFFICER_RANKS = [
-  "2nd Lieutenant",
-  "1st Lieutenant",
-  "Captain",
-  "Major",
-  "Colonel",
-];
+const MILITARY_BRANCHES = {
+  "United States Army/Marine Corps": {
+    enlisted: [
+      "Private",
+      "Private First Class",
+      "Corporal",
+      "Sergeant",
+      "Staff Sergeant",
+      "Sergeant First Class",
+      "Master Sergeant",
+      "First Sergeant",
+      "Sergeant Major",
+    ],
+    officer: [
+      "2nd Lieutenant",
+      "1st Lieutenant",
+      "Captain",
+      "Major",
+      "Lieutenant Colonel",
+      "Colonel",
+    ],
+  },
+  "Russian Armed Forces": {
+    enlisted: [
+      "Ryadovoy",
+      "Ryadovoy",
+      "Efreitor",
+      "Mladshiy Serzhant",
+      "Serzhant",
+      "Starshiy Serzhant",
+      "Starshiy Serzhant",
+      "Starshina",
+      "Starshina",
+    ],
+    officer: [
+      "Mladshiy Leytenant",
+      "Starshiy Leytenant",
+      "Kapitan",
+      "Mayor",
+      "Podpolkovnik",
+      "Polkovnik",
+    ],
+  },
+  "Polish Armed Forces": {
+    enlisted: [
+      "Szeregowy",
+      "Starszy szeregowy",
+      "Kapral",
+      "Starszy kapral",
+      "Sier\u017cant",
+      "Starszy sier\u017cant",
+      "M\u0142odszy chor\u0105\u017cy",
+      "Chor\u0105\u017cy",
+      "Starszy chor\u0105\u017cy",
+    ],
+    officer: [
+      "Podporucznik",
+      "Porucznik",
+      "Kapitan",
+      "Major",
+      "Podpu\u0142kownik",
+      "Pu\u0142kownik",
+    ],
+  },
+  "Swedish Armed Forces": {
+    enlisted: [
+      "Menig",
+      "Menig",
+      "Korpral",
+      "Furir",
+      "Sergeant",
+      "Sergeant",
+      "Sergeant",
+      "Sergeant",
+      "Sergeant",
+    ],
+    officer: [
+      "F\u00e4nrik",
+      "L\u00f6jtnant",
+      "Kapten",
+      "Major",
+      "\u00d6verstel\u00f6jtnant",
+      "\u00d6verste",
+    ],
+  },
+};
 
 // ─── SPECIALTIES BY SKILL ───
 
 const SPECIALTIES = {
   "Close Combat": ["Brawler", "Melee", "Killer", "Martial Artist"],
-  "Heavy Weapons": [
-    "Machinegunner",
-    "Launcher Crew",
-    "Redleg",
-    "Vehicle Gunner",
-  ],
+  "Heavy Weapons": ["Machinegunner", "Launcher Crew", "Redleg", "Vehicle Gunner"],
   Stamina: ["Builder", "Load Carrier", "NBC Specialist", "Ranger", "SERE"],
   Driving: ["Biker", "Boatman", "Pilot", "Racer", "Tanker"],
-  Mobility: [
-    "Diver",
-    "Mountaineer",
-    "Paratrooper",
-    "Pitcher",
-    "Rider",
-    "Runner",
-  ],
+  Mobility: ["Diver", "Mountaineer", "Paratrooper", "Pitcher", "Rider", "Runner"],
   "Ranged Combat": ["Archer", "Reloader", "Rifleman", "Sidearms", "Sniper"],
   Recon: [
     "Combat Awareness",
@@ -121,14 +182,7 @@ const SPECIALTIES = {
     "General Practitioner",
     "Veterinarian",
   ],
-  Persuasion: [
-    "Interrogator",
-    "Linguist",
-    "Musician",
-    "Psy Ops",
-    "Teacher",
-    "Trader",
-  ],
+  Persuasion: ["Interrogator", "Linguist", "Musician", "Psy Ops", "Teacher", "Trader"],
 };
 
 // ─── CHILDHOOD DATA ───
@@ -139,84 +193,42 @@ const CHILDHOODS = [
     name: "Rural",
     desc: "You grew up on a farm or in a small rural community.",
     skill: "Survival",
-    specialtyTable: [
-      "Farmer",
-      "Fisher",
-      "Forager",
-      "Hunter",
-      "Navigator",
-      "Rider",
-    ],
+    specialtyTable: ["Farmer", "Fisher", "Forager", "Hunter", "Navigator", "Rider"],
   },
   {
     roll: 2,
     name: "Suburban",
     desc: "You grew up in a quiet suburb.",
     skill: "Persuasion",
-    specialtyTable: [
-      "Linguist",
-      "Musician",
-      "Teacher",
-      "Trader",
-      "Counselor",
-      "Cook",
-    ],
+    specialtyTable: ["Linguist", "Musician", "Teacher", "Trader", "Counselor", "Cook"],
   },
   {
     roll: 3,
     name: "Urban",
     desc: "You grew up in the heart of a big city.",
     skill: "Recon",
-    specialtyTable: [
-      "Investigator",
-      "Scout",
-      "Infiltrator",
-      "Computers",
-      "Locksmith",
-      "Brawler",
-    ],
+    specialtyTable: ["Investigator", "Scout", "Infiltrator", "Computers", "Locksmith", "Brawler"],
   },
   {
     roll: 4,
     name: "Immigrant",
     desc: "Your family moved to a new country when you were young.",
     skill: "Persuasion",
-    specialtyTable: [
-      "Linguist",
-      "Cook",
-      "Trader",
-      "Musician",
-      "Teacher",
-      "Scrounger",
-    ],
+    specialtyTable: ["Linguist", "Cook", "Trader", "Musician", "Teacher", "Scrounger"],
   },
   {
     roll: 5,
     name: "Military Brat",
     desc: "You grew up on military bases around the world.",
     skill: "Mobility",
-    specialtyTable: [
-      "Runner",
-      "Pitcher",
-      "Rider",
-      "Combat Awareness",
-      "Brawler",
-      "Linguist",
-    ],
+    specialtyTable: ["Runner", "Pitcher", "Rider", "Combat Awareness", "Brawler", "Linguist"],
   },
   {
     roll: 6,
     name: "Privileged",
     desc: "You grew up in a wealthy family with every advantage.",
     skill: "Driving",
-    specialtyTable: [
-      "Racer",
-      "Pilot",
-      "Boatman",
-      "Computers",
-      "Musician",
-      "Rider",
-    ],
+    specialtyTable: ["Racer", "Pilot", "Boatman", "Computers", "Musician", "Rider"],
   },
 ];
 
@@ -228,19 +240,12 @@ const CAREERS = [
     name: "Combat Arms",
     category: "Military",
     subcategory: "Enlisted",
-    startingRank: "Private",
+    startingRankIndex: 0,
     rankTrack: "enlisted",
     reqText: "None",
     reqCheck: () => true,
     skills: ["Ranged Combat", "Close Combat", "Recon"],
-    specialtyTable: [
-      "Rifleman",
-      "Machinegunner",
-      "Combat Awareness",
-      "Brawler",
-      "Scout",
-      "Sniper",
-    ],
+    specialtyTable: ["Rifleman", "Machinegunner", "Combat Awareness", "Brawler", "Scout", "Sniper"],
     gear: [
       "Assault rifle with 2 extra magazines",
       "Body armor",
@@ -253,7 +258,7 @@ const CAREERS = [
     name: "Combat Support",
     category: "Military",
     subcategory: "Enlisted",
-    startingRank: "Private",
+    startingRankIndex: 1,
     rankTrack: "enlisted",
     reqText: "None",
     reqCheck: () => true,
@@ -278,7 +283,7 @@ const CAREERS = [
     name: "Combat Service Support",
     category: "Military",
     subcategory: "Enlisted",
-    startingRank: "Private",
+    startingRankIndex: 1,
     rankTrack: "enlisted",
     reqText: "None",
     reqCheck: () => true,
@@ -291,30 +296,18 @@ const CAREERS = [
       "Gunsmith",
       "Electrician",
     ],
-    gear: [
-      "Pistol with 2 extra magazines",
-      "Backpack",
-      "Toolbox",
-      "First aid kit",
-    ],
+    gear: ["Pistol with 2 extra magazines", "Backpack", "Toolbox", "First aid kit"],
   },
   {
     name: "Special Operations",
     category: "Military",
     subcategory: "Enlisted",
-    startingRank: "Sergeant",
+    startingRankIndex: 3,
     rankTrack: "enlisted",
     reqText: "At least one Military term",
     reqCheck: () => countMilitaryTerms() >= 1,
     skills: ["Ranged Combat", "Close Combat", "Survival"],
-    specialtyTable: [
-      "Sniper",
-      "Paratrooper",
-      "Diver",
-      "Killer",
-      "SERE",
-      "Infiltrator",
-    ],
+    specialtyTable: ["Sniper", "Paratrooper", "Diver", "Killer", "SERE", "Infiltrator"],
     gear: [
       "Assault rifle with suppressor and 3 extra magazines",
       "Pistol with 2 extra magazines",
@@ -327,7 +320,7 @@ const CAREERS = [
     name: "Officer",
     category: "Military",
     subcategory: "Officer",
-    startingRank: "2nd Lieutenant",
+    startingRankIndex: 0,
     rankTrack: "officer",
     reqText: "INT B+ and at least one Education term",
     reqCheck: () => dieIndex(char.attributes.INT) >= 3 && countEducationTerms() >= 1,
@@ -340,22 +333,17 @@ const CAREERS = [
       "Psy Ops",
       "Sidearms",
     ],
-    gear: [
-      "Pistol with 2 extra magazines",
-      "Binoculars",
-      "Map and compass",
-      "Backpack",
-    ],
+    gear: ["Pistol with 2 extra magazines", "Binoculars", "Map and compass", "Backpack"],
   },
   // POLICE
   {
     name: "Police Officer",
     category: "Police",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
-    reqText: "No prior Crime career",
-    reqCheck: () => !hasCrimeCareer(),
+    reqText: "No prison record",
+    reqCheck: () => !hasPrisonTerm(),
     skills: ["Ranged Combat", "Persuasion", "Recon"],
     specialtyTable: [
       "Sidearms",
@@ -365,22 +353,16 @@ const CAREERS = [
       "Scout",
       "Rifleman",
     ],
-    gear: [
-      "Pistol with 2 extra magazines",
-      "Body armor",
-      "Flashlight",
-      "Handcuffs",
-    ],
+    gear: ["Pistol with 2 extra magazines", "Body armor", "Flashlight", "Handcuffs"],
   },
   {
     name: "Detective",
     category: "Police",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
-    reqText: "At least one Police term, EMP C+",
-    reqCheck: () =>
-      countCareerTerms("Police") >= 1 && dieIndex(char.attributes.EMP) >= 2,
+    reqText: "At least one Police term and EMP C+",
+    reqCheck: () => countCareerTerms("Police") >= 1 && dieIndex(char.attributes.EMP) >= 2,
     skills: ["Recon", "Persuasion", "Tech"],
     specialtyTable: [
       "Investigator",
@@ -396,20 +378,15 @@ const CAREERS = [
     name: "SWAT",
     category: "Police",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
-    reqText: "STR B+ and AGL B+",
+    reqText: "At least one Police term, STR B+ and AGL B+",
     reqCheck: () =>
-      dieIndex(char.attributes.STR) >= 3 && dieIndex(char.attributes.AGL) >= 3,
+      countCareerTerms("Police") >= 1 &&
+      dieIndex(char.attributes.STR) >= 3 &&
+      dieIndex(char.attributes.AGL) >= 3,
     skills: ["Ranged Combat", "Close Combat", "Mobility"],
-    specialtyTable: [
-      "Rifleman",
-      "Sniper",
-      "Brawler",
-      "Combat Awareness",
-      "Diver",
-      "Mountaineer",
-    ],
+    specialtyTable: ["Rifleman", "Sniper", "Brawler", "Combat Awareness", "Diver", "Mountaineer"],
     gear: [
       "Assault rifle with 3 extra magazines",
       "Pistol with 2 extra magazines",
@@ -423,79 +400,48 @@ const CAREERS = [
     name: "Gang Member",
     category: "Crime",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "No attribute at A",
-    reqCheck: () =>
-      ATTRIBUTES.every((a) => dieIndex(char.attributes[a]) < 4),
+    reqCheck: () => ATTRIBUTES.every((a) => dieIndex(char.attributes[a]) < 4),
     skills: ["Close Combat", "Ranged Combat", "Persuasion"],
-    specialtyTable: [
-      "Brawler",
-      "Sidearms",
-      "Melee",
-      "Interrogator",
-      "Scrounger",
-      "Rifleman",
-    ],
+    specialtyTable: ["Brawler", "Sidearms", "Melee", "Interrogator", "Scrounger", "Rifleman"],
     gear: ["Pistol with 1 extra magazine", "Knife", "Leather jacket"],
   },
   {
     name: "Burglar",
     category: "Crime",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "AGL C+ and INT C+",
-    reqCheck: () =>
-      dieIndex(char.attributes.AGL) >= 2 && dieIndex(char.attributes.INT) >= 2,
+    reqCheck: () => dieIndex(char.attributes.AGL) >= 2 && dieIndex(char.attributes.INT) >= 2,
     skills: ["Recon", "Tech", "Mobility"],
-    specialtyTable: [
-      "Locksmith",
-      "Infiltrator",
-      "Electrician",
-      "Scout",
-      "Runner",
-      "Computers",
-    ],
+    specialtyTable: ["Locksmith", "Infiltrator", "Electrician", "Scout", "Runner", "Computers"],
     gear: ["Lock picks", "Flashlight", "Backpack", "Knife"],
   },
   {
     name: "Hustler",
     category: "Crime",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "INT C+ and EMP C+",
-    reqCheck: () =>
-      dieIndex(char.attributes.INT) >= 2 && dieIndex(char.attributes.EMP) >= 2,
+    reqCheck: () => dieIndex(char.attributes.INT) >= 2 && dieIndex(char.attributes.EMP) >= 2,
     skills: ["Persuasion", "Recon", "Survival"],
-    specialtyTable: [
-      "Trader",
-      "Interrogator",
-      "Linguist",
-      "Scrounger",
-      "Investigator",
-      "Psy Ops",
-    ],
+    specialtyTable: ["Trader", "Interrogator", "Linguist", "Scrounger", "Investigator", "Psy Ops"],
     gear: ["Pistol with 1 extra magazine", "Flashy clothing", "Cash stash"],
   },
   {
     name: "Prisoner",
     category: "Crime",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "Forced entry after Crime career (D6 odd)",
     reqCheck: () => false, // Never voluntarily chosen
     skills: ["Close Combat", "Stamina", "Survival"],
-    specialtyTable: [
-      "Brawler",
-      "Load Carrier",
-      "Scrounger",
-      "Cook",
-      "Melee",
-      "Killer",
-    ],
+    specialtyTable: ["Brawler", "Load Carrier", "Scrounger", "Cook", "Melee", "Killer"],
     gear: ["Shiv"],
   },
   // INTELLIGENCE
@@ -503,11 +449,10 @@ const CAREERS = [
     name: "Agent",
     category: "Intelligence",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "INT B+ and at least one Education term",
-    reqCheck: () =>
-      dieIndex(char.attributes.INT) >= 3 && countEducationTerms() >= 1,
+    reqCheck: () => dieIndex(char.attributes.INT) >= 3 && countEducationTerms() >= 1,
     skills: ["Recon", "Persuasion", "Tech"],
     specialtyTable: [
       "Intelligence Analyst",
@@ -517,44 +462,25 @@ const CAREERS = [
       "Investigator",
       "Communications",
     ],
-    gear: [
-      "Pistol with 2 extra magazines",
-      "Forged documents",
-      "Radio",
-      "Disguise kit",
-    ],
+    gear: ["Pistol with 2 extra magazines", "Forged documents", "Radio", "Disguise kit"],
   },
   {
     name: "Assassin",
     category: "Intelligence",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "AGL B+ and at least one Intelligence term",
-    reqCheck: () =>
-      dieIndex(char.attributes.AGL) >= 3 &&
-      countCareerTerms("Intelligence") >= 1,
+    reqCheck: () => dieIndex(char.attributes.AGL) >= 3 && countCareerTerms("Intelligence") >= 1,
     skills: ["Ranged Combat", "Close Combat", "Recon"],
-    specialtyTable: [
-      "Sniper",
-      "Killer",
-      "Sidearms",
-      "Infiltrator",
-      "Locksmith",
-      "Martial Artist",
-    ],
-    gear: [
-      "Pistol with suppressor and 2 extra magazines",
-      "Knife",
-      "Garrote",
-      "Disguise kit",
-    ],
+    specialtyTable: ["Sniper", "Killer", "Sidearms", "Infiltrator", "Locksmith", "Martial Artist"],
+    gear: ["Pistol with suppressor and 2 extra magazines", "Knife", "Garrote", "Disguise kit"],
   },
   {
     name: "Paramilitary",
     category: "Intelligence",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "STR B+, AGL B+, and at least one Military term",
     reqCheck: () =>
@@ -582,45 +508,31 @@ const CAREERS = [
     name: "Driver",
     category: "Blue Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "AGL C+",
     reqCheck: () => dieIndex(char.attributes.AGL) >= 2,
     skills: ["Driving", "Tech", "Recon"],
-    specialtyTable: [
-      "Biker",
-      "Boatman",
-      "Pilot",
-      "Racer",
-      "Tanker",
-      "Mechanic",
-    ],
+    specialtyTable: ["Biker", "Boatman", "Pilot", "Racer", "Tanker", "Mechanic"],
     gear: ["Personal vehicle", "Toolbox", "Road map"],
   },
   {
     name: "Farmer",
     category: "Blue Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "None",
     reqCheck: () => true,
     skills: ["Survival", "Tech", "Stamina"],
-    specialtyTable: [
-      "Farmer",
-      "Hunter",
-      "Forager",
-      "Mechanic",
-      "Veterinarian",
-      "Cook",
-    ],
+    specialtyTable: ["Farmer", "Hunter", "Forager", "Mechanic", "Veterinarian", "Cook"],
     gear: ["Hunting rifle with 20 rounds", "Knife", "Rope (30m)"],
   },
   {
     name: "Mechanic",
     category: "Blue Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "None",
     reqCheck: () => true,
@@ -639,7 +551,7 @@ const CAREERS = [
     name: "Construction",
     category: "Blue Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "STR C+",
     reqCheck: () => dieIndex(char.attributes.STR) >= 2,
@@ -659,27 +571,19 @@ const CAREERS = [
     name: "Liberal Arts",
     category: "Education",
     subcategory: "Liberal Arts",
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "INT C+ and EMP C+",
-    reqCheck: () =>
-      dieIndex(char.attributes.INT) >= 2 && dieIndex(char.attributes.EMP) >= 2,
+    reqCheck: () => dieIndex(char.attributes.INT) >= 2 && dieIndex(char.attributes.EMP) >= 2,
     skills: ["Persuasion", "Recon", "Command"],
-    specialtyTable: [
-      "Teacher",
-      "Historian",
-      "Linguist",
-      "Musician",
-      "Counselor",
-      "Trader",
-    ],
+    specialtyTable: ["Teacher", "Historian", "Linguist", "Musician", "Counselor", "Trader"],
     gear: ["Reference books", "Notebook"],
   },
   {
     name: "Sciences",
     category: "Education",
     subcategory: "Sciences",
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "INT B+",
     reqCheck: () => dieIndex(char.attributes.INT) >= 3,
@@ -699,12 +603,10 @@ const CAREERS = [
     name: "Doctor",
     category: "White Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "Two Sciences terms and EMP B+",
-    reqCheck: () =>
-      countEducationSubTerms("Sciences") >= 2 &&
-      dieIndex(char.attributes.EMP) >= 3,
+    reqCheck: () => countEducationSubTerms("Sciences") >= 2 && dieIndex(char.attributes.EMP) >= 3,
     skills: ["Medical Aid", "Persuasion", "Tech"],
     specialtyTable: [
       "Field Surgeon",
@@ -720,12 +622,11 @@ const CAREERS = [
     name: "Professor",
     category: "White Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "Two Liberal Arts terms and INT B+",
     reqCheck: () =>
-      countEducationSubTerms("Liberal Arts") >= 2 &&
-      dieIndex(char.attributes.INT) >= 3,
+      countEducationSubTerms("Liberal Arts") >= 2 && dieIndex(char.attributes.INT) >= 3,
     skills: ["Persuasion", "Recon", "Command"],
     specialtyTable: [
       "Teacher",
@@ -741,11 +642,10 @@ const CAREERS = [
     name: "Manager",
     category: "White Collar",
     subcategory: null,
-    startingRank: null,
+    startingRankIndex: null,
     rankTrack: null,
     reqText: "At least one Education term and EMP C+",
-    reqCheck: () =>
-      countEducationTerms() >= 1 && dieIndex(char.attributes.EMP) >= 2,
+    reqCheck: () => countEducationTerms() >= 1 && dieIndex(char.attributes.EMP) >= 2,
     skills: ["Command", "Persuasion", "Tech"],
     specialtyTable: [
       "Logistician",
@@ -761,22 +661,8 @@ const CAREERS = [
 
 // At War specialty tables by category
 const AT_WAR_SPECIALTIES = {
-  Military: [
-    "Rifleman",
-    "Combat Awareness",
-    "Scrounger",
-    "Combat Medic",
-    "Mechanic",
-    "Scout",
-  ],
-  "Blue Collar": [
-    "Mechanic",
-    "Scrounger",
-    "Builder",
-    "Rifleman",
-    "Combat Awareness",
-    "Cook",
-  ],
+  Military: ["Rifleman", "Combat Awareness", "Scrounger", "Combat Medic", "Mechanic", "Scout"],
+  "Blue Collar": ["Mechanic", "Scrounger", "Builder", "Rifleman", "Combat Awareness", "Cook"],
   "White Collar": [
     "Combat Medic",
     "Quartermaster",
@@ -785,14 +671,7 @@ const AT_WAR_SPECIALTIES = {
     "Scrounger",
     "Logistician",
   ],
-  Other: [
-    "Rifleman",
-    "Scrounger",
-    "Scout",
-    "Brawler",
-    "Combat Awareness",
-    "Infiltrator",
-  ],
+  Other: ["Rifleman", "Scrounger", "Scout", "Brawler", "Combat Awareness", "Infiltrator"],
 };
 
 // ─── STATE ───
@@ -813,8 +692,9 @@ function initChar() {
     skills: {},
     specialties: [],
     cuf: "D",
-    rank: null,
+    rankIndex: null,
     rankTrack: null,
+    militaryBranch: null,
     careerHistory: [],
     completedTerms: 0,
     localMilitia: false,
@@ -834,6 +714,8 @@ function initWizard() {
     attrIncreases: 0,
     attrDistributed: 0,
     attrDecreased: false,
+    attrDecreasedAttr: null,
+    attrIncreasedAttrs: {},
     selectedChildhood: null,
     selectedCareer: null,
     selectedSkills: [],
@@ -855,8 +737,8 @@ function canIncrease(level) {
   return dieIndex(level) < 4;
 }
 
-function canDecrease(level) {
-  return dieIndex(level) > 0;
+function canDecreaseAttr(level) {
+  return dieIndex(level) > 1; // Attributes cannot go below D
 }
 
 function increaseLevel(level) {
@@ -902,32 +784,30 @@ function addSpecialty(name) {
 
 function countMilitaryTerms() {
   return char.careerHistory.filter(
-    (h) => CAREERS.find((c) => c.name === h.career)?.category === "Military"
+    (h) => CAREERS.find((c) => c.name === h.career)?.category === "Military",
   ).length;
 }
 
 function countEducationTerms() {
   return char.careerHistory.filter(
-    (h) => CAREERS.find((c) => c.name === h.career)?.category === "Education"
+    (h) => CAREERS.find((c) => c.name === h.career)?.category === "Education",
   ).length;
 }
 
 function countEducationSubTerms(sub) {
   return char.careerHistory.filter(
-    (h) => CAREERS.find((c) => c.name === h.career)?.subcategory === sub
+    (h) => CAREERS.find((c) => c.name === h.career)?.subcategory === sub,
   ).length;
 }
 
 function countCareerTerms(category) {
   return char.careerHistory.filter(
-    (h) => CAREERS.find((c) => c.name === h.career)?.category === category
+    (h) => CAREERS.find((c) => c.name === h.career)?.category === category,
   ).length;
 }
 
-function hasCrimeCareer() {
-  return char.careerHistory.some(
-    (h) => CAREERS.find((c) => c.name === h.career)?.category === "Crime"
-  );
+function hasPrisonTerm() {
+  return char.careerHistory.some((h) => h.career === "Prisoner");
 }
 
 function isFirstMilitaryTerm() {
@@ -939,19 +819,21 @@ function isMilitaryOrIntelCareer(career) {
 }
 
 function isNCO() {
-  if (!char.rank || char.rankTrack !== "enlisted") return false;
-  const idx = ENLISTED_RANKS.indexOf(char.rank);
-  return idx >= 1; // Corporal or above
+  if (char.rankIndex === null || char.rankTrack !== "enlisted") return false;
+  return char.rankIndex >= 2; // Corporal or above
+}
+
+function getRankName() {
+  if (char.rankIndex === null || !char.militaryBranch) return null;
+  const branch = MILITARY_BRANCHES[char.militaryBranch];
+  const track = char.rankTrack === "officer" ? branch.officer : branch.enlisted;
+  return track[Math.min(char.rankIndex, track.length - 1)];
 }
 
 function getAtWarSpecialtyCategory(career) {
   if (career.category === "Military") return "Military";
   if (career.category === "Blue Collar") return "Blue Collar";
-  if (
-    career.category === "Education" ||
-    career.category === "White Collar"
-  )
-    return "White Collar";
+  if (career.category === "Education" || career.category === "White Collar") return "White Collar";
   return "Other";
 }
 
@@ -987,6 +869,12 @@ function renderSummary() {
   el.classList.add("visible");
 
   let html = '<div class="summary-grid">';
+  if (char.name) {
+    html +=
+      '<div><span class="label">Name</span><br><span class="value">' +
+      escapeHtml(char.name) +
+      "</span></div>";
+  }
   if (char.nationality) {
     html +=
       '<div><span class="label">Nationality</span><br><span class="value">' +
@@ -994,26 +882,27 @@ function renderSummary() {
       "</span></div>";
   }
   html +=
-    '<div><span class="label">Age</span><br><span class="value">' +
-    char.age +
-    "</span></div>";
+    '<div><span class="label">Age</span><br><span class="value">' + char.age + "</span></div>";
   for (const attr of ATTRIBUTES) {
     html +=
       '<div><span class="label">' +
       ATTR_NAMES[attr] +
       '</span><br><span class="value">' +
-      DIE_LABELS[char.attributes[attr]] +
+      LEVEL_LABELS[char.attributes[attr]] +
       "</span></div>";
   }
   html +=
     '<div><span class="label">Coolness Under Fire</span><br><span class="value">' +
-    DIE_LABELS[char.cuf] +
+    LEVEL_LABELS[char.cuf] +
     "</span></div>";
-  if (char.rank) {
-    html +=
-      '<div><span class="label">Rank</span><br><span class="value">' +
-      escapeHtml(char.rank) +
-      "</span></div>";
+  if (char.rankIndex !== null) {
+    const rankName = getRankName();
+    if (rankName) {
+      html +=
+        '<div><span class="label">Rank</span><br><span class="value">' +
+        escapeHtml(rankName) +
+        "</span></div>";
+    }
   }
   html += "</div>";
 
@@ -1021,14 +910,12 @@ function renderSummary() {
   const skillEntries = Object.entries(char.skills);
   if (skillEntries.length > 0) {
     html += '<div class="summary-skills"><h4>Skills</h4><div class="skill-list">';
-    for (const [name, level] of skillEntries.sort((a, b) =>
-      a[0].localeCompare(b[0])
-    )) {
+    for (const [name, level] of skillEntries.sort((a, b) => a[0].localeCompare(b[0]))) {
       html +=
         '<span class="skill-item">' +
         escapeHtml(name) +
         ' <span class="skill-die">' +
-        DIE_LABELS[level] +
+        LEVEL_LABELS[level] +
         "</span></span>";
     }
     html += "</div></div>";
@@ -1036,44 +923,13 @@ function renderSummary() {
 
   // Specialties
   if (char.specialties.length > 0) {
-    html +=
-      '<div class="summary-skills"><h4>Specialties</h4><div class="skill-list">';
+    html += '<div class="summary-skills"><h4>Specialties</h4><div class="skill-list">';
     for (const s of [...char.specialties].sort()) {
       html += '<span class="skill-item">' + escapeHtml(s) + "</span>";
     }
     html += "</div></div>";
   }
 
-  content.innerHTML = html;
-}
-
-function renderHistory() {
-  const el = document.getElementById("history-card");
-  const content = document.getElementById("history-content");
-  if (char.careerHistory.length === 0) {
-    el.classList.remove("visible");
-    return;
-  }
-  el.classList.add("visible");
-  let html = "";
-  for (const entry of char.careerHistory) {
-    html += '<div class="history-entry">';
-    html +=
-      '<span class="term-label">Term ' +
-      entry.term +
-      ": " +
-      escapeHtml(entry.career) +
-      "</span>";
-    const details = [];
-    if (entry.promoted) details.push("Promoted");
-    if (entry.specialty) details.push(escapeHtml(entry.specialty));
-    if (entry.yearsAdded)
-      details.push("+" + entry.yearsAdded + " years");
-    if (details.length > 0) {
-      html += '<div class="term-detail">' + details.join(" \u2022 ") + "</div>";
-    }
-    html += "</div>";
-  }
   content.innerHTML = html;
 }
 
@@ -1109,7 +965,6 @@ function renderWizard() {
   }
 
   renderSummary();
-  renderHistory();
 }
 
 // ─── STEP RENDERERS ───
@@ -1128,13 +983,22 @@ function renderNationality(el) {
   el.innerHTML =
     '<div class="step-title">Step 1: Nationality</div>' +
     "<h3>Where are you from?</h3>" +
-    "<p>Choose your character's nationality.</p>" +
+    "<p>Choose your character's nationality and name.</p>" +
     '<div class="form-group">' +
     '<label for="nationality-input">Nationality</label>' +
     '<input type="text" class="text-input" id="nationality-input" placeholder="e.g. American, Swedish, Polish..." value="' +
     escapeHtml(char.nationality) +
     '">' +
     "</div>" +
+    '<div class="form-group">' +
+    '<label for="char-name">Name</label>' +
+    '<input type="text" class="text-input" id="char-name" placeholder="Character name" value="' +
+    escapeHtml(char.name) +
+    '">' +
+    "</div>" +
+    (wizard.nationalityError
+      ? '<p class="note-text">Please enter both a nationality and a name.</p>'
+      : "") +
     '<div class="btn-row"><button class="btn" onclick="submitNationality()">Continue</button></div>';
 }
 
@@ -1143,7 +1007,7 @@ function renderAttributes(el) {
   let html =
     '<div class="step-title">Step 2: Attributes</div>' +
     "<h3>Distribute Attribute Increases</h3>" +
-    '<p>You rolled <strong>' +
+    "<p>You rolled <strong>" +
     wizard.attrIncreases +
     "</strong> increases (2D3). Distribute them among your attributes.</p>";
 
@@ -1152,22 +1016,21 @@ function renderAttributes(el) {
       '<p class="note-text">You may optionally decrease one attribute from C to D to gain +1 additional increase.</p>';
   }
 
-  html +=
-    '<div class="remaining-display">Remaining increases: ' + remaining + "</div>";
+  html += '<div class="remaining-display">Remaining increases: ' + remaining + "</div>";
 
   for (const attr of ATTRIBUTES) {
     const level = char.attributes[attr];
     const canUp = canIncrease(level) && remaining > 0;
-    const canDown =
-      level === "C" &&
-      !wizard.attrDecreased &&
-      wizard.attrDistributed <= wizard.attrIncreases;
-    // Allow decreasing back to original if we increased it
-    const canDownFromIncrease = dieIndex(level) > dieIndex("C") || (level !== "C" && level !== "D");
+    // C→D trade: only once, only from C
+    const canDownTrade =
+      level === "C" && !wizard.attrDecreased && wizard.attrDistributed <= wizard.attrIncreases;
+    // Refund: can undo a previous increase
+    const canDownRefund = (wizard.attrIncreasedAttrs[attr] || 0) > 0;
+    const canDown = canDownTrade || canDownRefund;
 
     html += '<div class="attr-row">';
     html += '<span class="attr-name">' + ATTR_NAMES[attr] + "</span>";
-    html += '<span class="attr-die">' + DIE_LABELS[level] + "</span>";
+    html += '<span class="attr-die">' + LEVEL_LABELS[level] + "</span>";
     html +=
       '<button class="attr-btn" onclick="attrDecrease(\'' +
       attr +
@@ -1260,22 +1123,23 @@ function renderChildhoodSpecialty(el) {
   for (let i = 0; i < 6; i++) {
     const spec = ch.specialtyTable[i];
     const selected = wizard.selectedChildhoodSpecialty === i;
+    const owned = hasSpecialty(spec);
     html +=
       '<li class="' +
       (selected ? "selected" : "") +
-      '" onclick="selectChildhoodSpecialty(' +
-      i +
-      ')">';
+      (owned ? " disabled" : "") +
+      '" onclick="' +
+      (owned ? "" : "selectChildhoodSpecialty(" + i + ")") +
+      '">';
     html += '<span class="d6-num">' + (i + 1) + "</span>";
-    html += "<span>" + escapeHtml(spec) + "</span>";
+    html += "<span>" + escapeHtml(spec) + (owned ? " (already have)" : "") + "</span>";
     html += "</li>";
   }
   html += "</ul>";
 
   html +=
     '<div class="btn-row"><button class="btn" onclick="submitChildhoodSpecialty()" ' +
-    (wizard.selectedChildhoodSpecialty !== undefined &&
-    wizard.selectedChildhoodSpecialty !== null
+    (wizard.selectedChildhoodSpecialty !== undefined && wizard.selectedChildhoodSpecialty !== null
       ? ""
       : "disabled") +
     ">Continue</button></div>";
@@ -1287,18 +1151,14 @@ function renderCareerChoice(el) {
     '<div class="step-title">Step 4: Career (Term ' +
     (char.completedTerms + 1) +
     ")</div>" +
-    "<h3>Choose a Career</h3>" +
-    "<p>Select from the available careers below. Unavailable careers are grayed out.</p>";
+    "<h3>Choose a Career</h3>";
 
   if (wizard.prisonForced) {
     html +=
       '<p class="note-text">You rolled odd on the prison check. You must serve a term as a Prisoner.</p>';
     // Auto-select prisoner
-    wizard.selectedCareer = CAREERS.findIndex(
-      (c) => c.name === "Prisoner"
-    );
-    html +=
-      '<div class="dice-result">Forced into <strong>Prisoner</strong></div>';
+    wizard.selectedCareer = CAREERS.findIndex((c) => c.name === "Prisoner");
+    html += '<div class="dice-result">Forced into <strong>Prisoner</strong></div>';
     html +=
       '<div class="btn-row"><button class="btn" onclick="submitCareerChoice()">Continue</button></div>';
     el.innerHTML = html;
@@ -1317,7 +1177,7 @@ function renderCareerChoice(el) {
 
   for (const cat of categories) {
     const careersInCat = CAREERS.map((c, i) => ({ ...c, index: i })).filter(
-      (c) => c.category === cat && c.name !== "Prisoner"
+      (c) => c.category === cat && c.name !== "Prisoner",
     );
     if (careersInCat.length === 0) continue;
 
@@ -1327,10 +1187,7 @@ function renderCareerChoice(el) {
     for (const career of careersInCat) {
       const meetsReq = career.reqCheck();
       const selected = wizard.selectedCareer === career.index;
-      const cls =
-        "career-option" +
-        (selected ? " selected" : "") +
-        (!meetsReq ? " disabled" : "");
+      const cls = "career-option" + (selected ? " selected" : "") + (!meetsReq ? " disabled" : "");
 
       html +=
         '<div class="' +
@@ -1338,20 +1195,33 @@ function renderCareerChoice(el) {
         '" onclick="' +
         (meetsReq ? "selectCareer(" + career.index + ")" : "") +
         '">';
-      html +=
-        '<span class="career-name">' + escapeHtml(career.name) + "</span>";
-      html +=
-        '<span class="career-req">(' + escapeHtml(career.reqText) + ")</span>";
+      html += '<span class="career-name">' + escapeHtml(career.name) + "</span>";
+      if (career.reqText !== "None") {
+        html += '<span class="career-req">(Requires: ' + escapeHtml(career.reqText) + ")</span>";
+      }
       html += "</div>";
     }
+
+    // Branch selector inside the Military group
+    if (cat === "Military" && !char.militaryBranch) {
+      html +=
+        '<div class="form-group">' +
+        '<label for="military-branch">Armed Forces Branch</label>' +
+        '<select class="text-input" id="military-branch" onchange="selectMilitaryBranch()">' +
+        "<option value=''>-- Select Branch --</option>";
+      for (const branch of Object.keys(MILITARY_BRANCHES)) {
+        const selected = wizard.selectedBranch === branch ? " selected" : "";
+        html +=
+          "<option value='" + branch + "'" + selected + ">" + escapeHtml(branch) + "</option>";
+      }
+      html += "</select></div>";
+    }
+
     html += "</div>";
   }
 
   // Local militia checkbox for military careers
-  if (
-    wizard.selectedCareer !== null &&
-    CAREERS[wizard.selectedCareer]?.category === "Military"
-  ) {
+  if (wizard.selectedCareer !== null && CAREERS[wizard.selectedCareer]?.category === "Military") {
     html +=
       '<div class="checkbox-row">' +
       '<input type="checkbox" id="local-militia" ' +
@@ -1361,9 +1231,16 @@ function renderCareerChoice(el) {
       "</div>";
   }
 
+  const needsBranch =
+    wizard.selectedCareer !== null &&
+    CAREERS[wizard.selectedCareer]?.category === "Military" &&
+    !char.militaryBranch &&
+    !wizard.selectedBranch;
+  const canContinue = wizard.selectedCareer !== null && !needsBranch;
+
   html +=
     '<div class="btn-row"><button class="btn" onclick="submitCareerChoice()" ' +
-    (wizard.selectedCareer !== null ? "" : "disabled") +
+    (canContinue ? "" : "disabled") +
     ">Continue</button></div>";
   el.innerHTML = html;
 }
@@ -1372,8 +1249,8 @@ function renderCareerSkills(el) {
   const career = CAREERS[wizard.currentTermCareer];
   const allSkills = [...new Set([...career.skills, ...UNIVERSAL_SKILLS])];
 
-  // NCO can also choose Command
-  if (isNCO() && !allSkills.includes("Command")) {
+  // NCO can also choose Command in military careers
+  if (isNCO() && career.category === "Military" && !allSkills.includes("Command")) {
     allSkills.push("Command");
   }
 
@@ -1382,6 +1259,15 @@ function renderCareerSkills(el) {
     career.category === "Military" &&
     getSkillLevel("Ranged Combat") === "F";
 
+  // If Ranged Combat is required but not in career skills, auto-select it
+  const rangedAutoSelected = mustPickRanged && !allSkills.includes("Ranged Combat");
+  if (rangedAutoSelected && !wizard.selectedSkills.includes("Ranged Combat")) {
+    wizard.selectedSkills = ["Ranged Combat"];
+  }
+  if (rangedAutoSelected && !allSkills.includes("Ranged Combat")) {
+    allSkills.unshift("Ranged Combat");
+  }
+
   let html =
     '<div class="step-title">Career: ' +
     escapeHtml(career.name) +
@@ -1389,12 +1275,14 @@ function renderCareerSkills(el) {
     "<h3>Choose Skill Increases</h3>" +
     "<p>Choose 2 skills to increase by one step each.</p>";
 
-  if (mustPickRanged && !wizard.selectedSkills.includes("Ranged Combat")) {
+  if (rangedAutoSelected) {
     html +=
-      '<p class="note-text">First military term: one increase must be Ranged Combat.</p>';
+      '<p class="note-text">First military term: Ranged Combat has been automatically selected as your first increase. Choose 1 more skill.</p>';
+  } else if (mustPickRanged && !wizard.selectedSkills.includes("Ranged Combat")) {
+    html += '<p class="note-text">First military term: one increase must be Ranged Combat.</p>';
   }
 
-  if (isNCO()) {
+  if (isNCO() && career.category === "Military") {
     html +=
       '<p class="note-text">As an NCO, Command is available as an additional skill choice.</p>';
   }
@@ -1404,37 +1292,38 @@ function renderCareerSkills(el) {
   for (const skillName of allSkills) {
     const currentLevel = getSkillLevel(skillName);
     const isSelected = wizard.selectedSkills.includes(skillName);
+    const isLocked = rangedAutoSelected && skillName === "Ranged Combat";
     const isFull = selectedCount >= 2 && !isSelected;
     const isMaxed = !canIncrease(currentLevel);
-    const disabled = isFull || isMaxed;
+    const disabled = isFull || isMaxed || isLocked;
 
     const cls =
-      "skill-choice" +
-      (isSelected ? " selected" : "") +
-      (disabled ? " disabled" : "");
+      "skill-choice" + (isSelected ? " selected" : "") + (disabled && !isLocked ? " disabled" : "");
 
     html +=
       '<div class="' +
       cls +
       '" onclick="' +
-      (!disabled || isSelected
+      (!isLocked && (!disabled || isSelected)
         ? "toggleSkillChoice('" + escapeHtml(skillName) + "')"
         : "") +
       '">';
     html +=
-      '<span class="skill-name">' + escapeHtml(skillName) + "</span>";
+      '<span class="skill-name">' +
+      escapeHtml(skillName) +
+      (isLocked ? " (required)" : "") +
+      "</span>";
     html +=
       '<span class="skill-current">' +
-      DIE_LABELS[currentLevel] +
+      LEVEL_LABELS[currentLevel] +
       " \u2192 " +
-      DIE_LABELS[increaseLevel(currentLevel)] +
+      LEVEL_LABELS[increaseLevel(currentLevel)] +
       "</span>";
     html += "</div>";
   }
 
   const canContinue =
-    selectedCount === 2 &&
-    (!mustPickRanged || wizard.selectedSkills.includes("Ranged Combat"));
+    selectedCount === 2 && (!mustPickRanged || wizard.selectedSkills.includes("Ranged Combat"));
 
   html +=
     '<div class="btn-row"><button class="btn" onclick="submitCareerSkills()" ' +
@@ -1446,20 +1335,19 @@ function renderCareerSkills(el) {
 function renderPromotion(el) {
   const career = CAREERS[wizard.currentTermCareer];
   const allSkills = [...new Set([...career.skills, ...UNIVERSAL_SKILLS])];
-  if (isNCO() && !allSkills.includes("Command")) {
+  if (isNCO() && career.category === "Military" && !allSkills.includes("Command")) {
     allSkills.push("Command");
   }
 
   // Only skills that were just increased are eligible for promotion roll
-  const eligibleSkills = wizard.selectedSkills.filter(
-    (s) => getSkillLevel(s) !== "F"
-  );
+  const eligibleSkills = wizard.selectedSkills.filter((s) => getSkillLevel(s) !== "F");
 
   let html =
     '<div class="step-title">Promotion Roll</div>' +
-    "<h3>Choose a Skill for Promotion</h3>" +
-    "<p>Choose one of your increased skills to roll for promotion. " +
-    "Roll the skill die + its attribute die. A 6+ on either die is a success.</p>";
+    "<h3>Try for Promotion</h3>" +
+    "<p>Promotion represents recognition and advancement in your career. " +
+    "Choose one of the skills you just improved and roll it along with its linked attribute. " +
+    "A result of 6 or higher on either die means success.</p>";
 
   for (const skillName of eligibleSkills) {
     const skillDef = SKILLS.find((s) => s.name === skillName);
@@ -1467,19 +1355,32 @@ function renderPromotion(el) {
     const skillLevel = getSkillLevel(skillName);
     const isSelected = wizard.promotionSkill === skillName;
 
+    // Calculate promotion probability
+    const attrSize = DIE_SIZES[attrLevel];
+    const skSize = DIE_SIZES[skillLevel];
+    const pAttrFail = attrSize >= 6 ? Math.min(5, attrSize - 1) / attrSize : 1.0;
+    const pSkFail = skSize >= 6 ? Math.min(5, skSize - 1) / skSize : 1.0;
+    const pSuccess = Math.round((1 - pAttrFail * pSkFail) * 100);
+
     html +=
       '<div class="skill-choice' +
       (isSelected ? " selected" : "") +
       '" onclick="selectPromotionSkill(\'' +
       escapeHtml(skillName) +
       "')\">";
-    html +=
-      '<span class="skill-name">' + escapeHtml(skillName) + "</span>";
+    html += '<span class="skill-name">' + escapeHtml(skillName) + "</span>";
     html +=
       '<span class="skill-current">' +
+      LEVEL_LABELS[attrLevel] +
+      " + " +
+      LEVEL_LABELS[skillLevel] +
+      " \u2014 " +
       DIE_LABELS[attrLevel] +
       " + " +
       DIE_LABELS[skillLevel] +
+      " (" +
+      pSuccess +
+      "% chance)" +
       "</span>";
     html += "</div>";
   }
@@ -1496,22 +1397,30 @@ function renderPromotionResult(el) {
   const career = CAREERS[wizard.currentTermCareer];
   const isMilOrIntel = isMilitaryOrIntelCareer(career);
 
+  const skillDef = SKILLS.find((s) => s.name === wizard.promotionSkill);
+  const attrDie = DIE_LABELS[char.attributes[skillDef.attr]];
+  const skillDie = DIE_LABELS[getSkillLevel(wizard.promotionSkill)];
+
   let html =
     '<div class="step-title">Promotion Result</div>' +
     "<h3>Promotion Roll</h3>" +
     '<div class="dice-result">';
   html +=
-    '<div><span class="dice-label">Attribute die:</span> <span class="dice-value">' +
+    "<div>Attribute die (" +
+    attrDie +
+    "): rolled <strong>" +
     result.attrRoll +
-    "</span> " +
+    "</strong> \u2014 " +
     (result.attrSuccess
       ? '<span class="success">Success!</span>'
       : '<span class="failure">Fail</span>') +
     "</div>";
   html +=
-    '<div><span class="dice-label">Skill die:</span> <span class="dice-value">' +
+    "<div>Skill die (" +
+    skillDie +
+    "): rolled <strong>" +
     result.skillRoll +
-    "</span> " +
+    "</strong> \u2014 " +
     (result.skillSuccess
       ? '<span class="success">Success!</span>'
       : '<span class="failure">Fail</span>') +
@@ -1521,12 +1430,12 @@ function renderPromotionResult(el) {
   if (result.success) {
     html += '<p class="success"><strong>Promoted!</strong></p>';
     if (isMilOrIntel) {
-      html +=
-        "<p>Coolness Under Fire increased to " +
-        DIE_LABELS[char.cuf] +
-        ".</p>";
-      if (career.category === "Military" && char.rank) {
-        html += "<p>Rank: " + escapeHtml(char.rank) + "</p>";
+      html += "<p>Coolness Under Fire increased to " + LEVEL_LABELS[char.cuf] + ".</p>";
+      if (career.category === "Military" && char.rankIndex !== null) {
+        const rankName = getRankName();
+        if (rankName) {
+          html += "<p>Rank: " + escapeHtml(rankName) + "</p>";
+        }
       }
     }
     // Specialty selection
@@ -1534,7 +1443,7 @@ function renderPromotionResult(el) {
 
     if (!wizard.promotionSpecialtyRoll) {
       html +=
-        '<div class="btn-row"><button class="btn btn-secondary btn-small" onclick="rollPromotionSpecialty()">Roll D6</button></div>';
+        '<div class="btn-row"><button class="btn" onclick="rollPromotionSpecialty()">Roll D6</button></div>';
     } else {
       html +=
         '<div class="dice-result"><span class="dice-label">D6 =</span> <span class="dice-value">' +
@@ -1546,61 +1455,22 @@ function renderPromotionResult(el) {
     for (let i = 0; i < 6; i++) {
       const spec = career.specialtyTable[i];
       const selected = wizard.selectedPromotionSpecialty === i;
+      const owned = hasSpecialty(spec);
       html +=
         '<li class="' +
         (selected ? "selected" : "") +
-        '" onclick="selectPromotionSpecialty(' +
-        i +
-        ')">';
+        (owned ? " disabled" : "") +
+        '" onclick="' +
+        (owned ? "" : "selectPromotionSpecialty(" + i + ")") +
+        '">';
       html += '<span class="d6-num">' + (i + 1) + "</span>";
-      html +=
-        "<span>" +
-        escapeHtml(spec) +
-        (hasSpecialty(spec) ? " (already have)" : "") +
-        "</span>";
+      html += "<span>" + escapeHtml(spec) + (owned ? " (already have)" : "") + "</span>";
       html += "</li>";
     }
     html += "</ul>";
 
-    if (
-      wizard.selectedPromotionSpecialty !== null &&
-      wizard.selectedPromotionSpecialty !== undefined
-    ) {
-      const chosenSpec =
-        career.specialtyTable[wizard.selectedPromotionSpecialty];
-      if (hasSpecialty(chosenSpec)) {
-        html +=
-          '<p class="note-text">You already have this specialty. You may choose any specialty instead.</p>';
-        html +=
-          '<div class="form-group">' +
-          '<label for="free-specialty">Choose any specialty:</label>' +
-          '<select class="text-input" id="free-specialty" onchange="selectFreeSpecialty()">';
-        html += "<option value=''>-- Select --</option>";
-        for (const [skill, specs] of Object.entries(SPECIALTIES)) {
-          for (const spec of specs) {
-            if (!hasSpecialty(spec)) {
-              html +=
-                "<option value='" +
-                escapeHtml(spec) +
-                "'>" +
-                escapeHtml(spec) +
-                " (" +
-                escapeHtml(skill) +
-                ")</option>";
-            }
-          }
-        }
-        html += "</select></div>";
-      }
-    }
-
     const canContinue =
-      wizard.selectedPromotionSpecialty !== null &&
-      wizard.selectedPromotionSpecialty !== undefined &&
-      (wizard.freeSpecialty ||
-        !hasSpecialty(
-          career.specialtyTable[wizard.selectedPromotionSpecialty]
-        ));
+      wizard.selectedPromotionSpecialty !== null && wizard.selectedPromotionSpecialty !== undefined;
     html +=
       '<div class="btn-row"><button class="btn" onclick="submitPromotionResult()" ' +
       (canContinue ? "" : "disabled") +
@@ -1618,6 +1488,7 @@ function renderAging(el) {
   if (!wizard.agingRolled) {
     // Auto-roll
     wizard.agingYears = roll(6);
+    wizard.preAgingAge = char.age;
     char.age += wizard.agingYears;
 
     // Age effect
@@ -1635,25 +1506,28 @@ function renderAging(el) {
     '<div class="step-title">Aging</div>' +
     "<h3>Time Passes</h3>" +
     '<div class="dice-result">' +
-    '<div><span class="dice-label">Years this term (D6):</span> <span class="dice-value">' +
+    "<div>You rolled a D6 and got <strong>" +
     wizard.agingYears +
-    "</span></div>" +
-    "<div>Age: " +
+    "</strong>. " +
+    wizard.agingYears +
+    " years pass.</div>" +
+    "<div>You age from " +
+    wizard.preAgingAge +
+    " to " +
     char.age +
-    "</div>" +
+    ".</div>" +
     "</div>";
 
   if (wizard.agingEffectNeeded) {
     html +=
       '<div class="dice-result">' +
-      '<div><span class="dice-label">Age effect (D8):</span> <span class="dice-value">' +
+      "<div>You rolled a D8 and got <strong>" +
       wizard.agingEffectRoll +
-      '</span> vs completed terms: <span class="dice-value">' +
+      "</strong> vs. " +
       char.completedTerms +
-      "</span></div>";
+      " completed terms.</div>";
     if (wizard.agingEffectHit) {
-      html +=
-        '<div class="failure">Age takes its toll! Decrease one attribute by one step.</div>';
+      html += '<div class="failure">Age takes its toll! Decrease one attribute by one step.</div>';
     } else {
       html += '<div class="success">No age effects.</div>';
     }
@@ -1664,22 +1538,17 @@ function renderAging(el) {
     html += "<p>Choose an attribute to decrease:</p>";
     for (const attr of ATTRIBUTES) {
       const level = char.attributes[attr];
-      if (canDecrease(level)) {
-        html +=
-          '<div class="attr-row">' +
-          '<span class="attr-name">' +
-          ATTR_NAMES[attr] +
-          "</span>" +
-          '<span class="attr-die">' +
-          DIE_LABELS[level] +
-          " \u2192 " +
-          DIE_LABELS[decreaseLevel(level)] +
-          "</span>" +
-          '<button class="btn btn-small btn-secondary" onclick="agingDecreaseAttr(\'' +
-          attr +
-          "')\">\u2212</button>" +
-          "</div>";
-      }
+      const canDown = canDecreaseAttr(level);
+      html += '<div class="attr-row">';
+      html += '<span class="attr-name">' + ATTR_NAMES[attr] + "</span>";
+      html += '<span class="attr-die">' + LEVEL_LABELS[level] + "</span>";
+      html +=
+        '<button class="attr-btn" onclick="agingDecreaseAttr(\'' +
+        attr +
+        "')\" " +
+        (canDown ? "" : "disabled") +
+        ">\u2212</button>";
+      html += "</div>";
     }
   } else {
     html +=
@@ -1702,9 +1571,7 @@ function renderWarCheck(el) {
     wizard.warCheckRolled = true;
   }
 
-  let html =
-    '<div class="step-title">War Check</div>' +
-    "<h3>Does War Break Out?</h3>";
+  let html = '<div class="step-title">War Check</div>' + "<h3>Does War Break Out?</h3>";
 
   if (char.localMilitia && char.completedTerms === 1) {
     html +=
@@ -1714,15 +1581,15 @@ function renderWarCheck(el) {
   } else {
     html +=
       '<div class="dice-result">' +
-      '<div><span class="dice-label">War roll (D8):</span> <span class="dice-value">' +
+      "<div>You rolled a D8 and got <strong>" +
       wizard.warRoll +
-      '</span> vs completed terms: <span class="dice-value">' +
+      "</strong> vs. " +
       char.completedTerms +
-      "</span></div>";
+      " completed terms.</div>";
     if (wizard.warBrokenOut) {
       html += '<div class="failure">War breaks out!</div>';
     } else {
-      html += '<div class="success">Peace continues... for now.</div>';
+      html += '<div class="success">Life continues under the shadow of the Cold War.</div>';
     }
     html += "</div>";
   }
@@ -1751,14 +1618,14 @@ function renderPrisonCheck(el) {
     "<h3>Prison Check</h3>" +
     "<p>After a crime career, roll D6. Odd result means prison next term.</p>" +
     '<div class="dice-result">' +
-    '<div><span class="dice-label">D6 =</span> <span class="dice-value">' +
+    "<div>You rolled a D6 and got <strong>" +
     wizard.prisonRoll +
-    "</span></div>";
+    "</strong> (odd = prison).</div>";
 
   if (wizard.prisonForced) {
-    html += '<div class="failure">Odd! You are sent to prison.</div>';
+    html += '<div class="failure">Sent to prison.</div>';
   } else {
-    html += '<div class="success">Even. You avoided prison.</div>';
+    html += '<div class="success">Avoided prison.</div>';
   }
   html += "</div>";
 
@@ -1784,8 +1651,7 @@ function renderAtWar(el) {
     wizard.atWarDraftApplied = true;
   }
 
-  const mustPickRanged =
-    char.drafted && getSkillLevel("Ranged Combat") === "F";
+  const mustPickRanged = char.drafted && getSkillLevel("Ranged Combat") === "F";
 
   let html =
     '<div class="step-title">At War</div>' +
@@ -1793,11 +1659,9 @@ function renderAtWar(el) {
     "<p>Choose 2 different skills to increase by one step each.</p>";
 
   if (char.drafted) {
-    html +=
-      '<p class="note-text">You were drafted! You receive Combat Arms gear.</p>';
+    html += '<p class="note-text">You were drafted! You receive Combat Arms gear.</p>';
     if (mustPickRanged) {
-      html +=
-        '<p class="note-text">As a draftee, one increase must be Ranged Combat.</p>';
+      html += '<p class="note-text">As a draftee, one increase must be Ranged Combat.</p>';
     }
   }
 
@@ -1812,33 +1676,26 @@ function renderAtWar(el) {
     const isMaxed = !canIncrease(currentLevel);
     const disabled = isFull || isMaxed;
 
-    const cls =
-      "skill-choice" +
-      (isSelected ? " selected" : "") +
-      (disabled ? " disabled" : "");
+    const cls = "skill-choice" + (isSelected ? " selected" : "") + (disabled ? " disabled" : "");
 
     html +=
       '<div class="' +
       cls +
       '" onclick="' +
-      (!disabled || isSelected
-        ? "toggleSkillChoice('" + escapeHtml(skillName) + "')"
-        : "") +
+      (!disabled || isSelected ? "toggleSkillChoice('" + escapeHtml(skillName) + "')" : "") +
       '">';
-    html +=
-      '<span class="skill-name">' + escapeHtml(skillName) + "</span>";
+    html += '<span class="skill-name">' + escapeHtml(skillName) + "</span>";
     html +=
       '<span class="skill-current">' +
-      DIE_LABELS[currentLevel] +
+      LEVEL_LABELS[currentLevel] +
       " \u2192 " +
-      DIE_LABELS[increaseLevel(currentLevel)] +
+      LEVEL_LABELS[increaseLevel(currentLevel)] +
       "</span>";
     html += "</div>";
   }
 
   const canContinue =
-    selectedCount === 2 &&
-    (!mustPickRanged || wizard.selectedSkills.includes("Ranged Combat"));
+    selectedCount === 2 && (!mustPickRanged || wizard.selectedSkills.includes("Ranged Combat"));
 
   html +=
     '<div class="btn-row"><button class="btn" onclick="submitAtWarSkills()" ' +
@@ -1851,9 +1708,7 @@ function renderAtWarSpecialty(el) {
   const lastCareer = char.lastPreWarCareer
     ? CAREERS.find((c) => c.name === char.lastPreWarCareer)
     : null;
-  const cat = lastCareer
-    ? getAtWarSpecialtyCategory(lastCareer)
-    : "Other";
+  const cat = lastCareer ? getAtWarSpecialtyCategory(lastCareer) : "Other";
   const table = AT_WAR_SPECIALTIES[cat];
 
   let html =
@@ -1865,7 +1720,7 @@ function renderAtWarSpecialty(el) {
 
   if (!wizard.atWarSpecialtyRoll) {
     html +=
-      '<div class="btn-row"><button class="btn btn-secondary btn-small" onclick="rollAtWarSpecialty()">Roll D6</button></div>';
+      '<div class="btn-row"><button class="btn" onclick="rollAtWarSpecialty()">Roll D6</button></div>';
   } else {
     html +=
       '<div class="dice-result"><span class="dice-label">D6 =</span> <span class="dice-value">' +
@@ -1877,25 +1732,22 @@ function renderAtWarSpecialty(el) {
   for (let i = 0; i < 6; i++) {
     const spec = table[i];
     const selected = wizard.selectedAtWarSpecialty === i;
+    const owned = hasSpecialty(spec);
     html +=
       '<li class="' +
       (selected ? "selected" : "") +
-      '" onclick="selectAtWarSpecialty(' +
-      i +
-      ')">';
+      (owned ? " disabled" : "") +
+      '" onclick="' +
+      (owned ? "" : "selectAtWarSpecialty(" + i + ")") +
+      '">';
     html += '<span class="d6-num">' + (i + 1) + "</span>";
-    html +=
-      "<span>" +
-      escapeHtml(spec) +
-      (hasSpecialty(spec) ? " (already have)" : "") +
-      "</span>";
+    html += "<span>" + escapeHtml(spec) + (owned ? " (already have)" : "") + "</span>";
     html += "</li>";
   }
   html += "</ul>";
 
   const canContinue =
-    wizard.selectedAtWarSpecialty !== null &&
-    wizard.selectedAtWarSpecialty !== undefined;
+    wizard.selectedAtWarSpecialty !== null && wizard.selectedAtWarSpecialty !== undefined;
   html +=
     '<div class="btn-row"><button class="btn" onclick="submitAtWarSpecialty()" ' +
     (canContinue ? "" : "disabled") +
@@ -1906,10 +1758,10 @@ function renderAtWarSpecialty(el) {
 function renderFinishing(el) {
   // Calculate capacities
   char.hitCapacity = Math.ceil(
-    (DIE_SIZES[char.attributes.STR] + DIE_SIZES[char.attributes.AGL]) / 4
+    (DIE_SIZES[char.attributes.STR] + DIE_SIZES[char.attributes.AGL]) / 4,
   );
   char.stressCapacity = Math.ceil(
-    (DIE_SIZES[char.attributes.INT] + DIE_SIZES[char.attributes.EMP]) / 4
+    (DIE_SIZES[char.attributes.INT] + DIE_SIZES[char.attributes.EMP]) / 4,
   );
 
   let html =
@@ -1919,23 +1771,17 @@ function renderFinishing(el) {
     "<div>Hit Capacity: <strong>" +
     char.hitCapacity +
     "</strong> (STR " +
-    DIE_LABELS[char.attributes.STR] +
+    LEVEL_LABELS[char.attributes.STR] +
     " + AGL " +
-    DIE_LABELS[char.attributes.AGL] +
+    LEVEL_LABELS[char.attributes.AGL] +
     " / 4, rounded up)</div>" +
     "<div>Stress Capacity: <strong>" +
     char.stressCapacity +
     "</strong> (INT " +
-    DIE_LABELS[char.attributes.INT] +
+    LEVEL_LABELS[char.attributes.INT] +
     " + EMP " +
-    DIE_LABELS[char.attributes.EMP] +
+    LEVEL_LABELS[char.attributes.EMP] +
     " / 4, rounded up)</div>" +
-    "</div>" +
-    '<div class="form-group">' +
-    '<label for="char-name">Name</label>' +
-    '<input type="text" class="text-input" id="char-name" placeholder="Character name" value="' +
-    escapeHtml(char.name) +
-    '">' +
     "</div>" +
     '<div class="form-group">' +
     '<label for="char-appearance">Appearance</label>' +
@@ -1956,8 +1802,8 @@ function renderFinishing(el) {
     '">' +
     "</div>" +
     '<div class="form-group">' +
-    '<label for="char-buddy">Buddy (another PC or NPC)</label>' +
-    '<input type="text" class="text-input" id="char-buddy" placeholder="Who does your character trust most?" value="' +
+    '<label for="char-buddy">Buddy (another PC)</label>' +
+    '<input type="text" class="text-input" id="char-buddy" placeholder="Who does your character feel closest to?" value="' +
     escapeHtml(char.buddy) +
     '">' +
     "</div>" +
@@ -2008,12 +1854,11 @@ function renderRadiation(el) {
     "<h3>Radiation Dose</h3>" +
     "<p>Roll D6 for your starting radiation dose.</p>" +
     '<div class="dice-result">' +
-    '<div><span class="dice-label">D6 =</span> <span class="dice-value">' +
+    "<div>You rolled a D6 and got <strong>" +
     char.radiation +
-    "</span></div>" +
-    "<div>Starting radiation: " +
+    "</strong>. Starting radiation: " +
     char.radiation +
-    " rads</div>" +
+    " rads.</div>" +
     "</div>" +
     '<div class="btn-row"><button class="btn" onclick="goToFinalSummary()">View Character Sheet</button></div>';
   el.innerHTML = html;
@@ -2032,36 +1877,23 @@ function renderFinalSummary(el) {
   html += '<div class="summary-grid">';
   if (char.nationality)
     html +=
-      "<div><span class='label'>Nationality</span><br>" +
-      escapeHtml(char.nationality) +
-      "</div>";
+      "<div><span class='label'>Nationality</span><br>" + escapeHtml(char.nationality) + "</div>";
   html += "<div><span class='label'>Age</span><br>" + char.age + "</div>";
-  if (char.rank)
-    html +=
-      "<div><span class='label'>Rank</span><br>" +
-      escapeHtml(char.rank) +
-      "</div>";
+  if (char.rankIndex !== null) {
+    const rankName = getRankName();
+    if (rankName)
+      html += "<div><span class='label'>Rank</span><br>" + escapeHtml(rankName) + "</div>";
+  }
   if (char.moralCode)
     html +=
-      "<div><span class='label'>Moral Code</span><br>" +
-      escapeHtml(char.moralCode) +
-      "</div>";
+      "<div><span class='label'>Moral Code</span><br>" + escapeHtml(char.moralCode) + "</div>";
   if (char.bigDream)
-    html +=
-      "<div><span class='label'>Big Dream</span><br>" +
-      escapeHtml(char.bigDream) +
-      "</div>";
+    html += "<div><span class='label'>Big Dream</span><br>" + escapeHtml(char.bigDream) + "</div>";
   if (char.buddy)
-    html +=
-      "<div><span class='label'>Buddy</span><br>" +
-      escapeHtml(char.buddy) +
-      "</div>";
+    html += "<div><span class='label'>Buddy</span><br>" + escapeHtml(char.buddy) + "</div>";
   html += "</div>";
   if (char.appearance) {
-    html +=
-      "<p><span class='label'>Appearance:</span> " +
-      escapeHtml(char.appearance) +
-      "</p>";
+    html += "<p><span class='label'>Appearance:</span> " + escapeHtml(char.appearance) + "</p>";
   }
   html += "</div>";
 
@@ -2074,7 +1906,7 @@ function renderFinalSummary(el) {
       '<div class="sheet-attr"><div class="attr-label">' +
       attr +
       '</div><div class="attr-val">' +
-      DIE_LABELS[char.attributes[attr]] +
+      LEVEL_LABELS[char.attributes[attr]] +
       "</div></div>";
   }
   html += "</div>";
@@ -2094,7 +1926,7 @@ function renderFinalSummary(el) {
     "</div></div>";
   html +=
     '<div class="sheet-attr"><div class="attr-label">Coolness Under Fire</div><div class="attr-val">' +
-    DIE_LABELS[char.cuf] +
+    LEVEL_LABELS[char.cuf] +
     "</div></div>";
   html +=
     '<div class="sheet-attr"><div class="attr-label">Radiation</div><div class="attr-val">' +
@@ -2116,7 +1948,7 @@ function renderFinalSummary(el) {
         ' <span style="color:var(--text-muted);font-size:0.8rem">(' +
         skill.attr +
         ')</span></span><span class="sk-die">' +
-        DIE_LABELS[level] +
+        LEVEL_LABELS[level] +
         "</span></div>";
     }
   }
@@ -2147,33 +1979,7 @@ function renderFinalSummary(el) {
     html += "</div>";
   }
 
-  // Career History
-  if (char.careerHistory.length > 0) {
-    html += '<div class="sheet-section">';
-    html += "<h4>Career History</h4>";
-    for (const entry of char.careerHistory) {
-      html += '<div class="history-entry">';
-      html +=
-        '<span class="term-label">Term ' +
-        entry.term +
-        ": " +
-        escapeHtml(entry.career) +
-        "</span>";
-      const details = [];
-      if (entry.promoted) details.push("Promoted");
-      if (entry.specialty) details.push(escapeHtml(entry.specialty));
-      if (entry.yearsAdded) details.push("+" + entry.yearsAdded + " years");
-      if (details.length > 0) {
-        html +=
-          '<div class="term-detail">' + details.join(" \u2022 ") + "</div>";
-      }
-      html += "</div>";
-    }
-    html += "</div>";
-  }
-
-  html +=
-    '<div class="btn-row"><button class="btn btn-secondary" onclick="startOver()">Start Over</button></div>';
+  html += '<p class="note-text">To create a new character, refresh the page.</p>';
   el.innerHTML = html;
 }
 
@@ -2186,21 +1992,25 @@ function startGeneration() {
   renderWizard();
 }
 
-function startOver() {
-  initChar();
-  initWizard();
-  wizard.step = "intro";
-  document.getElementById("wizard-card").classList.add("visible");
-  renderWizard();
-}
-
 function submitNationality() {
   const input = document.getElementById("nationality-input");
   char.nationality = input.value.trim();
+  const nameInput = document.getElementById("char-name");
+  if (nameInput) {
+    char.name = nameInput.value.trim();
+  }
+  if (!char.nationality || !char.name) {
+    wizard.nationalityError = true;
+    renderWizard();
+    return;
+  }
+  wizard.nationalityError = false;
   wizard.step = "attributes";
   wizard.attrIncreases = rollD3() + rollD3();
   wizard.attrDistributed = 0;
   wizard.attrDecreased = false;
+  wizard.attrDecreasedAttr = null;
+  wizard.attrIncreasedAttrs = {};
   // Reset attributes to C
   for (const attr of ATTRIBUTES) {
     char.attributes[attr] = "C";
@@ -2214,15 +2024,40 @@ function attrIncrease(attr) {
   if (!canIncrease(char.attributes[attr])) return;
   char.attributes[attr] = increaseLevel(char.attributes[attr]);
   wizard.attrDistributed++;
+  wizard.attrIncreasedAttrs[attr] = (wizard.attrIncreasedAttrs[attr] || 0) + 1;
+  // Auto-undo C→D trade if the traded attr is back to C
+  if (attr === wizard.attrDecreasedAttr && char.attributes[attr] === "C") {
+    wizard.attrDistributed--;
+    wizard.attrIncreasedAttrs[attr]--;
+    wizard.attrDecreased = false;
+    wizard.attrIncreases--;
+    wizard.attrDecreasedAttr = null;
+  }
   renderWizard();
 }
 
 function attrDecrease(attr) {
-  // Only allow decreasing from C to D for the optional trade
+  // Refund: undo a previous increase
+  if ((wizard.attrIncreasedAttrs[attr] || 0) > 0) {
+    char.attributes[attr] = decreaseLevel(char.attributes[attr]);
+    wizard.attrDistributed--;
+    wizard.attrIncreasedAttrs[attr]--;
+    // If this fully reverses the C→D trade, undo it and restore to C
+    if (attr === wizard.attrDecreasedAttr && wizard.attrIncreasedAttrs[attr] === 0) {
+      char.attributes[attr] = "C";
+      wizard.attrDecreased = false;
+      wizard.attrIncreases--;
+      wizard.attrDecreasedAttr = null;
+    }
+    renderWizard();
+    return;
+  }
+  // C→D trade: only allow decreasing from C to D for the optional trade
   if (char.attributes[attr] !== "C" || wizard.attrDecreased) return;
   char.attributes[attr] = "D";
   wizard.attrIncreases++;
   wizard.attrDecreased = true;
+  wizard.attrDecreasedAttr = attr;
   renderWizard();
 }
 
@@ -2263,8 +2098,10 @@ function submitChildhood() {
 }
 
 function rollChildhoodSpecialty() {
+  const ch = CHILDHOODS[wizard.selectedChildhood - 1];
   wizard.childhoodSpecialtyRoll = roll(6);
-  wizard.selectedChildhoodSpecialty = wizard.childhoodSpecialtyRoll - 1;
+  const idx = wizard.childhoodSpecialtyRoll - 1;
+  wizard.selectedChildhoodSpecialty = hasSpecialty(ch.specialtyTable[idx]) ? null : idx;
   renderWizard();
 }
 
@@ -2274,10 +2111,7 @@ function selectChildhoodSpecialty(i) {
 }
 
 function submitChildhoodSpecialty() {
-  if (
-    wizard.selectedChildhoodSpecialty === null ||
-    wizard.selectedChildhoodSpecialty === undefined
-  )
+  if (wizard.selectedChildhoodSpecialty === null || wizard.selectedChildhoodSpecialty === undefined)
     return;
   const ch = CHILDHOODS[wizard.selectedChildhood - 1];
   const spec = ch.specialtyTable[wizard.selectedChildhoodSpecialty];
@@ -2299,23 +2133,31 @@ function toggleLocalMilitia() {
   char.localMilitia = document.getElementById("local-militia").checked;
 }
 
+function selectMilitaryBranch() {
+  const sel = document.getElementById("military-branch");
+  wizard.selectedBranch = sel.value || null;
+  renderWizard();
+}
+
 function submitCareerChoice() {
   if (wizard.selectedCareer === null) return;
   const career = CAREERS[wizard.selectedCareer];
   wizard.currentTermCareer = wizard.selectedCareer;
-  wizard.isFirstMilitaryTerm =
-    career.category === "Military" && isFirstMilitaryTerm();
+  wizard.isFirstMilitaryTerm = career.category === "Military" && isFirstMilitaryTerm();
+
+  // Commit military branch selection
+  if (wizard.selectedBranch && !char.militaryBranch) {
+    char.militaryBranch = wizard.selectedBranch;
+    wizard.selectedBranch = null;
+  }
 
   // Set rank if this is first time in this rank track
-  if (career.rankTrack && !char.rank) {
-    char.rank = career.startingRank;
+  if (career.rankTrack && char.rankIndex === null) {
+    char.rankIndex = career.startingRankIndex;
     char.rankTrack = career.rankTrack;
-  } else if (
-    career.rankTrack &&
-    career.rankTrack !== char.rankTrack
-  ) {
+  } else if (career.rankTrack && career.rankTrack !== char.rankTrack) {
     // Switching track (e.g., enlisted to officer)
-    char.rank = career.startingRank;
+    char.rankIndex = career.startingRankIndex;
     char.rankTrack = career.rankTrack;
   }
 
@@ -2351,7 +2193,7 @@ function submitCareerSkills() {
   wizard.promotionResult = null;
   wizard.promotionSpecialtyRoll = null;
   wizard.selectedPromotionSpecialty = null;
-  wizard.freeSpecialty = null;
+
   renderWizard();
 }
 
@@ -2378,12 +2220,11 @@ function rollPromotion() {
       }
     }
     // Rank increase for military
-    if (career.category === "Military" && char.rank) {
-      const track =
-        char.rankTrack === "officer" ? OFFICER_RANKS : ENLISTED_RANKS;
-      const currentIdx = track.indexOf(char.rank);
-      if (currentIdx >= 0 && currentIdx < track.length - 1) {
-        char.rank = track[currentIdx + 1];
+    if (career.category === "Military" && char.rankIndex !== null && char.militaryBranch) {
+      const branch = MILITARY_BRANCHES[char.militaryBranch];
+      const track = char.rankTrack === "officer" ? branch.officer : branch.enlisted;
+      if (char.rankIndex < track.length - 1) {
+        char.rankIndex++;
       }
     }
   }
@@ -2393,20 +2234,16 @@ function rollPromotion() {
 }
 
 function rollPromotionSpecialty() {
+  const career = CAREERS[wizard.currentTermCareer];
   wizard.promotionSpecialtyRoll = roll(6);
-  wizard.selectedPromotionSpecialty = wizard.promotionSpecialtyRoll - 1;
+  const idx = wizard.promotionSpecialtyRoll - 1;
+  wizard.selectedPromotionSpecialty = hasSpecialty(career.specialtyTable[idx]) ? null : idx;
   renderWizard();
 }
 
 function selectPromotionSpecialty(i) {
   wizard.selectedPromotionSpecialty = i;
-  wizard.freeSpecialty = null;
-  renderWizard();
-}
 
-function selectFreeSpecialty() {
-  const sel = document.getElementById("free-specialty");
-  wizard.freeSpecialty = sel.value;
   renderWizard();
 }
 
@@ -2416,13 +2253,7 @@ function submitPromotionResult() {
   let specialty = null;
 
   if (result.success) {
-    const chosenSpec =
-      career.specialtyTable[wizard.selectedPromotionSpecialty];
-    if (hasSpecialty(chosenSpec) && wizard.freeSpecialty) {
-      specialty = wizard.freeSpecialty;
-    } else {
-      specialty = chosenSpec;
-    }
+    specialty = career.specialtyTable[wizard.selectedPromotionSpecialty];
     addSpecialty(specialty);
   }
 
@@ -2447,8 +2278,7 @@ function agingDecreaseAttr(attr) {
   wizard.agingAttrDecreased = true;
   // Update the career history with years
   if (char.careerHistory.length > 0) {
-    char.careerHistory[char.careerHistory.length - 1].yearsAdded =
-      wizard.agingYears;
+    char.careerHistory[char.careerHistory.length - 1].yearsAdded = wizard.agingYears;
   }
   renderWizard();
 }
@@ -2456,16 +2286,12 @@ function agingDecreaseAttr(attr) {
 function submitAging() {
   // Update years in career history
   if (char.careerHistory.length > 0) {
-    char.careerHistory[char.careerHistory.length - 1].yearsAdded =
-      wizard.agingYears;
+    char.careerHistory[char.careerHistory.length - 1].yearsAdded = wizard.agingYears;
   }
 
   // Check if last career was crime → prison check
   const lastCareer = CAREERS[wizard.currentTermCareer];
-  if (
-    lastCareer.category === "Crime" &&
-    lastCareer.name !== "Prisoner"
-  ) {
+  if (lastCareer.category === "Crime" && lastCareer.name !== "Prisoner") {
     wizard.step = "prisonCheck";
     wizard.prisonCheckRolled = false;
   } else {
@@ -2526,8 +2352,14 @@ function submitAtWarSkills() {
 }
 
 function rollAtWarSpecialty() {
+  const lastCareer = char.lastPreWarCareer
+    ? CAREERS.find((c) => c.name === char.lastPreWarCareer)
+    : null;
+  const cat = lastCareer ? getAtWarSpecialtyCategory(lastCareer) : "Other";
+  const table = AT_WAR_SPECIALTIES[cat];
   wizard.atWarSpecialtyRoll = roll(6);
-  wizard.selectedAtWarSpecialty = wizard.atWarSpecialtyRoll - 1;
+  const idx = wizard.atWarSpecialtyRoll - 1;
+  wizard.selectedAtWarSpecialty = hasSpecialty(table[idx]) ? null : idx;
   renderWizard();
 }
 
@@ -2537,18 +2369,12 @@ function selectAtWarSpecialty(i) {
 }
 
 function submitAtWarSpecialty() {
-  if (
-    wizard.selectedAtWarSpecialty === null ||
-    wizard.selectedAtWarSpecialty === undefined
-  )
-    return;
+  if (wizard.selectedAtWarSpecialty === null || wizard.selectedAtWarSpecialty === undefined) return;
 
   const lastCareer = char.lastPreWarCareer
     ? CAREERS.find((c) => c.name === char.lastPreWarCareer)
     : null;
-  const cat = lastCareer
-    ? getAtWarSpecialtyCategory(lastCareer)
-    : "Other";
+  const cat = lastCareer ? getAtWarSpecialtyCategory(lastCareer) : "Other";
   const table = AT_WAR_SPECIALTIES[cat];
   const spec = table[wizard.selectedAtWarSpecialty];
   addSpecialty(spec);
@@ -2563,7 +2389,6 @@ function submitAtWarSpecialty() {
 }
 
 function submitFinishing() {
-  char.name = document.getElementById("char-name").value.trim();
   char.appearance = document.getElementById("char-appearance").value.trim();
   char.moralCode = document.getElementById("char-moral").value.trim();
   char.bigDream = document.getElementById("char-dream").value.trim();
@@ -2583,7 +2408,6 @@ function goToFinalSummary() {
   wizard.step = "summary";
   // Hide summary card since it's part of the final sheet now
   document.getElementById("summary-card").classList.remove("visible");
-  document.getElementById("history-card").classList.remove("visible");
   renderWizard();
 }
 

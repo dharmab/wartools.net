@@ -276,7 +276,7 @@
         }
 
         .career-option.disabled {
-            opacity: 0.4;
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
@@ -363,36 +363,6 @@
             .failure {
                 color: #e66;
             }
-        }
-
-        /* Career history log */
-        #history-card {
-            display: none;
-        }
-
-        #history-card.visible {
-            display: block;
-        }
-
-        .history-entry {
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .history-entry:last-child {
-            border-bottom: none;
-        }
-
-        .history-entry .term-label {
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-
-        .history-entry .term-detail {
-            color: var(--text-muted);
-            font-size: 0.8rem;
         }
 
         /* Text inputs */
@@ -601,10 +571,6 @@
             <div id="wizard-content"></div>
         </div>
 
-        <div class="card" id="history-card">
-            <h3>Career History</h3>
-            <div id="history-content"></div>
-        </div>
     </div>
 
     <script src="twilight-2000-4e-lifepath.js"></script>
