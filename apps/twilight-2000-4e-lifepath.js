@@ -1661,8 +1661,14 @@ function renderAtWar(el) {
   if (char.drafted) {
     html += '<p class="note-text">You were drafted! You receive Combat Arms gear.</p>';
     if (mustPickRanged) {
-      html += '<p class="note-text">As a draftee, one increase must be Ranged Combat.</p>';
+      html +=
+        '<p class="note-text">As a draftee, Ranged Combat has been automatically selected as your first increase. Choose 1 more skill.</p>';
     }
+  }
+
+  // Auto-select Ranged Combat for draftees (like first military term)
+  if (mustPickRanged && !wizard.selectedSkills.includes("Ranged Combat")) {
+    wizard.selectedSkills = ["Ranged Combat"];
   }
 
   // At War: any skill is available
@@ -1672,19 +1678,27 @@ function renderAtWar(el) {
   for (const skillName of allSkillNames) {
     const currentLevel = getSkillLevel(skillName);
     const isSelected = wizard.selectedSkills.includes(skillName);
+    const isLocked = mustPickRanged && skillName === "Ranged Combat";
     const isFull = selectedCount >= 2 && !isSelected;
     const isMaxed = !canIncrease(currentLevel);
-    const disabled = isFull || isMaxed;
+    const disabled = isFull || isMaxed || isLocked;
 
-    const cls = "skill-choice" + (isSelected ? " selected" : "") + (disabled ? " disabled" : "");
+    const cls =
+      "skill-choice" + (isSelected ? " selected" : "") + (disabled && !isLocked ? " disabled" : "");
 
     html +=
       '<div class="' +
       cls +
       '" onclick="' +
-      (!disabled || isSelected ? "toggleSkillChoice('" + escapeHtml(skillName) + "')" : "") +
+      (!isLocked && (!disabled || isSelected)
+        ? "toggleSkillChoice('" + escapeHtml(skillName) + "')"
+        : "") +
       '">';
-    html += '<span class="skill-name">' + escapeHtml(skillName) + "</span>";
+    html +=
+      '<span class="skill-name">' +
+      escapeHtml(skillName) +
+      (isLocked ? " (required)" : "") +
+      "</span>";
     html +=
       '<span class="skill-current">' +
       LEVEL_LABELS[currentLevel] +
