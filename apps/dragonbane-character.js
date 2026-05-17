@@ -1127,7 +1127,7 @@ function renderSummary() {
   const el = document.getElementById("summary-card");
   const content = document.getElementById("summary-content");
 
-  if (wizard.step === "intro") {
+  if (wizard.step === "intro" || wizard.step === "summary") {
     el.classList.remove("visible");
     return;
   }
