@@ -114,9 +114,30 @@ const KIN_NAMES = {
   Human: ["Joruna", "Tym", "Halvelda", "Garmander", "Verolun", "Lothar"],
   Halfling: ["Snappy", "Brine", "Cottar", "Bumble", "Perrywick", "Theoline"],
   Dwarf: ["Tinderrock", "Halwyld", "Tymolana", "Traut", "Urd", "Fermer"],
-  Elf: ["Arasin", "Illyriana", "Galvander", "Tyrindelia", "Erwilnor", "Andremone"],
-  Mallard: ["Qwucksum", "Splats", "Moggee", "Groddy", "Blisandina", "Hackleswell"],
-  Wolfkin: ["Wyld", "Wolfshadow", "Lunariem", "Obdurian", "Frostbite", "Wuldenhall"],
+  Elf: [
+    "Arasin",
+    "Illyriana",
+    "Galvander",
+    "Tyrindelia",
+    "Erwilnor",
+    "Andremone",
+  ],
+  Mallard: [
+    "Qwucksum",
+    "Splats",
+    "Moggee",
+    "Groddy",
+    "Blisandina",
+    "Hackleswell",
+  ],
+  Wolfkin: [
+    "Wyld",
+    "Wolfshadow",
+    "Lunariem",
+    "Obdurian",
+    "Frostbite",
+    "Wuldenhall",
+  ],
 };
 
 const PROFESSIONS = [
@@ -186,13 +207,29 @@ const PROFESSIONS = [
     keyAttr: "STR",
     heroicAbility: "Veteran",
     heroicOptions: null,
-    skills: ["Axes", "Bows", "Brawling", "Crossbows", "Evade", "Hammers", "Spears", "Swords"],
+    skills: [
+      "Axes",
+      "Bows",
+      "Brawling",
+      "Crossbows",
+      "Evade",
+      "Hammers",
+      "Spears",
+      "Swords",
+    ],
     gear: [
       "Broadsword/battle axe/morning star, small shield, chainmail, torch, flint & tinder, D6 food rations, D6 silver",
       "Short sword/handaxe/short spear, light crossbow, quiver, leather armor, torch, flint & tinder, D6 food rations, D6 silver",
       "Long spear, studded leather armor, open helmet, torch, flint & tinder, D6 food rations, D6 silver",
     ],
-    nicknames: ["Gravemaker", "Grimjaw", "Windthaw", "Coldsteel", "The Fearless", "The Butcher"],
+    nicknames: [
+      "Gravemaker",
+      "Grimjaw",
+      "Windthaw",
+      "Coldsteel",
+      "The Fearless",
+      "The Butcher",
+    ],
   },
   {
     name: "Hunter",
@@ -298,7 +335,14 @@ const PROFESSIONS = [
       "Knife, wand, grimoire, torch, flint & tinder, D6 food rations, D8 silver",
       "Amulet, grimoire, sleeping pelt, torch, flint & tinder, D6 food rations, D8 silver",
     ],
-    nicknames: ["Rootheart", "Crookback", "Graycape", "Stormhand", "Stafflimper", "Shadowbringer"],
+    nicknames: [
+      "Rootheart",
+      "Crookback",
+      "Graycape",
+      "Stormhand",
+      "Stafflimper",
+      "Shadowbringer",
+    ],
   },
   {
     name: "Mariner",
@@ -321,7 +365,14 @@ const PROFESSIONS = [
       "Scimitar, leather armor, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver",
       "Trident, spyglass, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver",
     ],
-    nicknames: ["Whitewater", "Waverider", "Foamborn", "Saltsplash", "Seadog", "Stormfarer"],
+    nicknames: [
+      "Whitewater",
+      "Waverider",
+      "Foamborn",
+      "Saltsplash",
+      "Seadog",
+      "Stormfarer",
+    ],
   },
   {
     name: "Merchant",
@@ -404,7 +455,14 @@ const PROFESSIONS = [
       "Knife, lockpicks (simple), torch, flint & tinder, D6 food rations, D10 silver",
       "Two daggers, marbles, rope (hemp), torch, flint & tinder, D6 food rations, D10 silver",
     ],
-    nicknames: ["Halffinger", "Blackrat", "Redeye", "Quickfoot", "Doubletongue", "Nightstabber"],
+    nicknames: [
+      "Halffinger",
+      "Blackrat",
+      "Redeye",
+      "Quickfoot",
+      "Doubletongue",
+      "Nightstabber",
+    ],
   },
 ];
 
@@ -966,7 +1024,9 @@ function renderSummary() {
   let html = '<div class="summary-grid">';
 
   if (char.name) {
-    const fullName = char.nickname ? `${char.name} "${char.nickname}"` : char.name;
+    const fullName = char.nickname
+      ? `${char.name} "${char.nickname}"`
+      : char.name;
     html += `<div><span class="label">Name</span><br><span class="value">${escapeHtml(fullName)}</span></div>`;
   }
   if (char.kin) {
@@ -1001,7 +1061,8 @@ function renderSummary() {
   if (char.kin) {
     const kinData = KIN.find((k) => k.name === char.kin);
     if (kinData) {
-      html += '<div class="summary-skills"><h4>Innate Abilities</h4><div class="skill-list">';
+      html +=
+        '<div class="summary-skills"><h4>Innate Abilities</h4><div class="skill-list">';
       for (const ab of kinData.abilities) {
         const wpText = ab.wp !== null ? ` (WP ${ab.wp})` : "";
         html += `<span class="skill-item">${escapeHtml(ab.name)}${escapeHtml(wpText)}: ${escapeHtml(ab.desc)}</span>`;
@@ -1011,7 +1072,9 @@ function renderSummary() {
   }
 
   if (char.heroicAbility) {
-    const heroicData = HEROIC_ABILITIES.find((a) => a.name === char.heroicAbility);
+    const heroicData = HEROIC_ABILITIES.find(
+      (a) => a.name === char.heroicAbility,
+    );
     const heroicDisplay = heroicData
       ? `${char.heroicAbility} (WP ${heroicData.wp})`
       : char.heroicAbility;
@@ -1019,11 +1082,15 @@ function renderSummary() {
   }
 
   if (char.trainedSkills.length > 0) {
-    html += '<div class="summary-skills"><h4>Trained Skills</h4><div class="skill-list">';
+    html +=
+      '<div class="summary-skills"><h4>Trained Skills</h4><div class="skill-list">';
     for (const sk of char.trainedSkills) {
       const attr = skillAttr(sk);
       const attrVal = char.attributes[attr] || 0;
-      const tv = attrVal > 0 ? ` <span class="skill-die">${trainedValue(attrVal)}</span>` : "";
+      const tv =
+        attrVal > 0
+          ? ` <span class="skill-die">${trainedValue(attrVal)}</span>`
+          : "";
       html += `<span class="skill-item">${escapeHtml(sk)}${tv}</span>`;
     }
     html += "</div></div>";
@@ -1049,7 +1116,8 @@ function renderSummary() {
   }
 
   if (char.appearance.length > 0) {
-    html += '<div class="summary-skills"><h4>Appearance</h4><div class="skill-list">';
+    html +=
+      '<div class="summary-skills"><h4>Appearance</h4><div class="skill-list">';
     for (const trait of char.appearance) {
       html += `<span class="skill-item">${escapeHtml(trait)}</span>`;
     }
@@ -1064,8 +1132,7 @@ function renderSummary() {
 function renderIntro(el) {
   el.innerHTML =
     "<h3>Dragonbane Character Generator</h3>" +
-    "<p>This tool walks you through Dragonbane character creation step by step, following the method from pp. 9–29 of the rulebook. At each step you can roll on the table or choose freely.</p>" +
-    "<p>You'll choose your Kin, Profession, Age, Name, Attributes, Skills, Heroic Ability, and more — building a complete adventurer ready for the world of Dragonbane.</p>" +
+    "<p>This tool walks you through Dragonbane character creation step by step, following the method from the rulebook.</p>" +
     '<div class="btn-row"><button class="btn" onclick="startWizard()">Begin</button></div>';
 }
 
@@ -1104,7 +1171,8 @@ function renderKin(el) {
 
   if (selectedKin) {
     const kinData = KIN.find((k) => k.name === selectedKin);
-    html += '<div class="career-group"><div class="career-group-title">Innate Abilities</div>';
+    html +=
+      '<div class="career-group"><div class="career-group-title">Innate Abilities</div>';
     for (const ab of kinData.abilities) {
       const wpText = ab.wp !== null ? ` — WP cost: ${ab.wp}` : " — No WP cost";
       html += `<div class="career-option disabled"><div>
@@ -1116,7 +1184,8 @@ function renderKin(el) {
   }
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollKin()">Roll D12</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollKin()">Roll D12</button>';
   html += `<button class="btn" onclick="submitKin()"${!selectedKin ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1179,7 +1248,8 @@ function renderProfession(el) {
 
   if (selectedProf) {
     const profData = PROFESSIONS.find((p) => p.name === selectedProf);
-    html += '<div class="career-group"><div class="career-group-title">Profession Skills</div>';
+    html +=
+      '<div class="career-group"><div class="career-group-title">Profession Skills</div>';
     if (profData.name === "Mage") {
       html +=
         '<div class="skill-list skill-list-padded"><span class="skill-item note-text">Select a magic school on the next screen to see profession skills.</span></div>';
@@ -1194,7 +1264,8 @@ function renderProfession(el) {
   }
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollProfession()">Roll D10</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollProfession()">Roll D10</button>';
   html += `<button class="btn" onclick="submitProfession()"${!selectedProf ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1252,7 +1323,8 @@ function renderMagicSchool(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="backToProfession()">Back</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="backToProfession()">Back</button>';
   html += `<button class="btn" onclick="submitMagicSchool()"${!selected ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1303,7 +1375,8 @@ function renderAge(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollAge()">Roll D6</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollAge()">Roll D6</button>';
   html += `<button class="btn" onclick="submitAge()"${!selectedAge ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1340,7 +1413,8 @@ function renderNameStep(el) {
   html += "<h3>Choose Your Name</h3>";
   html += `<p>Roll a D6 to choose a ${escapeHtml(char.kin)} name, or choose a name freely. OPTIONAL: You may also a roll a nickname from your profession's list, or choose one freely.</p>`;
 
-  html += '<div class="career-group"><div class="career-group-title">Name Table (D6)</div>';
+  html +=
+    '<div class="career-group"><div class="career-group-title">Name Table (D6)</div>';
   html += '<ul class="d6-table">';
   for (const [i, name] of kinNames.entries()) {
     const isSelected = char.name === name;
@@ -1375,8 +1449,10 @@ function renderNameStep(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollName()">Roll D6 Name</button>';
-  html += '<button class="btn btn-secondary" onclick="rollNickname()">Roll D6 Nickname</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollName()">Roll D6 Name</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollNickname()">Roll D6 Nickname</button>';
   html += `<button class="btn" id="name-continue-btn" onclick="submitNameStep()"${!char.name ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1528,7 +1604,10 @@ function submitAttributes() {
   const ageData = AGES.find((a) => a.name === char.age);
   if (ageData) {
     for (const [attr, mod] of Object.entries(ageData.attrMods)) {
-      char.attributes[attr] = Math.max(1, Math.min(18, char.attributes[attr] + mod));
+      char.attributes[attr] = Math.max(
+        1,
+        Math.min(18, char.attributes[attr] + mod),
+      );
     }
   }
 
@@ -1565,7 +1644,8 @@ function renderAttributes(el) {
     }
     html += "</div>";
     html += '<div class="btn-row" style="margin-top:14px;">';
-    html += '<button class="btn btn-secondary" onclick="switchToRolling()">Roll Instead</button>';
+    html +=
+      '<button class="btn btn-secondary" onclick="switchToRolling()">Roll Instead</button>';
     html += `<button class="btn" id="attr-continue-btn" onclick="submitAttributes()"${!allAssigned ? " disabled" : ""}>Continue</button>`;
     html += "</div>";
   } else {
@@ -1597,7 +1677,8 @@ function renderAttributes(el) {
     if (allAssigned) {
       html += '<div class="swap-status">';
       if (wizard.swapDone) {
-        html += '<div class="note-text">Swap done. Click Continue when ready.</div>';
+        html +=
+          '<div class="note-text">Swap done. Click Continue when ready.</div>';
       } else if (wizard.swapAttrA) {
         html += `<div class="note-text"><strong>${wizard.swapAttrA}</strong> selected — click another attribute to swap, or click <strong>${wizard.swapAttrA}</strong> again to cancel.</div>`;
       } else {
@@ -1609,9 +1690,11 @@ function renderAttributes(el) {
 
     html += '<div class="btn-row" style="margin-top:14px;">';
     if (wizard.attrRollIdx > 0) {
-      html += '<button class="btn btn-secondary" onclick="resetAttrRolls()">Start Over</button>';
+      html +=
+        '<button class="btn btn-secondary" onclick="resetAttrRolls()">Start Over</button>';
     }
-    html += '<button class="btn btn-secondary" onclick="switchToManual()">Enter Manually</button>';
+    html +=
+      '<button class="btn btn-secondary" onclick="switchToManual()">Enter Manually</button>';
     html += `<button class="btn" id="attr-continue-btn" onclick="submitAttributes()"${!allAssigned ? " disabled" : ""}>Continue</button>`;
     html += "</div>";
   }
@@ -1631,7 +1714,8 @@ function renderDerivedRatings(el) {
 
   let html = '<div class="step-title">Step 6 of 12 — Derived Ratings</div>';
   html += "<h3>Derived Ratings</h3>";
-  html += "<p>These values are computed automatically from your attributes and kin.</p>";
+  html +=
+    "<p>These values are computed automatically from your attributes and kin.</p>";
 
   html += "<div>";
   html += `<div class="attr-row">
@@ -1695,7 +1779,8 @@ function _getSkillStepData() {
 }
 
 function renderTrainedSkills(el) {
-  const { autoAdded, profPool, profNeeded, freeSkillCount } = _getSkillStepData();
+  const { autoAdded, profPool, profNeeded, freeSkillCount } =
+    _getSkillStepData();
   const profChosen = wizard.profSkillsChosen;
   const allChosenProf = [...autoAdded, ...profChosen];
 
@@ -1783,7 +1868,11 @@ function submitTrainedSkills() {
   if (wizard.profSkillsChosen.length !== profNeeded) return;
   if (wizard.freeSkillsChosen.length !== freeSkillCount) return;
 
-  char.trainedSkills = [...autoAdded, ...wizard.profSkillsChosen, ...wizard.freeSkillsChosen];
+  char.trainedSkills = [
+    ...autoAdded,
+    ...wizard.profSkillsChosen,
+    ...wizard.freeSkillsChosen,
+  ];
   wizard.step = "heroicAbility";
   renderWizard();
 }
@@ -1801,7 +1890,9 @@ function _heroicAbilityCard(abilityName, showReq) {
     '<div style="min-width:0;overflow-wrap:break-word;">' +
     `<span class="career-name">${escapeHtml(abilityName)}</span>` +
     `<span class="career-req">${meta}</span>` +
-    (data ? `<div class="note-text" style="margin-top:4px;">${escapeHtml(data.desc)}</div>` : "") +
+    (data
+      ? `<div class="note-text" style="margin-top:4px;">${escapeHtml(data.desc)}</div>`
+      : "") +
     "</div></div>"
   );
 }
@@ -1812,7 +1903,13 @@ function renderHeroicAbility(el) {
   const isArtisan = char.profession === "Artisan";
 
   // Auto-select profession default on first entry
-  if (!isMage && !isArtisan && !char.heroicAbility && profData && profData.heroicAbility) {
+  if (
+    !isMage &&
+    !isArtisan &&
+    !char.heroicAbility &&
+    profData &&
+    profData.heroicAbility
+  ) {
     char.heroicAbility = profData.heroicAbility;
   }
 
@@ -1850,7 +1947,8 @@ function renderHeroicAbility(el) {
         : [];
 
     if (isArtisan) {
-      html += "<p>Artisans choose one of three heroic abilities reflecting their craft:</p>";
+      html +=
+        "<p>Artisans choose one of three heroic abilities reflecting their craft:</p>";
     }
     html += '<div class="career-group">';
     for (const name of defaultList) {
@@ -1861,7 +1959,8 @@ function renderHeroicAbility(el) {
     html +=
       '<button class="btn btn-secondary" onclick="toggleHeroicShowAll()">Choose a different ability (GM approval required)</button>';
   } else {
-    html += '<div class="career-group"><div class="career-group-title">All Heroic Abilities</div>';
+    html +=
+      '<div class="career-group"><div class="career-group-title">All Heroic Abilities</div>';
     for (const ability of HEROIC_ABILITIES) {
       html += _heroicAbilityCard(ability.name, true);
     }
@@ -1930,13 +2029,16 @@ function renderWeakness(el) {
   html += `<input class="text-input" id="weakness-name-input" type="text" value="${escapeHtml(selected || "")}" placeholder="e.g. Stubborn" oninput="weaknessNameChanged(this.value)">`;
   html += "</div>";
   html += '<div class="form-group">';
-  html += '<label for="weakness-desc-input">Custom weakness description (optional):</label>';
+  html +=
+    '<label for="weakness-desc-input">Custom weakness description (optional):</label>';
   html += `<input class="text-input" id="weakness-desc-input" type="text" value="${escapeHtml(char.weaknessDesc || "")}" placeholder="e.g. I never admit when I am wrong." oninput="weaknessDescChanged(this.value)">`;
   html += "</div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollWeakness()">Roll D20</button>';
-  html += '<button class="btn btn-secondary" onclick="skipWeakness()">Skip</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollWeakness()">Roll D20</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="skipWeakness()">Skip</button>';
   html += `<button class="btn" id="weakness-continue-btn" onclick="submitWeakness()"${!selected ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -2020,7 +2122,8 @@ function renderGear(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollGear()">Roll D6</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollGear()">Roll D6</button>';
   html += `<button class="btn" onclick="submitGear()"${wizard.gearBundleIdx === null ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -2076,13 +2179,16 @@ function renderMemento(el) {
   html += "</div>";
 
   html += '<div class="form-group" style="margin-top:12px;">';
-  html += '<label for="memento-input">Type your own memento (optional):</label>';
+  html +=
+    '<label for="memento-input">Type your own memento (optional):</label>';
   html += `<input class="text-input" id="memento-input" type="text" value="${escapeHtml(selected || "")}" placeholder="Describe your memento..." oninput="mementoInputChanged(this.value)">`;
   html += "</div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollMemento()">Roll D20</button>';
-  html += '<button class="btn btn-secondary" onclick="skipMemento()">Skip</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollMemento()">Roll D20</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="skipMemento()">Skip</button>';
   html += `<button class="btn" id="memento-continue-btn" onclick="submitMemento()"${!selected ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -2144,7 +2250,8 @@ function renderAppearance(el) {
     html += "</div></div>";
   }
 
-  html += '<div class="career-group"><div class="career-group-title">Appearance Table (D20)</div>';
+  html +=
+    '<div class="career-group"><div class="career-group-title">Appearance Table (D20)</div>';
   for (const [i, a] of APPEARANCES.entries()) {
     const alreadyAdded = char.appearance.includes(a);
     html +=
@@ -2161,11 +2268,13 @@ function renderAppearance(el) {
   html += '<div style="display:flex;gap:8px;align-items:center;">';
   html +=
     '<input class="text-input input-grow" id="appearance-input" type="text" placeholder="Describe a feature...">';
-  html += '<button class="btn btn-secondary" onclick="addCustomAppearance()">Add</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="addCustomAppearance()">Add</button>';
   html += "</div></div>";
 
   html += '<div class="btn-row">';
-  html += '<button class="btn btn-secondary" onclick="rollAppearance()">Roll D20</button>';
+  html +=
+    '<button class="btn btn-secondary" onclick="rollAppearance()">Roll D20</button>';
   html += '<button class="btn" onclick="submitAppearance()">Continue</button>';
   html += "</div>";
 
@@ -2221,7 +2330,9 @@ function renderFinalSummary(el) {
   const baseMove = kinData ? kinData.movement : 10;
   const mov = baseMove + aglMoveMod(a.AGL);
 
-  const fullName = char.nickname ? `${char.name} "${char.nickname}"` : char.name;
+  const fullName = char.nickname
+    ? `${char.name} "${char.nickname}"`
+    : char.name;
   const profDisplay = char.magicSchool
     ? `${char.profession} (${char.magicSchool})`
     : char.profession;
@@ -2259,11 +2370,14 @@ function renderFinalSummary(el) {
   }
 
   if (char.heroicAbility) {
-    const heroicData = HEROIC_ABILITIES.find((a) => a.name === char.heroicAbility);
+    const heroicData = HEROIC_ABILITIES.find(
+      (a) => a.name === char.heroicAbility,
+    );
     html += "<h4>Heroic Ability</h4>";
     html += '<div class="skill-list" style="margin-bottom:16px;">';
     html += `<span class="skill-item"><strong>${escapeHtml(char.heroicAbility)}</strong>`;
-    if (heroicData) html += ` (WP ${escapeHtml(heroicData.wp)}) — ${escapeHtml(heroicData.desc)}`;
+    if (heroicData)
+      html += ` (WP ${escapeHtml(heroicData.wp)}) — ${escapeHtml(heroicData.desc)}`;
     html += "</span></div>";
   } else if (char.profession === "Mage") {
     html += "<h4>Magic School</h4>";
