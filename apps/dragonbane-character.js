@@ -1033,7 +1033,7 @@ function initWizard() {
       WIL: null,
       CHA: null,
     },
-    attrRollIdx: 0,
+    attrPending: null,
     swapAttrA: null,
     swapDone: false,
     attrManualMode: false,
@@ -1643,11 +1643,17 @@ function submitNameStep() {
 
 const ATTRS = ["STR", "CON", "AGL", "INT", "WIL", "CHA"];
 
-function rollNextAttr() {
-  const idx = wizard.attrRollIdx;
-  if (idx >= ATTRS.length) return;
-  wizard.attrAssigned[ATTRS[idx]] = rollDropLowest(4, 6);
-  wizard.attrRollIdx = idx + 1;
+function rollPendingAttr() {
+  if (wizard.attrPending !== null) return;
+  wizard.attrPending = rollDropLowest(4, 6);
+  renderWizard();
+}
+
+function assignPendingAttr(attrName) {
+  if (wizard.attrPending === null) return;
+  if (wizard.attrAssigned[attrName] !== null) return;
+  wizard.attrAssigned[attrName] = wizard.attrPending;
+  wizard.attrPending = null;
   renderWizard();
 }
 
@@ -1660,7 +1666,7 @@ function resetAttrRolls() {
     WIL: null,
     CHA: null,
   };
-  wizard.attrRollIdx = 0;
+  wizard.attrPending = null;
   wizard.swapAttrA = null;
   wizard.swapDone = false;
   renderWizard();
@@ -1676,7 +1682,7 @@ function switchToManual() {
     WIL: null,
     CHA: null,
   };
-  wizard.attrRollIdx = 0;
+  wizard.attrPending = null;
   wizard.swapAttrA = null;
   wizard.swapDone = false;
   renderWizard();
@@ -1692,7 +1698,7 @@ function switchToRolling() {
     WIL: null,
     CHA: null,
   };
-  wizard.attrRollIdx = 0;
+  wizard.attrPending = null;
   wizard.swapAttrA = null;
   wizard.swapDone = false;
   renderWizard();
@@ -1780,24 +1786,39 @@ function renderAttributes(el) {
     html += `<button class="btn" id="attr-continue-btn" onclick="submitAttributes()"${!allAssigned ? " disabled" : ""}>Continue</button>`;
     html += "</div>";
   } else {
-    html +=
-      "<p>Roll 4D6, keeping the highest 3, for each attribute. After all attributes are rolled, you may swap any two attribute scores.</p>";
+    const hasPending = wizard.attrPending !== null;
+
+    if (!allAssigned) {
+      html += '<div style="margin-bottom:12px;">';
+      if (hasPending) {
+        html += `<p>Roll result: <span class="attr-die" style="font-size:1.4rem;">${wizard.attrPending}</span></p>`;
+        html += "<p>Click an empty attribute below to assign this value.</p>";
+      } else {
+        html += "<p>Roll 4D6 and keep the highest 3. Then click an attribute to assign the result. Repeat until all six are filled.</p>";
+        html += `<button class="btn btn-secondary" onclick="rollPendingAttr()">Roll 4D6, keep highest 3</button>`;
+      }
+      html += "</div>";
+    }
 
     html += "<div>";
-    for (let i = 0; i < ATTRS.length; i++) {
-      const attr = ATTRS[i];
+    for (const attr of ATTRS) {
       const val = wizard.attrAssigned[attr];
-      const isCurrent = i === wizard.attrRollIdx;
       const isSwapA = wizard.swapAttrA === attr;
       const canSwap = allAssigned && !wizard.swapDone;
+      const canAssign = hasPending && val === null;
       const swapClass = isSwapA ? " attr-swap-selected" : "";
 
-      html += `<div class="attr-row${swapClass}"${canSwap ? ` role="button" tabindex="0" aria-pressed="${isSwapA ? "true" : "false"}" style="cursor:pointer;" onclick="clickAttrSlot('${attr}')"` : ""}>`;
+      let rowAttrs = "";
+      if (canSwap) {
+        rowAttrs = ` role="button" tabindex="0" aria-pressed="${isSwapA ? "true" : "false"}" style="cursor:pointer;" onclick="clickAttrSlot('${attr}')"`;
+      } else if (canAssign) {
+        rowAttrs = ` role="button" tabindex="0" style="cursor:pointer;" onclick="assignPendingAttr('${attr}')"`;
+      }
+
+      html += `<div class="attr-row${swapClass}"${rowAttrs}>`;
       html += `<span class="attr-name">${attr}</span>`;
       if (val !== null) {
         html += `<span class="attr-die">${val}</span>`;
-      } else if (isCurrent) {
-        html += `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation();rollNextAttr()">Roll 4D6, keep highest 3</button>`;
       } else {
         html += `<span style="color:var(--text-muted);font-size:0.95rem;">—</span>`;
       }
@@ -1822,7 +1843,7 @@ function renderAttributes(el) {
     html += '<div class="btn-row" style="margin-top:14px;">';
     html +=
       '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
-    if (wizard.attrRollIdx > 0) {
+    if (hasPending || ATTRS.some((a) => wizard.attrAssigned[a] !== null)) {
       html +=
         '<button class="btn btn-secondary" onclick="resetAttrRolls()">Reroll</button>';
     }
