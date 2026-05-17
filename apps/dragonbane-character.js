@@ -2258,14 +2258,35 @@ function renderWeakness(el) {
   }
   html += "</div>";
 
+  const customWeaknessIdeas = [
+    { name: "Stubborn", desc: "I never change my mind, no matter the evidence." },
+    { name: "Jealous", desc: "I can't stand to see others succeed where I have failed." },
+    { name: "Impulsive", desc: "I act before I think, and regret it later." },
+    { name: "Paranoid", desc: "I trust no one, not even my closest allies." },
+    { name: "Superstitious", desc: "I perform rituals before any dangerous undertaking." },
+    { name: "Vengeful", desc: "I never forgive a slight, no matter how small." },
+    { name: "Naive", desc: "I always assume the best of people, even when I shouldn't." },
+    { name: "Obsessive", desc: "Once I fixate on something, I cannot let it go." },
+    { name: "Wrathful", desc: "My anger flares fast and clouds my judgement." },
+    { name: "Indecisive", desc: "I agonize over choices until the moment has passed." },
+    { name: "Prideful", desc: "I refuse help even when I desperately need it." },
+    { name: "Pessimistic", desc: "I always expect the worst outcome." },
+    { name: "Compulsive Gambler", desc: "I bet on anything, even when the odds are against me." },
+    { name: "Overprotective", desc: "I put my companions before myself to a dangerous fault." },
+    { name: "Hot-headed", desc: "Insults and taunts push me into rash action." },
+  ];
+  const randomWeakness = customWeaknessIdeas[Math.floor(Math.random() * customWeaknessIdeas.length)];
+  const weaknessNamePlaceholder = randomWeakness.name;
+  const weaknessDescPlaceholder = randomWeakness.desc;
+
   html += '<div class="form-group" style="margin-top:12px;">';
   html += '<label for="weakness-name-input">Custom weakness name:</label>';
-  html += `<input class="text-input" id="weakness-name-input" type="text" value="${escapeHtml(selected || "")}" placeholder="e.g. Stubborn" oninput="weaknessNameChanged(this.value)">`;
+  html += `<input class="text-input" id="weakness-name-input" type="text" value="${escapeHtml(selected || "")}" placeholder="e.g. ${weaknessNamePlaceholder}" oninput="weaknessNameChanged(this.value)">`;
   html += "</div>";
   html += '<div class="form-group">';
   html +=
     '<label for="weakness-desc-input">Custom weakness description (optional):</label>';
-  html += `<input class="text-input" id="weakness-desc-input" type="text" value="${escapeHtml(char.weaknessDesc || "")}" placeholder="e.g. I never admit when I am wrong." oninput="weaknessDescChanged(this.value)">`;
+  html += `<input class="text-input" id="weakness-desc-input" type="text" value="${escapeHtml(char.weaknessDesc || "")}" placeholder="e.g. ${weaknessDescPlaceholder}" oninput="weaknessDescChanged(this.value)">`;
   html += "</div>";
 
   html += '<div class="btn-row">';
