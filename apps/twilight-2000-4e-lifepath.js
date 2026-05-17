@@ -245,7 +245,14 @@ const CAREERS = [
     reqText: "None",
     reqCheck: () => true,
     skills: ["Ranged Combat", "Close Combat", "Recon"],
-    specialtyTable: ["Rifleman", "Redleg", "Tanker", "Machinegunner", "Launcher Crew", "Combat Engineer"],
+    specialtyTable: [
+      "Rifleman",
+      "Redleg",
+      "Tanker",
+      "Machinegunner",
+      "Launcher Crew",
+      "Combat Engineer",
+    ],
     gear: [
       "Assault rifle with 2 extra magazines",
       "Body armor",
@@ -379,7 +386,14 @@ const CAREERS = [
       dieIndex(char.attributes.STR) >= 3 &&
       dieIndex(char.attributes.AGL) >= 3,
     skills: ["Ranged Combat", "Close Combat", "Mobility"],
-    specialtyTable: ["Martial Artist", "Rifleman", "Sniper", "Combat Awareness", "Infiltrator", "Scout"],
+    specialtyTable: [
+      "Martial Artist",
+      "Rifleman",
+      "Sniper",
+      "Combat Awareness",
+      "Infiltrator",
+      "Scout",
+    ],
     gear: [
       "Assault rifle with 3 extra magazines",
       "Pistol with 2 extra magazines",
@@ -410,7 +424,14 @@ const CAREERS = [
     reqText: "AGL C+ and INT C+",
     reqCheck: () => dieIndex(char.attributes.AGL) >= 2 && dieIndex(char.attributes.INT) >= 2,
     skills: ["Recon", "Tech", "Mobility"],
-    specialtyTable: ["Brawler", "Sidearms", "Mountaineer", "Infiltrator", "Electrician", "Locksmith"],
+    specialtyTable: [
+      "Brawler",
+      "Sidearms",
+      "Mountaineer",
+      "Infiltrator",
+      "Electrician",
+      "Locksmith",
+    ],
     gear: ["Lock picks", "Flashlight", "Backpack", "Knife"],
   },
   {
@@ -466,7 +487,14 @@ const CAREERS = [
     reqText: "AGL B+ and at least one Intelligence term",
     reqCheck: () => dieIndex(char.attributes.AGL) >= 3 && countCareerTerms("Intelligence") >= 1,
     skills: ["Ranged Combat", "Close Combat", "Recon"],
-    specialtyTable: ["Killer", "Interrogator", "Sniper", "Martial Artist", "Improvised Munitions", "Infiltrator"],
+    specialtyTable: [
+      "Killer",
+      "Interrogator",
+      "Sniper",
+      "Martial Artist",
+      "Improvised Munitions",
+      "Infiltrator",
+    ],
     gear: ["Pistol with suppressor and 2 extra magazines", "Knife", "Garrote", "Disguise kit"],
   },
   {
@@ -621,14 +649,7 @@ const CAREERS = [
     reqCheck: () =>
       countEducationSubTerms("Liberal Arts") >= 2 && dieIndex(char.attributes.INT) >= 3,
     skills: ["Persuasion", "Recon", "Command"],
-    specialtyTable: [
-      "Historian",
-      "Chemist",
-      "Scientist",
-      "Linguist",
-      "Psy Ops",
-      "Teacher",
-    ],
+    specialtyTable: ["Historian", "Chemist", "Scientist", "Linguist", "Psy Ops", "Teacher"],
     gear: ["Reference books", "Notebook", "Briefcase"],
   },
   {
@@ -654,16 +675,16 @@ const CAREERS = [
 
 // At War specialty tables by category
 const AT_WAR_SPECIALTIES = {
-  Military: ["Brawler", "Ranger", "NBC Specialist", "Rifleman", "Scrounger", "Improvised Munitions"],
-  "Blue Collar": ["Brawler", "Rider", "Runner", "Quartermaster", "Gunsmith", "Mechanic"],
-  "White Collar": [
-    "Scout",
-    "Fisher",
-    "Forager",
+  Military: [
+    "Brawler",
+    "Ranger",
+    "NBC Specialist",
+    "Rifleman",
     "Scrounger",
-    "Frontline Leader",
-    "Interrogator",
+    "Improvised Munitions",
   ],
+  "Blue Collar": ["Brawler", "Rider", "Runner", "Quartermaster", "Gunsmith", "Mechanic"],
+  "White Collar": ["Scout", "Fisher", "Forager", "Scrounger", "Frontline Leader", "Interrogator"],
   Other: ["Racer", "Hunter", "Forager", "Quartermaster", "Scrounger", "Improvised Munitions"],
 };
 
