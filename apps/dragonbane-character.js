@@ -1065,7 +1065,7 @@ function renderSummary() {
         '<div class="summary-skills"><h4>Innate Abilities</h4><div class="skill-list">';
       for (const ab of kinData.abilities) {
         const wpText = ab.wp !== null ? ` (WP ${ab.wp})` : "";
-        html += `<span class="skill-item">${escapeHtml(ab.name)}${escapeHtml(wpText)}: ${escapeHtml(ab.desc)}</span>`;
+        html += `<span class="ability-item">${escapeHtml(ab.name)}${escapeHtml(wpText)}: ${escapeHtml(ab.desc)}</span>`;
       }
       html += "</div></div>";
     }

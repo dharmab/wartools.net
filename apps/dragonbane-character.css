@@ -148,8 +148,8 @@ nav a {
     color: var(--text-secondary);
 }
 
-.skill-item {
-    white-space: nowrap;
+.ability-item {
+    white-space: normal;
 }
 
 .skill-die {
