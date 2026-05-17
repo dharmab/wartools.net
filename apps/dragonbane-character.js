@@ -892,6 +892,66 @@ const APPEARANCES = [
   "Weathered face",
 ];
 
+// ─── MAGIC DATA ───
+
+const GENERAL_MAGIC_TRICKS = [
+  { name: "Fetch", desc: "A loose object (no heavier than weight 1) within 10 meters floats to you." },
+  { name: "Flick", desc: "Give an object or creature within 10 meters a magical flick, inflicting 1 point of damage." },
+  { name: "Light", desc: "Create a bright light illuminating a 10-meter radius for one shift. Goes out if you reach 0 HP." },
+  { name: "Open/Close", desc: "Open or close an unlocked door within 10 meters that you can see." },
+  { name: "Repair Clothes", desc: "Instantly repair and clean clothes belonging to you or someone within 10 meters." },
+  { name: "Sense Magic", desc: "Sense whether the place you are in, or an item you are holding, is affected by magic — and what kind." },
+];
+
+const SCHOOL_MAGIC_TRICKS = {
+  Animism: [
+    { name: "Birdsong", desc: "Lovely birdsong surrounds you for one stretch, giving a boon to AWARENESS. Outdoors only." },
+    { name: "Clean", desc: "The room you are in is instantly cleaned of all dust and dirt." },
+    { name: "Cook Food", desc: "Automatically succeed at cooking food without a BUSHCRAFT roll (one action)." },
+    { name: "Floral Trail", desc: "Beautiful flowers sprout where you walk. They wither after a shift." },
+    { name: "Hairstyle", desc: "Change the color, length, and style of your hair. May grant boons to BLUFFING and PERSUASION." },
+  ],
+  Elementalism: [
+    { name: "Heat/Chill", desc: "The area within 10 meters becomes pleasantly warm or cold, protecting against cold for one shift." },
+    { name: "Ignite", desc: "Light or extinguish a candle, torch, or lantern within 10 meters." },
+    { name: "Puff of Smoke", desc: "An impressive puff of smoke erupts before you. Can give a boon to SNEAKING." },
+  ],
+  Mentalism: [
+    { name: "Lock/Unlock", desc: "Your touch locks or unlocks a non-magical lock." },
+    { name: "Magic Stool", desc: "Create a small floating round surface (~half a meter) to sit on or place things on. Lasts until you leave." },
+    { name: "Slow Fall", desc: "Slow your fall and land as light as a feather, no matter the height." },
+  ],
+};
+
+const GENERAL_MAGIC_SPELLS_RANK1 = [
+  { name: "Dispel", desc: "Cancel an ongoing spell of lower or equal power level within 10 meters." },
+  { name: "Protector", desc: "Protect a person or place from magic for one shift; reduces power level of incoming spells." },
+];
+
+const SCHOOL_SPELLS_RANK1 = {
+  Animism: [
+    { name: "Animal Whisperer", desc: "Talk with a bird or mammal within 2 meters, asking questions equal to the power level." },
+    { name: "Banish", desc: "Inflict 2D8 damage on a demon or undead within 10 meters; +D8 per extra power level. Armor has no effect." },
+    { name: "Ensnaring Roots", desc: "Ensnare a target within 10 meters in roots for one shift. Breaking free requires an EVADE roll." },
+    { name: "Lightning Flash", desc: "Call lightning on a target within 30 meters for 2D6 damage, chaining to a second target for 2D4." },
+    { name: "Treat Wound", desc: "Heal a living creature you touch for 2D6 HP; +D6 per extra power level." },
+  ],
+  Elementalism: [
+    { name: "Fireball", desc: "Hurl a fireball at a target within 20 meters for 2D6 damage, setting fire to flammable objects." },
+    { name: "Frost", desc: "Lower temperature in a 4-meter sphere: extinguish fires, deal D6 HP+WP, and freeze humanoids in place." },
+    { name: "Gust of Wind", desc: "Push objects and creatures in a 10-meter cone 2D4 meters away, dealing the same bludgeoning damage." },
+    { name: "Pillar", desc: "Raise a stone pillar 3 meters high from the ground within 10 meters. Lasts one shift." },
+    { name: "Shatter", desc: "Inflict 2D10 damage on an inanimate non-magical object you touch. Armor has no effect." },
+  ],
+  Mentalism: [
+    { name: "Farsight", desc: "See and hear up to 1 km away as if you were there, for as long as you concentrate." },
+    { name: "Levitate", desc: "Levitate yourself or another person or object up to human size up to 6 meters in any direction." },
+    { name: "Longstrider", desc: "Double a target's movement rating for one stretch." },
+    { name: "Power Fist", desc: "Increase the damage of your unarmed attacks by D6 per power level for one stretch." },
+    { name: "Stone Skin", desc: "Give a target you touch armor rating 4 for one stretch." },
+  ],
+};
+
 // ─── DERIVED RATINGS HELPERS ───
 
 function baseChance(attrVal) {
@@ -927,51 +987,61 @@ function skillAttr(skillName) {
 
 // ─── STATE ───
 
-let char = {
-  kin: null,
-  profession: null,
-  magicSchool: null,
-  age: null,
-  name: "",
-  nickname: "",
-  attributes: { STR: 0, CON: 0, AGL: 0, INT: 0, WIL: 0, CHA: 0 },
-  trainedSkills: [],
-  heroicAbility: null,
-  weakness: null,
-  weaknessDesc: null,
-  gear: [],
-  memento: null,
-  appearance: [],
-};
+function initChar() {
+  char = {
+    kin: null,
+    profession: null,
+    magicSchool: null,
+    age: null,
+    name: "",
+    nickname: "",
+    attributes: { STR: 0, CON: 0, AGL: 0, INT: 0, WIL: 0, CHA: 0 },
+    trainedSkills: [],
+    heroicAbility: null,
+    spells: { tricks: [], school: [] },
+    weakness: null,
+    weaknessDesc: null,
+    gear: [],
+    memento: null,
+    appearance: [],
+  };
+}
 
-let wizard = {
-  step: "intro",
-  kinRoll: null,
-  professionRoll: null,
-  ageRoll: null,
-  nameRoll: null,
-  nicknameRoll: null,
-  gearRoll: null,
-  gearBundleIdx: null,
-  weaknessRoll: null,
-  mementoRoll: null,
-  appearanceRolls: [],
-  profSkillsChosen: [],
-  freeSkillsChosen: [],
-  heroicShowAll: false,
-  attrAssigned: {
-    STR: null,
-    CON: null,
-    AGL: null,
-    INT: null,
-    WIL: null,
-    CHA: null,
-  },
-  attrRollIdx: 0,
-  swapAttrA: null,
-  swapDone: false,
-  attrManualMode: false,
-};
+function initWizard() {
+  wizard = {
+    step: "intro",
+    kinRoll: null,
+    professionRoll: null,
+    ageRoll: null,
+    nameRoll: null,
+    nicknameRoll: null,
+    gearRoll: null,
+    gearBundleIdx: null,
+    weaknessRoll: null,
+    mementoRoll: null,
+    appearanceRolls: [],
+    profSkillsChosen: [],
+    freeSkillsChosen: [],
+    spellTricksChosen: [],
+    spellSchoolChosen: [],
+    heroicShowAll: false,
+    attrAssigned: {
+      STR: null,
+      CON: null,
+      AGL: null,
+      INT: null,
+      WIL: null,
+      CHA: null,
+    },
+    attrRollIdx: 0,
+    swapAttrA: null,
+    swapDone: false,
+    attrManualMode: false,
+  };
+}
+
+let char;
+let wizard;
 
 // ─── WIZARD DISPATCH ───
 
@@ -980,33 +1050,75 @@ function renderWizard() {
   const content = document.getElementById("wizard-content");
   card.classList.add("visible");
 
-  // Each step maps to a function name; looked up at call time so future
-  // sessions can define them without modifying this dispatch table.
-  const stepFnMap = {
-    intro: "renderIntro",
-    kin: "renderKin",
-    profession: "renderProfession",
-    magicSchool: "renderMagicSchool",
-    age: "renderAge",
-    name: "renderNameStep",
-    attributes: "renderAttributes",
-    derivedRatings: "renderDerivedRatings",
-    trainedSkills: "renderTrainedSkills",
-    heroicAbility: "renderHeroicAbility",
-    weakness: "renderWeakness",
-    gear: "renderGear",
-    memento: "renderMemento",
-    appearance: "renderAppearance",
-    summary: "renderFinalSummary",
+  const stepRenderers = {
+    intro: renderIntro,
+    kin: renderKin,
+    profession: renderProfession,
+    magicSchool: renderMagicSchool,
+    age: renderAge,
+    name: renderNameStep,
+    attributes: renderAttributes,
+    derivedRatings: renderDerivedRatings,
+    trainedSkills: renderTrainedSkills,
+    heroicAbility: renderHeroicAbility,
+    spells: renderSpells,
+    weakness: renderWeakness,
+    gear: renderGear,
+    memento: renderMemento,
+    appearance: renderAppearance,
+    summary: renderFinalSummary,
   };
 
-  const fnName = stepFnMap[wizard.step];
-  const renderer = fnName ? window[fnName] : null;
+  const renderer = stepRenderers[wizard.step];
   if (typeof renderer === "function") {
     renderer(content);
   }
 
   renderSummary();
+}
+
+// ─── STEP NAVIGATION ───
+
+function stepLabel(key) {
+  const isMage = char.profession === "Mage";
+  const flow = [
+    "kin", "profession", "age", "name", "attributes", "derivedRatings",
+    "trainedSkills", "heroicAbility",
+    ...(isMage ? ["spells"] : []),
+    "weakness", "gear", "memento", "appearance",
+  ];
+  const names = {
+    kin: "Kin", profession: "Profession", age: "Age", name: "Name",
+    attributes: "Attributes", derivedRatings: "Derived Ratings",
+    trainedSkills: "Trained Skills", heroicAbility: "Heroic Ability",
+    spells: "Spells", weakness: "Weakness", gear: "Gear",
+    memento: "Memento", appearance: "Appearance",
+  };
+  const idx = flow.indexOf(key);
+  if (idx < 0) return "";
+  return `Step ${idx + 1} of ${flow.length} — ${names[key]}`;
+}
+
+function prevStep() {
+  const isMage = char.profession === "Mage";
+  const flow = [
+    "kin", "profession",
+    ...(isMage ? ["magicSchool"] : []),
+    "age", "name", "attributes", "derivedRatings",
+    "trainedSkills", "heroicAbility",
+    ...(isMage ? ["spells"] : []),
+    "weakness", "gear", "memento", "appearance",
+  ];
+  const idx = flow.indexOf(wizard.step);
+  return idx > 0 ? flow[idx - 1] : null;
+}
+
+function goBack() {
+  const prev = prevStep();
+  if (prev) {
+    wizard.step = prev;
+    renderWizard();
+  }
 }
 
 // ─── LIVE SUMMARY ───
@@ -1078,7 +1190,23 @@ function renderSummary() {
     const heroicDisplay = heroicData
       ? `${char.heroicAbility} (WP ${heroicData.wp})`
       : char.heroicAbility;
-    html += `<div class="summary-skills"><h4>Heroic Ability</h4><div class="skill-list"><span class="skill-item">${escapeHtml(heroicDisplay)}</span></div></div>`;
+    html += `<div class="summary-skills"><h4>Heroic Ability</h4><div class="skill-list"><span class="ability-item">${escapeHtml(heroicDisplay)}</span></div></div>`;
+  }
+
+  if (char.spells && char.spells.tricks.length > 0) {
+    html += '<div class="summary-skills"><h4>Magic Tricks</h4><div class="skill-list">';
+    for (const t of char.spells.tricks) {
+      html += `<span class="ability-item">${escapeHtml(t.name)}</span>`;
+    }
+    html += "</div></div>";
+  }
+
+  if (char.spells && char.spells.school.length > 0) {
+    html += '<div class="summary-skills"><h4>Spells</h4><div class="skill-list">';
+    for (const s of char.spells.school) {
+      html += `<span class="ability-item">${escapeHtml(s.name)}</span>`;
+    }
+    html += "</div></div>";
   }
 
   if (char.trainedSkills.length > 0) {
@@ -1091,7 +1219,7 @@ function renderSummary() {
         attrVal > 0
           ? ` <span class="skill-die">${trainedValue(attrVal)}</span>`
           : "";
-      html += `<span class="skill-item">${escapeHtml(sk)}${tv}</span>`;
+      html += `<span class="ability-item">${escapeHtml(sk)}${tv}</span>`;
     }
     html += "</div></div>";
   }
@@ -1100,17 +1228,17 @@ function renderSummary() {
     const weaknessDisplay = char.weaknessDesc
       ? `${char.weakness} — ${char.weaknessDesc}`
       : char.weakness;
-    html += `<div class="summary-skills"><h4>Weakness</h4><div class="skill-list"><span class="skill-item">${escapeHtml(weaknessDisplay)}</span></div></div>`;
+    html += `<div class="summary-skills"><h4>Weakness</h4><div class="skill-list"><span class="ability-item">${escapeHtml(weaknessDisplay)}</span></div></div>`;
   }
 
   if (char.memento) {
-    html += `<div class="summary-skills"><h4>Memento</h4><div class="skill-list"><span class="skill-item">${escapeHtml(char.memento)}</span></div></div>`;
+    html += `<div class="summary-skills"><h4>Memento</h4><div class="skill-list"><span class="ability-item">${escapeHtml(char.memento)}</span></div></div>`;
   }
 
   if (char.gear.length > 0) {
     html += '<div class="summary-skills"><h4>Gear</h4><div class="skill-list">';
     for (const item of char.gear) {
-      html += `<span class="skill-item">${escapeHtml(item)}</span>`;
+      html += `<span class="ability-item">${escapeHtml(item)}</span>`;
     }
     html += "</div></div>";
   }
@@ -1119,7 +1247,7 @@ function renderSummary() {
     html +=
       '<div class="summary-skills"><h4>Appearance</h4><div class="skill-list">';
     for (const trait of char.appearance) {
-      html += `<span class="skill-item">${escapeHtml(trait)}</span>`;
+      html += `<span class="ability-item">${escapeHtml(trait)}</span>`;
     }
     html += "</div></div>";
   }
@@ -1146,7 +1274,7 @@ function startWizard() {
 function renderKin(el) {
   const selectedKin = char.kin;
 
-  let html = '<div class="step-title">Step 1 of 12 — Kin</div>';
+  let html = `<div class="step-title">${stepLabel("kin")}</div>`;
   html += "<h3>Choose Your Kin</h3>";
   html +=
     "<p>Roll a D12 or choose from the table below. Your kin determines your innate abilities and base movement speed.</p>";
@@ -1159,7 +1287,7 @@ function renderKin(el) {
   for (const [i, kin] of KIN.entries()) {
     const isSelected = selectedKin === kin.name;
     const abilitySummary = kin.abilities.map((a) => a.name).join(", ");
-    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectKin(${i})">
+    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectKin(${i})">
       <span class="career-req roll-num-wide">${escapeHtml(kin.roll)}</span>
       <div>
         <span class="career-name">${escapeHtml(kin.name)}</span>
@@ -1216,7 +1344,7 @@ function submitKin() {
 function renderProfession(el) {
   const selectedProf = char.profession;
 
-  let html = '<div class="step-title">Step 2 of 12 — Profession</div>';
+  let html = `<div class="step-title">${stepLabel("profession")}</div>`;
   html += "<h3>Choose Your Profession</h3>";
   html +=
     "<p>Roll a D10 or choose from the table. Your profession gives you a skill list, starting gear, and a heroic ability.</p>";
@@ -1236,7 +1364,7 @@ function renderProfession(el) {
     } else {
       heroicText = "Magic (no heroic ability)";
     }
-    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectProfession(${i})">
+    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectProfession(${i})">
       <span class="career-req roll-num-wide">${escapeHtml(prof.roll)}</span>
       <div>
         <span class="career-name">${escapeHtml(prof.name)}</span>
@@ -1252,11 +1380,11 @@ function renderProfession(el) {
       '<div class="career-group"><div class="career-group-title">Profession Skills</div>';
     if (profData.name === "Mage") {
       html +=
-        '<div class="skill-list skill-list-padded"><span class="skill-item note-text">Select a magic school on the next screen to see profession skills.</span></div>';
+        '<div class="skill-list skill-list-padded"><span class="ability-item note-text">Select a magic school on the next screen to see profession skills.</span></div>';
     } else {
       html += '<div class="skill-list skill-list-padded">';
       for (const sk of profData.skills) {
-        html += `<span class="skill-item">${escapeHtml(sk)}</span>`;
+        html += `<span class="ability-item">${escapeHtml(sk)}</span>`;
       }
       html += "</div>";
     }
@@ -1264,6 +1392,8 @@ function renderProfession(el) {
   }
 
   html += '<div class="btn-row">';
+  html +=
+    '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollProfession()">Roll D10</button>';
   html += `<button class="btn" onclick="submitProfession()"${!selectedProf ? " disabled" : ""}>Continue</button>`;
@@ -1313,7 +1443,7 @@ function renderMagicSchool(el) {
   for (const [i, school] of SCHOOLS.entries()) {
     const isSelected = selected === school;
     const skillList = profData.schools[school].join(", ");
-    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectMagicSchool(${i})">
+    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectMagicSchool(${i})">
       <div>
         <span class="career-name">${escapeHtml(school)}</span>
         <span class="career-req"> — Skills: ${escapeHtml(skillList)}</span>
@@ -1324,7 +1454,7 @@ function renderMagicSchool(el) {
 
   html += '<div class="btn-row">';
   html +=
-    '<button class="btn btn-secondary" onclick="backToProfession()">Back</button>';
+    '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html += `<button class="btn" onclick="submitMagicSchool()"${!selected ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1333,11 +1463,6 @@ function renderMagicSchool(el) {
 
 function selectMagicSchool(idx) {
   char.magicSchool = ["Animism", "Elementalism", "Mentalism"][idx];
-  renderWizard();
-}
-
-function backToProfession() {
-  wizard.step = "profession";
   renderWizard();
 }
 
@@ -1352,7 +1477,7 @@ function submitMagicSchool() {
 function renderAge(el) {
   const selectedAge = char.age;
 
-  let html = '<div class="step-title">Step 3 of 12 — Age</div>';
+  let html = `<div class="step-title">${stepLabel("age")}</div>`;
   html += "<h3>Determine Your Age</h3>";
   html +=
     "<p>Roll a D6 or choose freely. Your age affects your starting attribute modifiers and how many skills you can train.</p>";
@@ -1364,7 +1489,7 @@ function renderAge(el) {
   html += '<div class="career-group">';
   for (const [i, age] of AGES.entries()) {
     const isSelected = selectedAge === age.name;
-    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectAge(${i})">
+    html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectAge(${i})">
       <span class="career-req roll-num-wide">${escapeHtml(age.roll)}</span>
       <div>
         <span class="career-name">${escapeHtml(age.name)}</span>
@@ -1375,6 +1500,8 @@ function renderAge(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
+  html +=
+    '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollAge()">Roll D6</button>';
   html += `<button class="btn" onclick="submitAge()"${!selectedAge ? " disabled" : ""}>Continue</button>`;
@@ -1409,7 +1536,7 @@ function renderNameStep(el) {
   const profData = PROFESSIONS.find((p) => p.name === char.profession);
   const profNicknames = profData ? profData.nicknames : [];
 
-  let html = '<div class="step-title">Step 4 of 12 — Name</div>';
+  let html = `<div class="step-title">${stepLabel("name")}</div>`;
   html += "<h3>Choose Your Name</h3>";
   html += `<p>Roll a D6 to choose a ${escapeHtml(char.kin)} name, or choose a name freely. OPTIONAL: You may also a roll a nickname from your profession's list, or choose one freely.</p>`;
 
@@ -1418,7 +1545,7 @@ function renderNameStep(el) {
   html += '<ul class="d6-table">';
   for (const [i, name] of kinNames.entries()) {
     const isSelected = char.name === name;
-    html += `<li class="${isSelected ? "selected" : ""}" role="button" tabindex="0" onclick="selectNameFromTable(${i})">
+    html += `<li class="${isSelected ? "selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectNameFromTable(${i})">
       <span class="d6-num">${i + 1}</span>
       <span>${escapeHtml(name)}</span>
     </li>`;
@@ -1435,7 +1562,7 @@ function renderNameStep(el) {
   html += '<ul class="d6-table">';
   for (const [i, nick] of profNicknames.entries()) {
     const isSelected = char.nickname === nick;
-    html += `<li class="${isSelected ? "selected" : ""}" role="button" tabindex="0" onclick="selectNicknameFromTable(${i})">
+    html += `<li class="${isSelected ? "selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectNicknameFromTable(${i})">
       <span class="d6-num">${i + 1}</span>
       <span>${escapeHtml(nick)}</span>
     </li>`;
@@ -1449,6 +1576,8 @@ function renderNameStep(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
+  html +=
+    '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollName()">Roll D6 Name</button>';
   html +=
@@ -1618,7 +1747,7 @@ function submitAttributes() {
 function renderAttributes(el) {
   const allAssigned = ATTRS.every((a) => wizard.attrAssigned[a] != null);
 
-  let html = '<div class="step-title">Step 5 of 12 — Attributes</div>';
+  let html = `<div class="step-title">${stepLabel("attributes")}</div>`;
   html += "<h3>Roll Your Attributes</h3>";
 
   if (char.age) {
@@ -1645,6 +1774,8 @@ function renderAttributes(el) {
     html += "</div>";
     html += '<div class="btn-row" style="margin-top:14px;">';
     html +=
+      '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
+    html +=
       '<button class="btn btn-secondary" onclick="switchToRolling()">Roll Instead</button>';
     html += `<button class="btn" id="attr-continue-btn" onclick="submitAttributes()"${!allAssigned ? " disabled" : ""}>Continue</button>`;
     html += "</div>";
@@ -1661,7 +1792,7 @@ function renderAttributes(el) {
       const canSwap = allAssigned && !wizard.swapDone;
       const swapClass = isSwapA ? " attr-swap-selected" : "";
 
-      html += `<div class="attr-row${swapClass}"${canSwap ? ` role="button" tabindex="0" style="cursor:pointer;" onclick="clickAttrSlot('${attr}')"` : ""}>`;
+      html += `<div class="attr-row${swapClass}"${canSwap ? ` role="button" tabindex="0" aria-pressed="${isSwapA ? "true" : "false"}" style="cursor:pointer;" onclick="clickAttrSlot('${attr}')"` : ""}>`;
       html += `<span class="attr-name">${attr}</span>`;
       if (val !== null) {
         html += `<span class="attr-die">${val}</span>`;
@@ -1689,9 +1820,11 @@ function renderAttributes(el) {
     }
 
     html += '<div class="btn-row" style="margin-top:14px;">';
+    html +=
+      '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
     if (wizard.attrRollIdx > 0) {
       html +=
-        '<button class="btn btn-secondary" onclick="resetAttrRolls()">Start Over</button>';
+        '<button class="btn btn-secondary" onclick="resetAttrRolls()">Reroll</button>';
     }
     html +=
       '<button class="btn btn-secondary" onclick="switchToManual()">Enter Manually</button>';
@@ -1712,7 +1845,7 @@ function renderDerivedRatings(el) {
   const mov = baseMove + movMod;
   const movModStr = movMod >= 0 ? `+${movMod}` : `${movMod}`;
 
-  let html = '<div class="step-title">Step 6 of 12 — Derived Ratings</div>';
+  let html = `<div class="step-title">${stepLabel("derivedRatings")}</div>`;
   html += "<h3>Derived Ratings</h3>";
   html +=
     "<p>These values are computed automatically from your attributes and kin.</p>";
@@ -1746,7 +1879,7 @@ function renderDerivedRatings(el) {
   html += "</div>";
 
   html +=
-    '<div class="btn-row"><button class="btn" onclick="submitDerivedRatings()">Continue</button></div>';
+    '<div class="btn-row"><button class="btn btn-secondary" onclick="goBack()">Back</button><button class="btn" onclick="submitDerivedRatings()">Continue</button></div>';
   el.innerHTML = html;
 }
 
@@ -1789,7 +1922,7 @@ function renderTrainedSkills(el) {
   const profOk = profChosen.length === profNeeded;
   const freeOk = freeChosen.length === freeSkillCount;
 
-  let html = '<div class="step-title">Step 7 of 12 — Trained Skills</div>';
+  let html = `<div class="step-title">${stepLabel("trainedSkills")}</div>`;
   html += "<h3>Choose Your Trained Skills</h3>";
   html += `<p>Pick <strong>${profNeeded}</strong> skills from your profession list and <strong>${freeSkillCount}</strong> free skills from any skill. Trained value = 2× base chance of the linked attribute.</p>`;
 
@@ -1813,7 +1946,7 @@ function renderTrainedSkills(el) {
     const isChosen = profChosen.includes(sk);
     const attr = skillAttr(sk);
     const av = char.attributes[attr] || 0;
-    html += `<div class="career-option${isChosen ? " selected" : ""}" role="button" tabindex="0" onclick="toggleProfSkill(${i})">
+    html += `<div class="career-option${isChosen ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isChosen ? "true" : "false"}" onclick="toggleProfSkill(${i})">
       <div><span class="career-name">${escapeHtml(sk)}</span><span class="career-req"> (${attr}) — Base: ${baseChance(av)} — Trained: ${trainedValue(av)}</span></div>
     </div>`;
   }
@@ -1825,13 +1958,13 @@ function renderTrainedSkills(el) {
     if (allChosenProf.includes(sk.name)) continue;
     const isChosen = freeChosen.includes(sk.name);
     const av = char.attributes[sk.attr] || 0;
-    html += `<div class="career-option${isChosen ? " selected" : ""}" role="button" tabindex="0" onclick="toggleFreeSkill(${i})">
+    html += `<div class="career-option${isChosen ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isChosen ? "true" : "false"}" onclick="toggleFreeSkill(${i})">
       <div><span class="career-name">${escapeHtml(sk.name)}</span><span class="career-req"> (${sk.attr}) — Base: ${baseChance(av)} — Trained: ${trainedValue(av)}</span></div>
     </div>`;
   }
   html += "</div>";
 
-  html += `<div class="btn-row"><button class="btn" onclick="submitTrainedSkills()"${!(profOk && freeOk) ? " disabled" : ""}>Continue</button></div>`;
+  html += `<div class="btn-row"><button class="btn btn-secondary" onclick="goBack()">Back</button><button class="btn" onclick="submitTrainedSkills()"${!(profOk && freeOk) ? " disabled" : ""}>Continue</button></div>`;
   el.innerHTML = html;
 }
 
@@ -1886,7 +2019,7 @@ function _heroicAbilityCard(abilityName, showReq) {
   let meta = data ? ` — WP: ${escapeHtml(data.wp)}` : "";
   if (showReq && data) meta += ` — Req: ${escapeHtml(data.req)}`;
   return (
-    `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectHeroicAbility(${idx})">` +
+    `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectHeroicAbility(${idx})">` +
     '<div style="min-width:0;overflow-wrap:break-word;">' +
     `<span class="career-name">${escapeHtml(abilityName)}</span>` +
     `<span class="career-req">${meta}</span>` +
@@ -1913,7 +2046,7 @@ function renderHeroicAbility(el) {
     char.heroicAbility = profData.heroicAbility;
   }
 
-  let html = '<div class="step-title">Step 8 of 12 — Heroic Ability</div>';
+  let html = `<div class="step-title">${stepLabel("heroicAbility")}</div>`;
   html += "<h3>Heroic Ability</h3>";
 
   if (isMage) {
@@ -1929,7 +2062,7 @@ function renderHeroicAbility(el) {
       '<span class="career-req"> — No heroic ability; magic replaces it</span>' +
       "</div></div></div>";
     html +=
-      '<div class="btn-row"><button class="btn" onclick="submitHeroicAbility()">Continue</button></div>';
+      '<div class="btn-row"><button class="btn btn-secondary" onclick="goBack()">Back</button><button class="btn" onclick="submitHeroicAbility()">Continue</button></div>';
     el.innerHTML = html;
     return;
   }
@@ -1970,6 +2103,7 @@ function renderHeroicAbility(el) {
       '<button class="btn btn-secondary" onclick="toggleHeroicShowAll()">Show profession default only</button>';
   }
 
+  html += '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html += `<button class="btn" onclick="submitHeroicAbility()"${!char.heroicAbility ? " disabled" : ""}>Continue</button>`;
   html += "</div>";
 
@@ -1990,9 +2124,109 @@ function toggleHeroicShowAll() {
 function submitHeroicAbility() {
   if (char.profession === "Mage") {
     char.heroicAbility = null;
+    wizard.step = "spells";
   } else if (!char.heroicAbility) {
     return;
+  } else {
+    wizard.step = "weakness";
   }
+  renderWizard();
+}
+
+// ─── SPELLS STEP ───
+
+function renderSpells(el) {
+  const school = char.magicSchool;
+  const allTricks = [
+    ...GENERAL_MAGIC_TRICKS,
+    ...(SCHOOL_MAGIC_TRICKS[school] || []),
+  ];
+  const allSpells = [
+    ...GENERAL_MAGIC_SPELLS_RANK1,
+    ...(SCHOOL_SPELLS_RANK1[school] || []),
+  ];
+
+  const tricksChosen = wizard.spellTricksChosen;
+  const schoolChosen = wizard.spellSchoolChosen;
+  const tricksOk = tricksChosen.length === 3;
+  const schoolOk = schoolChosen.length === 3;
+
+  let html = `<div class="step-title">${stepLabel("spells")}</div>`;
+  html += "<h3>Choose Your Starting Spells</h3>";
+  html += `<p>As a ${escapeHtml(school)} mage, choose <strong>3 magic tricks</strong> and <strong>3 rank 1 spells</strong> from your school or general magic.</p>`;
+
+  html += `<div class="career-group"><div class="career-group-title">Magic Tricks — pick 3 (${tricksChosen.length}/3 chosen)</div>`;
+  for (const [i, trick] of allTricks.entries()) {
+    const isChosen = tricksChosen.includes(trick.name);
+    const disabled = !isChosen && tricksOk ? " disabled" : "";
+    html += `<div class="career-option${isChosen ? " selected" : ""}${disabled}" role="button" tabindex="0" aria-pressed="${isChosen ? "true" : "false"}" onclick="toggleSpellTrick(${i})">
+      <div>
+        <span class="career-name">${escapeHtml(trick.name)}</span>
+        <span class="career-req"> — ${escapeHtml(trick.desc)}</span>
+      </div>
+    </div>`;
+  }
+  html += "</div>";
+
+  html += `<div class="career-group"><div class="career-group-title">Rank 1 Spells — pick 3 (${schoolChosen.length}/3 chosen)</div>`;
+  for (const [i, spell] of allSpells.entries()) {
+    const isChosen = schoolChosen.includes(spell.name);
+    const disabled = !isChosen && schoolOk ? " disabled" : "";
+    html += `<div class="career-option${isChosen ? " selected" : ""}${disabled}" role="button" tabindex="0" aria-pressed="${isChosen ? "true" : "false"}" onclick="toggleSpellSchool(${i})">
+      <div>
+        <span class="career-name">${escapeHtml(spell.name)}</span>
+        <span class="career-req"> — ${escapeHtml(spell.desc)}</span>
+      </div>
+    </div>`;
+  }
+  html += "</div>";
+
+  html += `<div class="btn-row"><button class="btn btn-secondary" onclick="goBack()">Back</button><button class="btn" onclick="submitSpells()"${!(tricksOk && schoolOk) ? " disabled" : ""}>Continue</button></div>`;
+  el.innerHTML = html;
+}
+
+function toggleSpellTrick(idx) {
+  const school = char.magicSchool;
+  const allTricks = [
+    ...GENERAL_MAGIC_TRICKS,
+    ...(SCHOOL_MAGIC_TRICKS[school] || []),
+  ];
+  const name = allTricks[idx].name;
+  const pos = wizard.spellTricksChosen.indexOf(name);
+  if (pos >= 0) {
+    wizard.spellTricksChosen.splice(pos, 1);
+  } else if (wizard.spellTricksChosen.length < 3) {
+    wizard.spellTricksChosen.push(name);
+  }
+  renderWizard();
+}
+
+function toggleSpellSchool(idx) {
+  const school = char.magicSchool;
+  const allSpells = [
+    ...GENERAL_MAGIC_SPELLS_RANK1,
+    ...(SCHOOL_SPELLS_RANK1[school] || []),
+  ];
+  const name = allSpells[idx].name;
+  const pos = wizard.spellSchoolChosen.indexOf(name);
+  if (pos >= 0) {
+    wizard.spellSchoolChosen.splice(pos, 1);
+  } else if (wizard.spellSchoolChosen.length < 3) {
+    wizard.spellSchoolChosen.push(name);
+  }
+  renderWizard();
+}
+
+function submitSpells() {
+  if (wizard.spellTricksChosen.length !== 3) return;
+  if (wizard.spellSchoolChosen.length !== 3) return;
+  const school = char.magicSchool;
+  const allTricks = [...GENERAL_MAGIC_TRICKS, ...(SCHOOL_MAGIC_TRICKS[school] || [])];
+  const allSpells = [...GENERAL_MAGIC_SPELLS_RANK1, ...(SCHOOL_SPELLS_RANK1[school] || [])];
+  char.spells = {
+    tricks: allTricks.filter((t) => wizard.spellTricksChosen.includes(t.name)),
+    school: allSpells.filter((s) => wizard.spellSchoolChosen.includes(s.name)),
+  };
   wizard.step = "weakness";
   renderWizard();
 }
@@ -2002,7 +2236,7 @@ function submitHeroicAbility() {
 function renderWeakness(el) {
   const selected = char.weakness;
 
-  let html = '<div class="step-title">Step 9 of 12 — Weakness</div>';
+  let html = `<div class="step-title">${stepLabel("weakness")}</div>`;
   html += "<h3>Choose a Weakness</h3>";
   html +=
     "<p>Optional: Roll a D20 to choose a weakness, or choose one freely. Weaknesses aren't required, but can be fun for roleplaying.</p>";
@@ -2015,7 +2249,7 @@ function renderWeakness(el) {
   for (const [i, w] of WEAKNESSES.entries()) {
     const isSelected = selected === w.name;
     html +=
-      `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectWeakness(${i})">` +
+      `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectWeakness(${i})">` +
       "<div>" +
       `<span class="career-req roll-num-wide">${i + 1}</span>` +
       `<span class="career-name">${escapeHtml(w.name)}</span>` +
@@ -2035,6 +2269,8 @@ function renderWeakness(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
+  html +=
+    '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollWeakness()">Roll D20</button>';
   html +=
@@ -2094,7 +2330,7 @@ function renderGear(el) {
   const profData = PROFESSIONS.find((p) => p.name === char.profession);
   const bundles = _gearBundles(profData);
 
-  let html = '<div class="step-title">Step 10 of 12 — Gear</div>';
+  let html = `<div class="step-title">${stepLabel("gear")}</div>`;
   html += "<h3>Starting Gear</h3>";
   html +=
     "<p>Roll a D6 or pick one of the three gear bundles for your " +
@@ -2110,18 +2346,19 @@ function renderGear(el) {
     const isSelected = wizard.gearBundleIdx === i;
     const items = bundle.split(", ");
     html +=
-      `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectGear(${i})">` +
+      `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectGear(${i})">` +
       "<div>" +
       `<span class="career-name">Bundle ${i + 1}</span>` +
       '<div class="skill-list" style="margin-top:4px;">';
     for (const item of items) {
-      html += `<span class="skill-item">${escapeHtml(item.trim())}</span>`;
+      html += `<span class="ability-item">${escapeHtml(item.trim())}</span>`;
     }
     html += "</div></div></div>";
   }
   html += "</div>";
 
   html += '<div class="btn-row">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollGear()">Roll D6</button>';
   html += `<button class="btn" onclick="submitGear()"${wizard.gearBundleIdx === null ? " disabled" : ""}>Continue</button>`;
@@ -2157,7 +2394,7 @@ function submitGear() {
 function renderMemento(el) {
   const selected = char.memento;
 
-  let html = '<div class="step-title">Step 11 of 12 — Memento</div>';
+  let html = `<div class="step-title">${stepLabel("memento")}</div>`;
   html += "<h3>Choose a Memento</h3>";
   html +=
     "<p>Optional: Roll a D20 to choose a memento, or choose one freely. Mementos are small personal items that tell a story about your character.</p>";
@@ -2170,7 +2407,7 @@ function renderMemento(el) {
   for (const [i, m] of MEMENTOS.entries()) {
     const isSelected = selected === m;
     html +=
-      `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" onclick="selectMemento(${i})">` +
+      `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectMemento(${i})">` +
       "<div>" +
       `<span class="career-req roll-num-wide">${i + 1}</span>` +
       `<span class="career-name">${escapeHtml(m)}</span>` +
@@ -2185,6 +2422,7 @@ function renderMemento(el) {
   html += "</div>";
 
   html += '<div class="btn-row">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollMemento()">Roll D20</button>';
   html +=
@@ -2230,7 +2468,7 @@ function submitMemento() {
 // ─── APPEARANCE STEP ───
 
 function renderAppearance(el) {
-  let html = '<div class="step-title">Step 12 of 12 — Appearance</div>';
+  let html = `<div class="step-title">${stepLabel("appearance")}</div>`;
   html += "<h3>Describe Your Appearance</h3>";
   html +=
     "<p>Optional: Roll a D20 for a random appearance trait — you can roll multiple times. Click a table entry to toggle it. Click an active trait to remove it. You can also add custom traits.</p>";
@@ -2245,7 +2483,7 @@ function renderAppearance(el) {
       '<div class="career-group"><div class="career-group-title">Selected Traits (click to remove)</div>';
     html += '<div class="skill-list skill-list-padded">';
     for (const [i, trait] of char.appearance.entries()) {
-      html += `<span class="skill-item removable" role="button" tabindex="0" onclick="removeAppearance(${i})">✕ ${escapeHtml(trait)}</span>`;
+      html += `<span class="ability-item removable" role="button" tabindex="0" aria-pressed="true" onclick="removeAppearance(${i})">✕ ${escapeHtml(trait)}</span>`;
     }
     html += "</div></div>";
   }
@@ -2255,7 +2493,7 @@ function renderAppearance(el) {
   for (const [i, a] of APPEARANCES.entries()) {
     const alreadyAdded = char.appearance.includes(a);
     html +=
-      `<div class="career-option${alreadyAdded ? " selected" : ""}" role="button" tabindex="0" onclick="toggleAppearanceTrait(${i})">` +
+      `<div class="career-option${alreadyAdded ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${alreadyAdded ? "true" : "false"}" onclick="toggleAppearanceTrait(${i})">` +
       "<div>" +
       `<span class="career-req roll-num-wide">${i + 1}</span>` +
       `<span class="career-name">${escapeHtml(a)}</span>` +
@@ -2273,6 +2511,7 @@ function renderAppearance(el) {
   html += "</div></div>";
 
   html += '<div class="btn-row">';
+  html += '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
   html +=
     '<button class="btn btn-secondary" onclick="rollAppearance()">Roll D20</button>';
   html += '<button class="btn" onclick="submitAppearance()">Continue</button>';
@@ -2364,7 +2603,7 @@ function renderFinalSummary(el) {
     html += '<div class="skill-list" style="margin-bottom:16px;">';
     for (const ab of kinData.abilities) {
       const wpText = ab.wp !== null ? ` (WP ${ab.wp})` : "";
-      html += `<span class="skill-item"><strong>${escapeHtml(ab.name)}${escapeHtml(wpText)}:</strong> ${escapeHtml(ab.desc)}</span>`;
+      html += `<span class="ability-item"><strong>${escapeHtml(ab.name)}${escapeHtml(wpText)}:</strong> ${escapeHtml(ab.desc)}</span>`;
     }
     html += "</div>";
   }
@@ -2375,13 +2614,31 @@ function renderFinalSummary(el) {
     );
     html += "<h4>Heroic Ability</h4>";
     html += '<div class="skill-list" style="margin-bottom:16px;">';
-    html += `<span class="skill-item"><strong>${escapeHtml(char.heroicAbility)}</strong>`;
+    html += `<span class="ability-item"><strong>${escapeHtml(char.heroicAbility)}</strong>`;
     if (heroicData)
       html += ` (WP ${escapeHtml(heroicData.wp)}) — ${escapeHtml(heroicData.desc)}`;
     html += "</span></div>";
   } else if (char.profession === "Mage") {
     html += "<h4>Magic School</h4>";
-    html += `<div class="skill-list" style="margin-bottom:16px;"><span class="skill-item">${escapeHtml(char.magicSchool || "")} (replaces heroic ability)</span></div>`;
+    html += `<div class="skill-list" style="margin-bottom:16px;"><span class="ability-item">${escapeHtml(char.magicSchool || "")} (replaces heroic ability)</span></div>`;
+  }
+
+  if (char.spells && char.spells.tricks.length > 0) {
+    html += "<h4>Magic Tricks</h4>";
+    html += '<div class="skill-list" style="margin-bottom:16px;">';
+    for (const t of char.spells.tricks) {
+      html += `<span class="ability-item"><strong>${escapeHtml(t.name)}:</strong> ${escapeHtml(t.desc)}</span>`;
+    }
+    html += "</div>";
+  }
+
+  if (char.spells && char.spells.school.length > 0) {
+    html += "<h4>Spells</h4>";
+    html += '<div class="skill-list" style="margin-bottom:16px;">';
+    for (const s of char.spells.school) {
+      html += `<span class="ability-item"><strong>${escapeHtml(s.name)}:</strong> ${escapeHtml(s.desc)}</span>`;
+    }
+    html += "</div>";
   }
 
   if (char.trainedSkills.length > 0) {
@@ -2390,7 +2647,7 @@ function renderFinalSummary(el) {
     for (const sk of char.trainedSkills) {
       const attr = skillAttr(sk);
       const av = a[attr] || 0;
-      html += `<span class="skill-item"><strong>${escapeHtml(sk)}</strong> (${attr}) — Trained: ${trainedValue(av)}</span>`;
+      html += `<span class="ability-item"><strong>${escapeHtml(sk)}</strong> (${attr}) — Trained: ${trainedValue(av)}</span>`;
     }
     html += "</div>";
   }
@@ -2398,7 +2655,7 @@ function renderFinalSummary(el) {
   if (char.weakness) {
     html += "<h4>Weakness</h4>";
     html += '<div class="skill-list" style="margin-bottom:16px;">';
-    html += `<span class="skill-item"><strong>${escapeHtml(char.weakness)}</strong>`;
+    html += `<span class="ability-item"><strong>${escapeHtml(char.weakness)}</strong>`;
     if (char.weaknessDesc) html += ` — ${escapeHtml(char.weaknessDesc)}`;
     html += "</span></div>";
   }
@@ -2407,21 +2664,21 @@ function renderFinalSummary(el) {
     html += "<h4>Starting Gear</h4>";
     html += '<div class="skill-list" style="margin-bottom:16px;">';
     for (const item of char.gear) {
-      html += `<span class="skill-item">${escapeHtml(item)}</span>`;
+      html += `<span class="ability-item">${escapeHtml(item)}</span>`;
     }
     html += "</div>";
   }
 
   if (char.memento) {
     html += "<h4>Memento</h4>";
-    html += `<div class="skill-list" style="margin-bottom:16px;"><span class="skill-item">${escapeHtml(char.memento)}</span></div>`;
+    html += `<div class="skill-list" style="margin-bottom:16px;"><span class="ability-item">${escapeHtml(char.memento)}</span></div>`;
   }
 
   if (char.appearance.length > 0) {
     html += "<h4>Appearance</h4>";
     html += '<div class="skill-list" style="margin-bottom:16px;">';
     for (const trait of char.appearance) {
-      html += `<span class="skill-item">${escapeHtml(trait)}</span>`;
+      html += `<span class="ability-item">${escapeHtml(trait)}</span>`;
     }
     html += "</div>";
   }
@@ -2433,55 +2690,16 @@ function renderFinalSummary(el) {
 }
 
 function restartWizard() {
-  char = {
-    kin: null,
-    profession: null,
-    magicSchool: null,
-    age: null,
-    name: "",
-    nickname: "",
-    attributes: { STR: 0, CON: 0, AGL: 0, INT: 0, WIL: 0, CHA: 0 },
-    trainedSkills: [],
-    heroicAbility: null,
-    weakness: null,
-    weaknessDesc: null,
-    gear: [],
-    memento: null,
-    appearance: [],
-  };
-  wizard = {
-    step: "intro",
-    kinRoll: null,
-    professionRoll: null,
-    ageRoll: null,
-    nameRoll: null,
-    nicknameRoll: null,
-    gearRoll: null,
-    gearBundleIdx: null,
-    weaknessRoll: null,
-    mementoRoll: null,
-    appearanceRolls: [],
-    profSkillsChosen: [],
-    freeSkillsChosen: [],
-    heroicShowAll: false,
-    attrAssigned: {
-      STR: null,
-      CON: null,
-      AGL: null,
-      INT: null,
-      WIL: null,
-      CHA: null,
-    },
-    attrRollIdx: 0,
-    swapAttrA: null,
-    swapDone: false,
-    attrManualMode: false,
-  };
+  initChar();
+  initWizard();
   window.scrollTo(0, 0);
   renderWizard();
 }
 
 // ─── ENTRY POINT ───
+
+initChar();
+initWizard();
 
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Enter" && e.key !== " ") return;
