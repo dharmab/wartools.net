@@ -710,7 +710,6 @@ function ageFromRoll(r) {
 
 const CORE_SKILLS = [
   { name: "Acrobatics", attr: "AGL" },
-  { name: "Animism", attr: "WIL" },
   { name: "Awareness", attr: "INT" },
   { name: "Bartering", attr: "CHA" },
   { name: "Beast Lore", attr: "INT" },
@@ -718,12 +717,10 @@ const CORE_SKILLS = [
   { name: "Brawling", attr: "STR" },
   { name: "Bushcraft", attr: "INT" },
   { name: "Crafting", attr: "STR" },
-  { name: "Elementalism", attr: "WIL" },
   { name: "Evade", attr: "AGL" },
   { name: "Healing", attr: "INT" },
   { name: "Hunting & Fishing", attr: "AGL" },
   { name: "Languages", attr: "INT" },
-  { name: "Mentalism", attr: "WIL" },
   { name: "Myths & Legends", attr: "INT" },
   { name: "Performance", attr: "CHA" },
   { name: "Persuasion", attr: "CHA" },
@@ -742,6 +739,13 @@ const CORE_SKILLS = [
   { name: "Spears", attr: "STR" },
   { name: "Staves", attr: "AGL" },
   { name: "Swords", attr: "STR" },
+];
+
+// Magic skills are Mage-only; they are not core skills available to all characters.
+const MAGIC_SKILLS = [
+  { name: "Animism", attr: "WIL" },
+  { name: "Elementalism", attr: "WIL" },
+  { name: "Mentalism", attr: "WIL" },
 ];
 
 const WEAKNESSES = [
@@ -1007,7 +1011,9 @@ function damageBonus(val) {
 }
 
 function skillAttr(skillName) {
-  const s = CORE_SKILLS.find((sk) => sk.name === skillName);
+  const s =
+    CORE_SKILLS.find((sk) => sk.name === skillName) ||
+    MAGIC_SKILLS.find((sk) => sk.name === skillName);
   return s ? s.attr : null;
 }
 
@@ -2663,7 +2669,10 @@ function renderFinalSummary(el) {
 
   html += "<h4>Skills</h4>";
   html += '<div class="skills-table" style="margin-bottom:16px;">';
-  const sortedSkills = [...CORE_SKILLS].sort((x, y) => x.name.localeCompare(y.name));
+  const sortedSkills = [
+    ...CORE_SKILLS,
+    ...MAGIC_SKILLS.filter((m) => char.trainedSkills.includes(m.name)),
+  ].sort((x, y) => x.name.localeCompare(y.name));
   for (const sk of sortedSkills) {
     const av = a[sk.attr] || 0;
     const value = char.trainedSkills.includes(sk.name) ? trainedValue(av) : baseChance(av);
