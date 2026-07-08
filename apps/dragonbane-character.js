@@ -1220,7 +1220,7 @@ function renderSummary() {
     const kinData = KIN.find((k) => k.name === char.kin);
     const baseMove = kinData ? kinData.movement : 10;
     const mov = baseMove + aglMoveMod(char.attributes.AGL);
-    html += `<div><span class="label">HP / WP / Move</span><br><span class="value">${hp} / ${wp} / ${mov}</span></div>`;
+    html += `<div><span class="label">HP / WP / Movement</span><br><span class="value">${hp} / ${wp} / ${mov}</span></div>`;
   }
 
   html += "</div>";
@@ -1346,7 +1346,7 @@ function renderKin(el) {
     const kinData = KIN.find((k) => k.name === selectedKin);
     html += '<div class="career-group"><div class="career-group-title">Kin Details</div>';
     html += `<div class="career-option disabled"><div>
-      <span class="career-name">Movement Speed</span>
+      <span class="career-name">Movement</span>
       <span class="career-req">${kinData.movement} meters</span>
     </div></div>`;
     html += "</div>";
