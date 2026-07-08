@@ -1333,12 +1333,10 @@ function renderKin(el) {
   html += '<div class="career-group">';
   for (const [i, kin] of KIN.entries()) {
     const isSelected = selectedKin === kin.name;
-    const abilitySummary = kin.abilities.map((a) => a.name).join(", ");
     html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectKin(${i})">
       <span class="career-req roll-num-wide">${escapeHtml(kin.roll)}</span>
       <div>
         <span class="career-name">${escapeHtml(kin.name)}</span>
-        <span class="career-req"> — Move ${kin.movement} — ${escapeHtml(abilitySummary)}</span>
       </div>
     </div>`;
   }
@@ -1346,12 +1344,18 @@ function renderKin(el) {
 
   if (selectedKin) {
     const kinData = KIN.find((k) => k.name === selectedKin);
+    html += '<div class="career-group"><div class="career-group-title">Kin Details</div>';
+    html += `<div class="career-option disabled"><div>
+      <span class="career-name">Movement Speed</span>
+      <span class="career-req">${kinData.movement} meters</span>
+    </div></div>`;
+    html += "</div>";
     html += '<div class="career-group"><div class="career-group-title">Innate Abilities</div>';
     for (const ab of kinData.abilities) {
-      const wpText = ab.wp !== null ? ` — WP cost: ${ab.wp}` : " — No WP cost";
+      const wpText = ab.wp !== null ? `WP: ${ab.wp} — ` : "";
       html += `<div class="career-option disabled"><div>
         <span class="career-name">${escapeHtml(ab.name)}</span>
-        <span class="career-req">${escapeHtml(wpText)}: ${escapeHtml(ab.desc)}</span>
+        <span class="career-req">${escapeHtml(wpText)}${escapeHtml(ab.desc)}</span>
       </div></div>`;
     }
     html += "</div>";
@@ -1401,19 +1405,10 @@ function renderProfession(el) {
   html += '<div class="career-group">';
   for (const [i, prof] of PROFESSIONS.entries()) {
     const isSelected = selectedProf === prof.name;
-    let heroicText;
-    if (prof.heroicOptions) {
-      heroicText = prof.heroicOptions.join(" / ");
-    } else if (prof.heroicAbility) {
-      heroicText = prof.heroicAbility;
-    } else {
-      heroicText = "Magic (no heroic ability)";
-    }
     html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectProfession(${i})">
       <span class="career-req roll-num-wide">${escapeHtml(prof.roll)}</span>
       <div>
         <span class="career-name">${escapeHtml(prof.name)}</span>
-        <span class="career-req"> — Key: ${escapeHtml(prof.keyAttr)} — ${escapeHtml(heroicText)}</span>
       </div>
     </div>`;
   }
@@ -1421,6 +1416,44 @@ function renderProfession(el) {
 
   if (selectedProf) {
     const profData = PROFESSIONS.find((p) => p.name === selectedProf);
+    html += '<div class="career-group"><div class="career-group-title">Profession Details</div>';
+    html += `<div class="career-option disabled"><div>
+      <span class="career-name">Key Attribute</span>
+      <span class="career-req">${escapeHtml(profData.keyAttr)}</span>
+    </div></div>`;
+    html += "</div>";
+
+    if (profData.heroicOptions) {
+      html += '<div class="career-group"><div class="career-group-title">Heroic Abilities (choose one)</div>';
+      for (const abilityName of profData.heroicOptions) {
+        const ab = HEROIC_ABILITIES.find((a) => a.name === abilityName);
+        if (ab) {
+          html += `<div class="career-option disabled"><div>
+            <span class="career-name">${escapeHtml(ab.name)}</span>
+            <span class="career-req">WP: ${escapeHtml(ab.wp)} — ${escapeHtml(ab.desc)}</span>
+          </div></div>`;
+        }
+      }
+      html += "</div>";
+    } else if (profData.heroicAbility) {
+      const ab = HEROIC_ABILITIES.find((a) => a.name === profData.heroicAbility);
+      html += '<div class="career-group"><div class="career-group-title">Heroic Ability</div>';
+      if (ab) {
+        html += `<div class="career-option disabled"><div>
+          <span class="career-name">${escapeHtml(ab.name)}</span>
+          <span class="career-req">WP: ${escapeHtml(ab.wp)} — ${escapeHtml(ab.desc)}</span>
+        </div></div>`;
+      }
+      html += "</div>";
+    } else {
+      html += '<div class="career-group"><div class="career-group-title">Heroic Ability</div>';
+      html +=
+        '<div class="career-option disabled"><div>' +
+        '<span class="career-req">Magic replaces heroic ability for Mages.</span>' +
+        "</div></div>";
+      html += "</div>";
+    }
+
     html += '<div class="career-group"><div class="career-group-title">Profession Skills</div>';
     if (profData.name === "Mage") {
       html +=
@@ -1478,21 +1511,44 @@ function renderMagicSchool(el) {
   let html = '<div class="step-title">Step 2b — Magic School</div>';
   html += "<h3>Choose Your School of Magic</h3>";
   html +=
-    "<p>As a Mage, choose your school. Each school provides a unique magic discipline and determines your profession skills.</p>";
+    "<p>Choose a school of magic to specialize in. Each school has its own profession skills, magic tricks, and rank 1 spells to pick from.</p>";
 
   html += '<div class="career-group">';
   const SCHOOLS = ["Animism", "Elementalism", "Mentalism"];
   for (const [i, school] of SCHOOLS.entries()) {
     const isSelected = selected === school;
-    const skillList = profData.schools[school].join(", ");
     html += `<div class="career-option${isSelected ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isSelected ? "true" : "false"}" onclick="selectMagicSchool(${i})">
       <div>
         <span class="career-name">${escapeHtml(school)}</span>
-        <span class="career-req"> — Skills: ${escapeHtml(skillList)}</span>
       </div>
     </div>`;
   }
   html += "</div>";
+
+  if (selected) {
+    html += '<div class="career-group"><div class="career-group-title">School Skills</div>';
+    html += '<div class="skill-list skill-list-padded">';
+    for (const sk of profData.schools[selected]) {
+      html += `<span class="ability-item">${escapeHtml(sk)}</span>`;
+    }
+    html += "</div></div>";
+
+    const allTricks = [...GENERAL_MAGIC_TRICKS, ...(SCHOOL_MAGIC_TRICKS[selected] || [])];
+    html += '<div class="career-group"><div class="career-group-title">Magic Tricks</div>';
+    html += '<div class="skill-list skill-list-padded">';
+    for (const trick of allTricks) {
+      html += `<span class="ability-item">${escapeHtml(trick.name)}</span>`;
+    }
+    html += "</div></div>";
+
+    const allSpells = [...GENERAL_MAGIC_SPELLS_RANK1, ...(SCHOOL_SPELLS_RANK1[selected] || [])];
+    html += '<div class="career-group"><div class="career-group-title">Rank 1 Spells</div>';
+    html += '<div class="skill-list skill-list-padded">';
+    for (const spell of allSpells) {
+      html += `<span class="ability-item">${escapeHtml(spell.name)}</span>`;
+    }
+    html += "</div></div>";
+  }
 
   html += '<div class="btn-row">';
   html += '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
@@ -1534,11 +1590,30 @@ function renderAge(el) {
       <span class="career-req roll-num-wide">${escapeHtml(age.roll)}</span>
       <div>
         <span class="career-name">${escapeHtml(age.name)}</span>
-        <span class="career-req"> — ${escapeHtml(age.desc)}</span>
       </div>
     </div>`;
   }
   html += "</div>";
+
+  if (selectedAge) {
+    const ageData = AGES.find((a) => a.name === selectedAge);
+    const attrKeys = Object.keys(ageData.attrMods);
+    const attrText =
+      attrKeys.length > 0
+        ? attrKeys.map((a) => `${ageData.attrMods[a] > 0 ? "+" : ""}${ageData.attrMods[a]} ${a}`).join(", ")
+        : "None";
+    const profSkillCount = ageData.totalSkills - ageData.freeSkills;
+    html += '<div class="career-group"><div class="career-group-title">Age Details</div>';
+    html += `<div class="career-option disabled"><div>
+      <span class="career-name">Attribute Modifiers</span>
+      <span class="career-req">${escapeHtml(attrText)}</span>
+    </div></div>`;
+    html += `<div class="career-option disabled"><div>
+      <span class="career-name">Trained Skills</span>
+      <span class="career-req">${ageData.totalSkills} total (${profSkillCount} profession + ${ageData.freeSkills} free)</span>
+    </div></div>`;
+    html += "</div>";
+  }
 
   html += '<div class="btn-row">';
   html += '<button class="btn btn-secondary" onclick="goBack()">Back</button>';
@@ -1970,7 +2045,7 @@ function renderTrainedSkills(el) {
 
   let html = `<div class="step-title">${stepLabel("trainedSkills")}</div>`;
   html += "<h3>Choose Your Trained Skills</h3>";
-  html += `<p>Pick <strong>${profNeeded}</strong> skills from your profession list and <strong>${freeSkillCount}</strong> free skills from any skill. Trained value = 2× base chance of the linked attribute.</p>`;
+  html += `<p>Pick <strong>${profNeeded}</strong> skills from your profession list and <strong>${freeSkillCount}</strong> free skills. The chosen skills will have double the base chance.</p>`;
 
   // Auto-added profession skill (Mage only)
   if (autoAdded.length > 0) {
@@ -1978,9 +2053,8 @@ function renderTrainedSkills(el) {
       '<div class="career-group"><div class="career-group-title">Auto-Added (Magic School)</div>';
     for (const sk of autoAdded) {
       const attr = skillAttr(sk);
-      const av = char.attributes[attr] || 0;
       html += `<div class="career-option disabled">
-        <div><span class="career-name">${escapeHtml(sk)}</span><span class="career-req"> (${attr}) — Base: ${baseChance(av)} — Trained: ${trainedValue(av)}</span></div>
+        <div><span class="career-name">${escapeHtml(sk)}</span><span class="career-req"> (${attr})</span></div>
       </div>`;
     }
     html += "</div>";
@@ -1991,21 +2065,19 @@ function renderTrainedSkills(el) {
   for (const [i, sk] of profPool.entries()) {
     const isChosen = profChosen.includes(sk);
     const attr = skillAttr(sk);
-    const av = char.attributes[attr] || 0;
     html += `<div class="career-option${isChosen ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isChosen ? "true" : "false"}" onclick="toggleProfSkill(${i})">
-      <div><span class="career-name">${escapeHtml(sk)}</span><span class="career-req"> (${attr}) — Base: ${baseChance(av)} — Trained: ${trainedValue(av)}</span></div>
+      <div><span class="career-name">${escapeHtml(sk)}</span><span class="career-req"> (${attr})</span></div>
     </div>`;
   }
   html += "</div>";
 
   // Free skills — all core skills except those already committed to profession slots
-  html += `<div class="career-group"><div class="career-group-title">Free Skills — pick any ${freeSkillCount} (${freeChosen.length}/${freeSkillCount} chosen)</div>`;
+  html += `<div class="career-group"><div class="career-group-title">Free Skills — pick ${freeSkillCount} (${freeChosen.length}/${freeSkillCount} chosen)</div>`;
   for (const [i, sk] of CORE_SKILLS.entries()) {
     if (allChosenProf.includes(sk.name)) continue;
     const isChosen = freeChosen.includes(sk.name);
-    const av = char.attributes[sk.attr] || 0;
     html += `<div class="career-option${isChosen ? " selected" : ""}" role="button" tabindex="0" aria-pressed="${isChosen ? "true" : "false"}" onclick="toggleFreeSkill(${i})">
-      <div><span class="career-name">${escapeHtml(sk.name)}</span><span class="career-req"> (${sk.attr}) — Base: ${baseChance(av)} — Trained: ${trainedValue(av)}</span></div>
+      <div><span class="career-name">${escapeHtml(sk.name)}</span><span class="career-req"> (${sk.attr})</span></div>
     </div>`;
   }
   html += "</div>";
@@ -2123,7 +2195,7 @@ function renderHeroicAbility(el) {
     html += "</div>";
     html += '<div class="btn-row">';
     html +=
-      '<button class="btn btn-secondary" onclick="toggleHeroicShowAll()">Choose a different ability (GM approval required)</button>';
+      '<button class="btn btn-secondary" onclick="toggleHeroicShowAll()">Choose a different ability</button>';
   } else {
     html += '<div class="career-group"><div class="career-group-title">All Heroic Abilities</div>';
     for (const ability of HEROIC_ABILITIES) {
@@ -2273,7 +2345,6 @@ function renderWeakness(el) {
       "<div>" +
       `<span class="career-req roll-num-wide">${i + 1}</span>` +
       `<span class="career-name">${escapeHtml(w.name)}</span>` +
-      `<span class="career-req"> — ${escapeHtml(w.desc)}</span>` +
       "</div></div>";
   }
   html += "</div>";
@@ -2301,11 +2372,11 @@ function renderWeakness(el) {
   const weaknessDescPlaceholder = randomWeakness.desc;
 
   html += '<div class="form-group" style="margin-top:12px;">';
-  html += '<label for="weakness-name-input">Custom weakness name:</label>';
+  html += '<label for="weakness-name-input">Weakness name:</label>';
   html += `<input class="text-input" id="weakness-name-input" type="text" value="${escapeHtml(selected || "")}" placeholder="e.g. ${weaknessNamePlaceholder}" oninput="weaknessNameChanged(this.value)">`;
   html += "</div>";
   html += '<div class="form-group">';
-  html += '<label for="weakness-desc-input">Custom weakness description (optional):</label>';
+  html += '<label for="weakness-desc-input">Weakness description (optional):</label>';
   html += `<input class="text-input" id="weakness-desc-input" type="text" value="${escapeHtml(char.weaknessDesc || "")}" placeholder="e.g. ${weaknessDescPlaceholder}" oninput="weaknessDescChanged(this.value)">`;
   html += "</div>";
 
