@@ -843,24 +843,24 @@ const APPEARANCES = [
 const GENERAL_MAGIC_TRICKS = [
   {
     name: "Fetch",
-    desc: "A loose object (no heavier than weight 1) within 10 meters floats to you.",
+    desc: "You make a loose object (no heavier than weight 1) within 10 meters float to you.",
   },
   {
     name: "Flick",
-    desc: "Give an object or creature within 10 meters a magical flick, inflicting 1 point of damage.",
+    desc: "You give an object or creature within 10 meters a magical flick. The attack inflicts 1 point of damage and can, for example, shatter glass.",
   },
   {
     name: "Light",
-    desc: "Create a bright light illuminating a 10-meter radius for one shift. Goes out if you reach 0 HP.",
+    desc: "You create a bright light that shines from a focus of your choice. It illuminates a 10-meter radius area around your focus and lasts for one shift of time. The light goes out if you reach zero HP.",
   },
-  { name: "Open/Close", desc: "Open or close an unlocked door within 10 meters that you can see." },
+  { name: "Open/Close", desc: "You open or close an unlocked door within 10 meters that you can see." },
   {
     name: "Repair Clothes",
-    desc: "Instantly repair and clean clothes belonging to you or someone within 10 meters.",
+    desc: "Clothes belonging to you or someone else within 10 meters are instantly repaired and cleaned.",
   },
   {
     name: "Sense Magic",
-    desc: "Sense whether the place you are in, or an item you are holding, is affected by magic — and what kind.",
+    desc: "You can sense whether the place you are in, or an item you are holding, is affected by magic — and if so, what kind of magic.",
   },
 ];
 
@@ -868,42 +868,42 @@ const SCHOOL_MAGIC_TRICKS = {
   Animism: [
     {
       name: "Birdsong",
-      desc: "Lovely birdsong surrounds you for one stretch, giving a boon to AWARENESS. Outdoors only.",
+      desc: "You are surrounded by lovely birdsong for one stretch of time. The birds give you a boon to AWARENESS. This trick only works outdoors.",
     },
-    { name: "Clean", desc: "The room you are in is instantly cleaned of all dust and dirt." },
+    { name: "Clean", desc: "The room you are in is cleaned. All dust and dirt disappear, and the room is put in order." },
     {
       name: "Cook Food",
-      desc: "Automatically succeed at cooking food without a BUSHCRAFT roll (one action).",
+      desc: "You automatically succeed at cooking food without a BUSHCRAFT roll, and it happens instantly (one action).",
     },
     {
       name: "Floral Trail",
-      desc: "Beautiful flowers sprout where you walk. They wither after a shift.",
+      desc: "Beautiful flowers sprout where you walk. The flowers wither after a shift.",
     },
     {
       name: "Hairstyle",
-      desc: "Change the color, length, and style of your hair. May grant boons to BLUFFING and PERSUASION.",
+      desc: "You change the color, length, and style of your hair as you see fit. In some situations this can give you a boon to BLUFFING and PERSUASION rolls.",
     },
   ],
   Elementalism: [
     {
       name: "Heat/Chill",
-      desc: "The area within 10 meters becomes pleasantly warm or cold, protecting against cold for one shift.",
+      desc: "The area within 10 meters of you becomes pleasantly warm or cold. The effect protects against cold for one shift of time.",
     },
-    { name: "Ignite", desc: "Light or extinguish a candle, torch, or lantern within 10 meters." },
+    { name: "Ignite", desc: "You light or extinguish a candle, torch, or lantern within 10 meters." },
     {
       name: "Puff of Smoke",
-      desc: "An impressive puff of smoke erupts before you. Can give a boon to SNEAKING.",
+      desc: "An impressive puff of smoke erupts in front of you. Very popular for dramatic entrances, and can give you a boon to SNEAKING in certain situations as determined by the GM.",
     },
   ],
   Mentalism: [
     { name: "Lock/Unlock", desc: "Your touch locks or unlocks a non-magical lock." },
     {
       name: "Magic Stool",
-      desc: "Create a small floating round surface (~half a meter) to sit on or place things on. Lasts until you leave.",
+      desc: "You create a round surface, roughly half a meter in diameter and height, which you can sit on or put things on. The effect lasts until you leave.",
     },
     {
       name: "Slow Fall",
-      desc: "Slow your fall and land as light as a feather, no matter the height.",
+      desc: "You slow your fall and land as light as a feather, no matter the height.",
     },
   ],
 };
@@ -911,11 +911,11 @@ const SCHOOL_MAGIC_TRICKS = {
 const GENERAL_MAGIC_SPELLS_RANK1 = [
   {
     name: "Dispel",
-    desc: "Cancel an ongoing spell of lower or equal power level within 10 meters.",
+    desc: "You cancel an ongoing spell of lower or equal power level. DISPEL can also be used to end other magical effects, if the adventure or GM allows it.",
   },
   {
     name: "Protector",
-    desc: "Protect a person or place from magic for one shift; reduces power level of incoming spells.",
+    desc: "You protect a person or place (no larger than a human) from magic. The power level of all spells cast at the person or place is reduced by the power level in PROTECTOR. You can also use the spell to protect against magical attacks from monsters; each power level reduces the number of dice rolled for damage by 1.",
   },
 ];
 
@@ -923,62 +923,62 @@ const SCHOOL_SPELLS_RANK1 = {
   Animism: [
     {
       name: "Animal Whisperer",
-      desc: "Talk with a bird or mammal within 2 meters, asking questions equal to the power level.",
+      desc: "This spell lets you talk to a bird or mammal. You can ask a number of questions equal to the power level. Animals can tell you what they have seen, heard, or smelled — but they do not perceive the world as humanoids do, and their answers are hard to interpret. The main advantage is that they never lie.",
     },
     {
       name: "Banish",
-      desc: "Inflict 2D8 damage on a demon or undead within 10 meters; +D8 per extra power level. Armor has no effect.",
+      desc: "Demons and undead rising from their graves are a violation of the natural order and must be stopped. This spell inflicts 2D8 damage on such a being. Each additional power level increases the damage by D8. Armor and natural armor have no effect, and the spell cannot be dodged or parried.",
     },
     {
       name: "Ensnaring Roots",
-      desc: "Ensnare a target within 10 meters in roots for one shift. Breaking free requires an EVADE roll.",
+      desc: "The victim is ensnared by roots and branches and is unable to move. Breaking free requires an EVADE roll — with a boon at power level 1, normally at power level 2, and with a bane at power level 3. Each attempt counts as an action in combat. Only one attempt is allowed per round, but others can help. The spell does not work on monsters.",
     },
     {
       name: "Lightning Flash",
-      desc: "Call lightning on a target within 30 meters for 2D6 damage, chaining to a second target for 2D4.",
+      desc: "You call down a flash of lightning from the sky. If the spell is cast successfully, the target takes 2D6 damage. The lightning flash continues to another random target within 2 meters of the target, inflicting 2D4 damage. Each power level beyond the first increases the number of dice rolled for damage by one. Metal armor has no effect but the spell can be dodged or parried as a ranged attack, and if this is successfully done, no further target is hit. Indoors, the WP cost to cast the spell is doubled.",
     },
     {
       name: "Treat Wound",
-      desc: "Heal a living creature you touch for 2D6 HP; +D6 per extra power level.",
+      desc: "You heal another living creature for 2D6 HP. For each power level beyond the first, the spell heals an additional D6 HP.",
     },
   ],
   Elementalism: [
     {
       name: "Fireball",
-      desc: "Hurl a fireball at a target within 20 meters for 2D6 damage, setting fire to flammable objects.",
+      desc: "The spell sends a fireball from your hand or focus at the target. The fireball can be dodged or parried as a ranged attack. The fireball inflicts 2D6 damage on a hit and sets fire to flammable objects. Each power level beyond the first increases the damage by D6 or creates another fireball that hits another target within range.",
     },
     {
       name: "Frost",
-      desc: "Lower temperature in a 4-meter sphere: extinguish fires, deal D6 HP+WP, and freeze humanoids in place.",
+      desc: "You drastically lower the temperature around you. All natural fires in the area of effect are extinguished and all living creatures lose D6 HP and D6 WP when the spell is cast, and become cold — they cannot heal HP or WP until they get warm. Humanoids (not monsters) in the area of effect when the spell is cast are also frozen in place and can neither move nor perform actions (not even reactions). On each turn, a frozen victim can make a STR roll (not an action) to break free. Each additional power level increases the range by 4 meters. Any water in the area of effect immediately freezes. In a river this creates an ice floe that you can walk on or use as a raft.",
     },
     {
       name: "Gust of Wind",
-      desc: "Push objects and creatures in a 10-meter cone 2D4 meters away, dealing the same bludgeoning damage.",
+      desc: "The spell summons a great gust of wind. All untethered objects and creatures up to human size in the area of effect are pushed 2D4 meters away from you and suffer the same amount of bludgeoning damage. Against a swarm the spell deals 2D6 damage. Each additional power level increases the number of dice by one. The spell has no effect on monsters that are Large or Huge.",
     },
     {
       name: "Pillar",
-      desc: "Raise a stone pillar 3 meters high from the ground within 10 meters. Lasts one shift.",
+      desc: "The spell raises a pillar, three meters high and one meter wide, from the ground or a stone floor. If someone is standing in that spot, the victim must make an ACROBATICS roll (not an action) to avoid falling off the pillar. If the pillar is created under a low ceiling and the roll fails, the victim takes 2D6 bludgeoning damage instead. For each additional power level, the height of the pillar increases by three meters, which can mean falling damage to anyone who falls off.",
     },
     {
       name: "Shatter",
-      desc: "Inflict 2D10 damage on an inanimate non-magical object you touch. Armor has no effect.",
+      desc: "By breaking the invisible bond that holds physical matter together, you can shatter physical objects. With this spell you inflict 2D10 damage on an inanimate and non-magical item. Any armor rating has no effect. Each power level beyond the first increases the damage by D10.",
     },
   ],
   Mentalism: [
     {
       name: "Farsight",
-      desc: "See and hear up to 1 km away as if you were there, for as long as you concentrate.",
+      desc: "The spell lets you see and hear what is happening in a place up to one kilometer away, as if you were there in person. You must either have the place in sight or have visited it previously. Each additional power level increases the range tenfold — 10 kilometers at power level 2 and 100 kilometers at power level 3. The spell cannot be used to peer into other dimensions.",
     },
     {
       name: "Levitate",
-      desc: "Levitate yourself or another person or object up to human size up to 6 meters in any direction.",
+      desc: "You levitate yourself or another person or object of up to human size and let it float up to 6 meters in any direction, after which it lands gently or drops to the ground (you decide). Each additional power level lets you levitate the target another 2 meters or levitate an additional person or object. If you try to LEVITATE an unwilling creature, you get a bane to the roll.",
     },
-    { name: "Longstrider", desc: "Double a target's movement rating for one stretch." },
+    { name: "Longstrider", desc: "The target's movement rating is doubled for the duration of the effect. You can cast the spell on yourself. Each additional power level lets you cast the spell on another person." },
     {
       name: "Power Fist",
-      desc: "Increase the damage of your unarmed attacks by D6 per power level for one stretch.",
+      desc: "The damage of your unarmed attacks increases by D6 per power level.",
     },
-    { name: "Stone Skin", desc: "Give a target you touch armor rating 4 for one stretch." },
+    { name: "Stone Skin", desc: "The target's skin turns hard and gray, and gains armor rating 4. Each power level beyond the first increases the armor rating by an additional 2. If you wear armor, only the highest armor rating counts." },
   ],
 };
 
