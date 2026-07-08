@@ -1213,7 +1213,7 @@ function renderSummary() {
   if (anyAttr) {
     for (const attr of ["STR", "CON", "AGL", "INT", "WIL", "CHA"]) {
       const v = char.attributes[attr];
-      html += `<div><span class="label">${attr}</span><br><span class="value">${v} <span style="font-weight:normal;font-size:0.8rem;color:var(--text-muted)">(${baseChance(v)}/${trainedValue(v)})</span></span></div>`;
+      html += `<div><span class="label">${attr}</span><br><span class="value">${v}</span></div>`;
     }
     const hp = char.attributes.CON;
     const wp = char.attributes.WIL;
